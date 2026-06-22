@@ -63,3 +63,14 @@ An exploit template is at `labs/week10/target-files/exploit_template.py`.
 ```bash
 cd labs/week10 && docker compose down
 ```
+
+---
+
+## Practice on VulnHub
+
+These two machines are the most highly recommended buffer-overflow practice targets in the VulnHub catalogue. Both are commonly used in OSCP prep — the same style of exploit development this lab teaches.
+
+| Machine | URL | Why it fits |
+|---------|-----|------------|
+| **Brainpan: 1** | https://www.vulnhub.com/entry/brainpan-1,51/ | Purpose-built for buffer overflow practice. A Windows PE binary runs as a network service on a Linux host — you fuzz it, find the offset with a cyclic pattern, control EIP, and land a shell. The exploit flow is identical to `vuln.c` in this lab but with a real binary. Widely regarded as the best BOF starter VM. Difficulty: intermediate. |
+| **Lord Of The Root: 1.0.1** | https://www.vulnhub.com/entry/lord-of-the-root-101,129/ | Full-chain machine where privilege escalation requires exploiting a locally compiled buffer-overflow binary. You enumerate → exploit a web vuln for initial access → then develop a BOF exploit against a SUID binary to get root. Mirrors the Week 10 full-chain worksheet structure. Difficulty: intermediate. |

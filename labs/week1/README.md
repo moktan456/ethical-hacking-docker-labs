@@ -110,3 +110,16 @@ Remember to ensure that the Secutils container is up and running before attempti
 ## License
 
 This project is released under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## Practice on VulnHub
+
+After completing this lab, apply your Wireshark and traffic-analysis skills against these machines. Both expose a wide range of services — run the lab environment alongside Wireshark to capture and dissect the traffic your tools generate.
+
+| Machine | URL | Why it fits |
+|---------|-----|------------|
+| **Metasploitable: 2** | https://www.vulnhub.com/entry/metasploitable-2,29/ | Dozens of intentionally vulnerable services (FTP, SSH, HTTP, SMB, MySQL, IRC, etc.) — ideal for generating real multi-protocol traffic to capture and analyse. A foundational reference VM for the whole course. |
+| **SickOs: 1.1** | https://www.vulnhub.com/entry/sickos-11,132/ | Traffic is routed through an HTTP CONNECT proxy, making Wireshark filtering and protocol dissection non-trivial. Good practice spotting tunnelled requests in a capture file. |
+
+**Tip:** Boot the VulnHub VM, start a capture in Wireshark, then run `nmap -sV <target-ip>` from the attacker container. Compare the resulting pcap with the pre-supplied `.cap` files in `labs/week1/data/`.

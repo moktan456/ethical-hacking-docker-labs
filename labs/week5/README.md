@@ -59,3 +59,14 @@ See **worksheet.md** for step-by-step exercises.
 ```bash
 cd labs/week5 && docker compose down
 ```
+
+---
+
+## Practice on VulnHub
+
+These machines require the same enumeration skills practised in this lab — LDAP, SMB, MySQL — but in a less guided "figure it out yourself" context.
+
+| Machine | URL | Why it fits |
+|---------|-----|------------|
+| **HackLAB: Vulnix** | https://www.vulnhub.com/entry/hacklab-vulnix,48/ | Heavy on LDAP and NFS enumeration. You enumerate user accounts via `finger` and LDAP, then leverage NFS exports to gain access — a realistic chain that mirrors exactly what Week 5 teaches. Difficulty: beginner–intermediate. |
+| **Stapler: 1** | https://www.vulnhub.com/entry/stapler-1,150/ | Exposes FTP, SSH, HTTP, SMB, MySQL, and more. `enum4linux` against this machine produces a rich haul of usernames, shares, and password-policy info — the same workflow as the Week 5 SMB exercises. Difficulty: intermediate. |

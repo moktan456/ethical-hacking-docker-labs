@@ -100,3 +100,14 @@ We welcome contributions to improve this learning environment. Please submit pul
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Practice on VulnHub
+
+After working through DVWA and Juice Shop in this lab, test the same techniques — SQLi, XSS, file upload, command injection — against these standalone VMs where there is no guided interface.
+
+| Machine | URL | Why it fits |
+|---------|-----|------------|
+| **Web Developer: 1** | https://www.vulnhub.com/entry/webdeveloper-1,288/ | WordPress-based machine where the attack chain goes through web-application enumeration, SQLi via WPScan, and credential abuse. Covers the same SQLi and web-enumeration workflow as the Week 7 DVWA exercises. Difficulty: beginner–intermediate. |
+| **Kioptrix: Level 1.2 (#3)** | https://www.vulnhub.com/entry/kioptrix-level-12-3,24/ | Hosts a vulnerable PHP gallery application with SQL injection and a MySQL backend. The exploit chain mirrors what students do in DVWA's SQLi module, then pivots into password cracking — a clean bridge between Weeks 6 and 7. Difficulty: beginner–intermediate. |

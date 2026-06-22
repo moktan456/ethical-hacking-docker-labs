@@ -55,3 +55,14 @@ See **worksheet.md** for step-by-step exercises.
 ```bash
 cd labs/week9 && docker compose down
 ```
+
+---
+
+## Practice on VulnHub
+
+Both machines require pivoting between network segments to complete the challenge — you cannot root them by staying on a single host. Use the SSH tunnelling and proxychains techniques from this lab's worksheet.
+
+| Machine | URL | Why it fits |
+|---------|-----|------------|
+| **WinterMute: 1** | https://www.vulnhub.com/entry/wintermute-1,239/ | Two-machine series: you compromise the first host (Straylight) then must pivot to reach the second (Neuromancer) on a separate network. Classic lateral movement requiring SOCKS proxy or port forwarding — exactly the skills in the Week 9 worksheet. Difficulty: intermediate. |
+| **Nully Cybersecurity: 1** | https://www.vulnhub.com/entry/nully-cybersecurity-1,549/ | Multi-host lab with three internal machines on different network segments. You pivot through each one using SSH tunnels and Metasploit routes. The topology directly mirrors the Week 9 external/internal network design. Difficulty: intermediate. |

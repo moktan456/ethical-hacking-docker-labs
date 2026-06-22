@@ -52,3 +52,13 @@ This lab focuses on analyzing captured network traffic using Wireshark to inform
 **Ethics**: Analysis only—no active attacks. Document assumptions for proposals.
 
 Generated with Claude Code.
+---
+
+## Practice on VulnHub
+
+These machines generate interesting traffic profiles. Boot one, capture its traffic in the Week 3 Wireshark container, and use the findings to draft a scope statement as per the lab's Proposal Draft activity.
+
+| Machine | URL | Why it fits |
+|---------|-----|------------|
+| **Metasploitable: 2** | https://www.vulnhub.com/entry/metasploitable-2,29/ | Exposes cleartext protocols (Telnet, FTP, HTTP) alongside encrypted ones. Analysing the mix is excellent practice for identifying in-scope vs out-of-scope assets from a pcap, which is exactly the Week 3 proposal exercise. |
+| **PwnLab: init** | https://www.vulnhub.com/entry/pwnlab-init,158/ | PHP web application with file upload and LFI. The HTTP traffic between browser and app contains multipart form data, cookies, and redirects — good material for filtering, following streams, and documenting findings in a scope doc. |

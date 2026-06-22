@@ -52,3 +52,14 @@ See **worksheet.md** for step-by-step exercises.
 ```bash
 cd labs/week4 && docker compose down
 ```
+
+---
+
+## Practice on VulnHub
+
+Once you are comfortable with the Nmap exercises in this lab, use these machines as "live" Nmap targets. They each expose a different mix of services so your scan results will look different every time.
+
+| Machine | URL | Why it fits |
+|---------|-----|------------|
+| **Kioptrix: Level 1** | https://www.vulnhub.com/entry/kioptrix-level-1-1,22/ | Classic beginner machine with SMB, HTTP, and SSH exposed. Run every scan type from the worksheet against it — `-sV`, `-A`, `--script smb-*` — and compare your output to what a real engagement might look like. |
+| **Mr-Robot: 1** | https://www.vulnhub.com/entry/mr-robot-1,151/ | Web-heavy machine with a WordPress site. Nmap will detect HTTP but not reveal everything — you need `gobuster` and `nikto` to go deeper. Good bridge between Week 4 (recon) and Week 5 (enumeration). |

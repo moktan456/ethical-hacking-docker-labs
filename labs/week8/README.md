@@ -83,3 +83,13 @@ docker compose down
 ## Security Notice
 
 **Educational use only in isolated lab environments.**
+---
+
+## Practice on VulnHub
+
+Week 8 is modelled on the De-ICE series. These two machines are the closest real-world equivalents — both require the full recon → enum → exploit → report chain with no hand-holding.
+
+| Machine | URL | Why it fits |
+|---------|-----|------------|
+| **De-ICE: S1.100** | https://www.vulnhub.com/entry/de-ice-s1100,8/ | The original inspiration for this lab. A simulated corporate Linux server with FTP, SSH, HTTP, and SMTP. You must enumerate services, crack a password, and escalate privileges — identical flow to the Week 8 de-ice attacker scenario. Difficulty: beginner. |
+| **Basic Pentesting: 2** | https://www.vulnhub.com/entry/basic-pentesting-2,241/ | Full-chain beginner machine: web enumeration → SMB user extraction → SSH brute-force → Sudo privilege escalation. Mirrors the Week 8 multi-service workflow and produces the kind of findings you would include in a practical pentest report. Difficulty: beginner–intermediate. |

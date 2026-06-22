@@ -347,3 +347,13 @@ docker-compose down
 **Remember:** With great power comes great responsibility. Use these skills to protect, not to harm.
 
 *Last updated: 2026-06*
+---
+
+## Practice on VulnHub
+
+Both machines require password cracking as a core step — not just an optional extra — making them a direct extension of this week's John, Hydra, and Hashcat exercises.
+
+| Machine | URL | Why it fits |
+|---------|-----|------------|
+| **Kioptrix: 2014 (#5)** | https://www.vulnhub.com/entry/kioptrix-2014-5,62/ | Gaining access requires cracking a password hash found during web enumeration. The hash type isn't told to you — you need to identify it first, mirroring the Week 6 hash-identification exercises. Difficulty: intermediate. |
+| **Mr-Robot: 1** | https://www.vulnhub.com/entry/mr-robot-1,151/ | The entire second flag revolves around a password hash in a WordPress database. The machine ships with a custom wordlist (`fsocity.dic`) that must be deduplicated and used with Hydra — a perfect practical follow-on to Week 6's wordlist and Hydra exercises. Difficulty: intermediate. |

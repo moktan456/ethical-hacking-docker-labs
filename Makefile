@@ -16,10 +16,10 @@ run-week3:
 	cd labs/week3 && docker compose up -d
 
 run-week4:
-	cd labs/week4 && docker compose up -d
+	@test -f labs/week4/docker-compose.yaml -o -f labs/week4/docker-compose.yml && (cd labs/week4 && docker compose up -d) || echo "Week 4 lab not yet built. See labs/week4/ (currently empty)."
 
 run-week5:
-	cd labs/week5 && docker compose up -d
+	@test -f labs/week5/docker-compose.yaml -o -f labs/week5/docker-compose.yml && (cd labs/week5 && docker compose up -d) || echo "Week 5 lab not yet built. See labs/week5/ (currently empty)."
 
 run-week6:
 	cd labs/week6 && docker compose up -d
@@ -31,29 +31,31 @@ run-week8:
 	cd labs/week8 && docker compose up -d
 
 run-week9:
-	cd labs/week9 && docker compose up -d
+	@test -f labs/week9/docker-compose.yaml -o -f labs/week9/docker-compose.yml && (cd labs/week9 && docker compose up -d) || echo "Week 9 lab not yet built. See labs/week9/ (currently empty)."
 
 run-week10:
-	cd labs/week10 && docker compose up -d
+	@test -f labs/week10/docker-compose.yaml -o -f labs/week10/docker-compose.yml && (cd labs/week10 && docker compose up -d) || echo "Week 10 lab not yet built. See labs/week10/ (currently empty)."
 
 run-week11:
-	cd labs/week11 && docker compose up -d
+	@echo "Week 11: Physical access controls - no Docker needed. Review README."
+	@cat labs/week11/README.md 2>/dev/null || echo "Create README for Week 11 physical security."
 
 run-week12:
-	cd labs/week12 && docker compose up -d
+	@echo "Week 12: Social engineering - no Docker needed. Review README."
+	@cat labs/week12/README.md 2>/dev/null || echo "Create README for Week 12 social engineering."
 
 # Build all weeks (if any have Dockerfiles)
 build-all:
 	$(MAKE) build-base
-	for week in {1..12}; do \
+	for week in 1 3 6 7 8; do \
 		if [ -f "labs/week$$week/Dockerfile" ]; then \
 			(cd labs/week$$week && docker compose build); \
 		fi; \
 	done
 
-# Stop all weeks
+# Stop all weeks (only the ones that actually exist)
 stop-all:
-	for week in {1..12}; do \
+	for week in 1 3 6 7 8; do \
 		(cd labs/week$$week && docker compose down 2>/dev/null || true); \
 	done
 

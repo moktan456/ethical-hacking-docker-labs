@@ -205,7 +205,7 @@ killall firefox     # Stop all Firefox processes
 ### `ping` - Test Connectivity
 ```bash
 ping google.com              # Test internet connection
-ping 192.168.1.1            # Test local network
+ping 10.10.8.1            # Test local network
 ping -c 4 google.com        # Send only 4 pings
 ```
 

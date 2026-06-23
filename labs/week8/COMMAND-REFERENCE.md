@@ -6,11 +6,11 @@ This document explains every command used in the De-ICE S1.100 lab in simple ter
 
 ### `nmap -sn 10.10.8.0/24`
 **What it does:** Discovers which computers are "alive" on the network  
-**How it works:** Sends ping packets to all IP addresses from 172.20.0.1 to 172.20.0.254  
+**How it works:** Sends ping packets to all IP addresses from 10.10.8.1 to 10.10.8.254  
 **Output:** List of active IP addresses  
 **Why we use it:** First step in any network penetration test - find targets
 
-### `nmap -sC -sV 172.20.0.2 172.20.0.3 172.20.0.4`
+### `nmap -sC -sV 10.10.8.2 10.10.8.10 10.10.8.11`
 **What it does:** Scans specific computers for open ports and services  
 **Flags explained:**
 - `-sC`: Run default scripts (safe checks for common vulnerabilities)  
@@ -20,13 +20,13 @@ This document explains every command used in the De-ICE S1.100 lab in simple ter
 
 ## Web Enumeration Commands
 
-### `curl http://172.20.0.5`
+### `curl http://10.10.8.12`
 **What it does:** Downloads and displays a webpage  
 **How it works:** Makes HTTP request like a web browser, but shows raw HTML  
 **Output:** HTML source code of the webpage  
 **Why we use it:** Looking for sensitive information exposed on websites
 
-### `curl -s http://172.20.0.5 | grep -E '(Name|Email)'`
+### `curl -s http://10.10.8.12 | grep -E '(Name|Email)'`
 **What it does:** Downloads webpage and searches for lines containing "Name" or "Email"  
 **Flags explained:**
 - `-s`: Silent mode (no progress bar)  
@@ -38,7 +38,7 @@ This document explains every command used in the De-ICE S1.100 lab in simple ter
 
 ## FTP Commands
 
-### `ftp 172.20.0.4`
+### `ftp 10.10.8.11`
 **What it does:** Connects to FTP (file transfer) server  
 **Interactive commands:**
 - `ls`: List files on server  
@@ -56,12 +56,12 @@ This document explains every command used in the De-ICE S1.100 lab in simple ter
 
 ## Password Attack Commands
 
-### `hydra -L users.txt -P passwords.txt 172.20.0.3 ssh -t 4`
+### `hydra -L users.txt -P passwords.txt 10.10.8.10 ssh -t 4`
 **What it does:** Attempts to guess SSH passwords by trying many combinations  
 **Flags explained:**
 - `-L users.txt`: Try all usernames from this file  
 - `-P passwords.txt`: Try all passwords from this file  
-- `172.20.0.3`: Target IP address  
+- `10.10.8.10`: Target IP address  
 - `ssh`: Attack SSH service  
 - `-t 4`: Use 4 parallel connections (faster)  
 **Output:** Shows successful login combinations  
@@ -83,7 +83,7 @@ EOF
 
 ## SSH Commands
 
-### `ssh aadams@172.20.0.3`
+### `ssh aadams@10.10.8.10`
 **What it does:** Connects securely to remote computer  
 **Format:** `ssh username@ip-address`  
 **What happens:** Prompts for password, then gives command line access  
@@ -117,7 +117,7 @@ EOF
 
 ## Service Banner Checking
 
-### `telnet 172.20.0.6 110`
+### `telnet 10.10.8.13 110`
 **What it does:** Connects directly to a service port  
 **Format:** `telnet ip-address port-number`  
 **Purpose:** See what software version is running  
@@ -150,7 +150,7 @@ EOF
 
 ### Successful Hydra Attack
 ```
-[22][ssh] host: 172.20.0.3   login: aadams   password: smadaa
+[22][ssh] host: 10.10.8.10   login: aadams   password: smadaa
 ```
 **What it means:**
 - `[22]`: SSH service (port 22)  

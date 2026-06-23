@@ -28,7 +28,7 @@ week9-attacker            week9-pivot                week9-internal-web
                                                      10.10.90.21 (MySQL)
 ```
 
-**Rule:** 172.90.20.x is unreachable from your attacker machine directly. Verify this first.
+**Rule:** 10.10.90.x is unreachable from your attacker machine directly. Verify this first.
 
 ---
 
@@ -235,7 +235,7 @@ run
 
 ```bash
 # In msfconsole — route all 10.10.90.0/24 traffic through session 1
-route add 172.90.20.0/255.255.255.0 1
+route add 10.10.90.0/255.255.255.0 1
 
 # Verify route
 route print
@@ -288,7 +288,7 @@ run
 2. What SSH flag creates a SOCKS proxy (dynamic forwarding)?
    - A) `-L`  B) `-R`  C) `-D`  D) `-T`
 
-3. Why can't the attacker reach 172.90.20.x directly in this lab?
+3. Why can't the attacker reach 10.10.90.x directly in this lab?
    - A) Firewall rules  B) The internal network is `internal: true` (no external routing)  C) Different VLAN  D) All of the above
 
 4. What Metasploit command routes traffic through an active session?

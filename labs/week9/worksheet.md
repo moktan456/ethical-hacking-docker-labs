@@ -22,10 +22,10 @@ CyberCorp's external network has been partially compromised. You have obtained c
 ```
 Your machine              Pivot host                 Internal targets
 week9-attacker            week9-pivot                week9-internal-web
-172.90.10.2  ───SSH──►  172.90.10.10               172.90.20.20 (HTTP)
+10.10.9.2  ───SSH──►  10.10.9.10               10.10.90.20 (HTTP)
              (can't reach)  │
                             └──────────────────────► week9-internal-db
-                                                     172.90.20.21 (MySQL)
+                                                     10.10.90.21 (MySQL)
 ```
 
 **Rule:** 172.90.20.x is unreachable from your attacker machine directly. Verify this first.
@@ -42,7 +42,7 @@ make run-week9
 docker exec -it week9-attacker bash
 
 # Confirm you CANNOT reach the internal network directly
-ping -c 1 172.90.20.20
+ping -c 1 10.10.90.20
 ```
 
 **Did the ping fail?**  ✓ Yes (expected)  ✓ No
@@ -57,10 +57,10 @@ If no, something is wrong — ask your instructor before continuing.
 
 ```bash
 # Check the pivot is on your network
-ping -c 2 172.90.10.10
+ping -c 2 10.10.9.10
 
 # Confirm SSH is running
-nmap -p 22 172.90.10.10
+nmap -p 22 10.10.9.10
 ```
 
 **Is the pivot host reachable?**  ✓ Yes  ✓ No
@@ -72,7 +72,7 @@ nmap -p 22 172.90.10.10
 ```bash
 # SSH into the pivot host
 # Credentials: pivotuser / pivot123
-ssh pivotuser@172.90.10.10
+ssh pivotuser@10.10.9.10
 ```
 
 Accept the host key fingerprint when prompted (type `yes`).
@@ -104,8 +104,8 @@ From your SSH session on the pivot host:
 ```bash
 # Check what's on the internal network
 ip route
-ping -c 1 172.90.20.20
-ping -c 1 172.90.20.21
+ping -c 1 10.10.90.20
+ping -c 1 10.10.90.21
 ```
 
 **Can the pivot host reach the internal targets?**  ✓ Yes  ✓ No
@@ -125,7 +125,7 @@ docker exec -it week9-attacker bash
 
 # Forward local port 8080 to the internal web server via the pivot
 # This creates: attacker:8080 → pivot:22 → internal-web:80
-ssh -L 8080:172.90.20.20:80 pivotuser@172.90.10.10 -N -f
+ssh -L 8080:10.10.90.20:80 pivotuser@10.10.9.10 -N -f
 ```
 
 The `-N` flag means "no command", `-f` backgrounds the tunnel.
@@ -151,7 +151,7 @@ _________________________________
 
 ```bash
 # Forward local port 3307 to the internal MySQL server
-ssh -L 3307:172.90.20.21:3306 pivotuser@172.90.10.10 -N -f
+ssh -L 3307:10.10.90.21:3306 pivotuser@10.10.9.10 -N -f
 
 # Connect to the internal MySQL via the tunnel
 mysql -h 127.0.0.1 -P 3307 -u appuser -papppass456
@@ -176,7 +176,7 @@ A SOCKS proxy lets you route *all* your traffic through the tunnel, not just one
 ```bash
 # Open a SOCKS5 proxy on local port 1080
 # All traffic sent to this proxy will tunnel through the pivot
-ssh -D 1080 pivotuser@172.90.10.10 -N -f
+ssh -D 1080 pivotuser@10.10.9.10 -N -f
 
 # Check it's listening
 ss -tlnp | grep 1080
@@ -190,10 +190,10 @@ ss -tlnp | grep 1080
 
 ```bash
 # Test proxychains reaches internal web through SOCKS proxy
-proxychains curl http://172.90.20.20
+proxychains curl http://10.10.90.20
 
 # Scan internal network through the proxy
-proxychains nmap -sT -Pn 172.90.20.0/24
+proxychains nmap -sT -Pn 10.10.90.0/24
 ```
 
 **What hosts did proxychains nmap find?**
@@ -221,7 +221,7 @@ msfconsole
 ```bash
 # Use the SSH login module
 use auxiliary/scanner/ssh/ssh_login
-set RHOSTS 172.90.10.10
+set RHOSTS 10.10.9.10
 set USERNAME pivotuser
 set PASSWORD pivot123
 run
@@ -234,7 +234,7 @@ run
 ### Exercise 4.3: Add a Route Through the Session
 
 ```bash
-# In msfconsole — route all 172.90.20.0/24 traffic through session 1
+# In msfconsole — route all 10.10.90.0/24 traffic through session 1
 route add 172.90.20.0/255.255.255.0 1
 
 # Verify route
@@ -248,7 +248,7 @@ route print
 ```bash
 # Now scan the internal network via the Metasploit route
 use auxiliary/scanner/portscan/tcp
-set RHOSTS 172.90.20.0/24
+set RHOSTS 10.10.90.0/24
 set PORTS 22,80,443,3306,8080
 run
 ```
@@ -257,8 +257,8 @@ run
 
 | Host | Open Ports |
 |------|------------|
-| 172.90.20.20 | |
-| 172.90.20.21 | |
+| 10.10.90.20 | |
+| 10.10.90.21 | |
 
 ---
 

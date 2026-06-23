@@ -1,25 +1,10 @@
-services:
-  hacking-tools:
-    image: ethical-base
-    container_name: password-cracking-lab
-    hostname: hacklab
-    stdin_open: true
-    tty: true
-    networks:
-      week6-labnet:
-        ipv4_address: 10.10.6.2
-    volumes:
-      - ./wordlists:/wordlists
-      - ./hashes:/hashes
-      - ./scripts:/scripts
-    command: /bin/bash -c "
-      pip3 install --break-system-packages zxcvbn &&
-      echo 'Lab environment ready!' &&
-      /bin/bash"
-    cap_add:
-      - NET_ADMIN
-      - SYS_PTRACE
+# Week 6 — Kali VM mode
+# Run with: make run-week6-kali
+# Access targets from your Kali VM at HOST_IP:<port>
+#   SSH:  HOST_IP:6022  (→ 10.10.6.10:22)
+#   Web:  HOST_IP:8080  (→ 10.10.6.11:80)  [already exposed in standard mode]
 
+services:
   ssh-target:
     image: ubuntu:22.04
     container_name: ssh-target
@@ -29,6 +14,8 @@ services:
     networks:
       week6-labnet:
         ipv4_address: 10.10.6.10
+    ports:
+      - "6022:22"
     command: /bin/bash -c "
       apt-get update &&
       apt-get install -y openssh-server &&
@@ -42,7 +29,6 @@ services:
       echo 'flag{w6_root_shell_obtained}' > /root/root.txt &&
       sed -i 's/#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config &&
       sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
-      echo 'SSH Target Server Ready' &&
       /usr/sbin/sshd -D"
 
   web-target:

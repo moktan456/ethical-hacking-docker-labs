@@ -29,7 +29,7 @@ Client says: *"You're connected to our network - find all vulnerabilities"*
 ```bash
 # Must start with network discovery (no targets known)
 ip addr show                # Where am I?
-nmap -sn 172.20.0.0/24     # What hosts exist?
+nmap -sn 10.10.8.0/24     # What hosts exist?
 nmap -sC -sV [discovered]  # What services run?
 curl http://[target]       # Now gather intelligence
 ```
@@ -50,7 +50,7 @@ ip addr show
 route -n
 
 # Who else is on this network?
-nmap -sn 172.20.0.0/24
+nmap -sn 10.10.8.0/24
 ```
 
 **Why This Phase is First in Black Box:**
@@ -196,7 +196,7 @@ hydra -L users.txt abc.com ssh # Targeted attacks
 ```bash
 # Given: "Network access only"
 # Phase 1: Network Discovery (Active - Required)
-nmap -sn 172.20.0.0/24        # Find what exists
+nmap -sn 10.10.8.0/24        # Find what exists
 # Phase 2: Service Discovery (Active - Required)
 nmap -sC -sV [discovered IPs] # Find what services run
 # Phase 3: Intelligence Gathering (Passive - Now possible)

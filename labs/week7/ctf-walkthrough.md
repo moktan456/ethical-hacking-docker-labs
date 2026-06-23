@@ -8,7 +8,7 @@
 
 **Step 1 — Connect to MySQL:**
 ```bash
-mysql -h 172.20.0.9 -u user -puserpassword exampledb
+mysql -h 10.10.7.9 -u user -puserpassword exampledb
 ```
 
 **Step 2 — Enumerate tables:**
@@ -28,7 +28,7 @@ SELECT * FROM ctf_flags;
 
 **Step 1 — Scan for Telnet:**
 ```bash
-nmap -sV -p 23 172.20.0.10
+nmap -sV -p 23 10.10.7.10
 ```
 
 **Step 2 — Enumerate credentials (from lab context or brute-force):**
@@ -37,7 +37,7 @@ nmap -sV -p 23 172.20.0.10
 
 **Step 3 — Connect via Telnet:**
 ```bash
-telnet 172.20.0.10
+telnet 10.10.7.10
 # Login: ctfuser / telnet123
 ```
 

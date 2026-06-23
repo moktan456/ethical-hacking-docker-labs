@@ -17,7 +17,7 @@ services:
       - seccomp:unconfined
     networks:
       traffic_net:
-        ipv4_address: 172.30.0.2
+        ipv4_address: 10.10.3.2
     restart: unless-stopped
 
   sample-target:
@@ -32,7 +32,7 @@ services:
       tail -f /dev/null"
     networks:
       traffic_net:
-        ipv4_address: 172.30.0.3
+        ipv4_address: 10.10.3.10
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
@@ -42,4 +42,4 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.30.0.0/24
+        - subnet: 10.10.3.0/24

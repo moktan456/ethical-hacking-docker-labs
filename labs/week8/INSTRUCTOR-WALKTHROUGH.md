@@ -13,7 +13,7 @@ docker exec -it de-ice-attacker bash
 ### 2. Verify All Services Are Running
 ```bash
 # From attacker container
-nmap -sn 172.20.0.0/24
+nmap -sn 10.10.8.0/24
 ```
 
 **Expected Output:**
@@ -47,7 +47,7 @@ Host is up (0.000011s latency).
 ### Network Discovery and Port Scanning
 ```bash
 # Step 1: Network discovery 
-nmap -sn 172.20.0.0/24
+nmap -sn 10.10.8.0/24
 
 # Step 2: Port scan discovered targets
 nmap -sC -sV 172.20.0.2 172.20.0.3 172.20.0.4 172.20.0.5 172.20.0.6

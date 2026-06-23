@@ -9,9 +9,9 @@
 
 | Host | IP | Notes |
 |------|----|-------|
-| week3-target | 172.30.0.3 | Sample target container |
+| week3-target | 10.10.3.10 | Sample target container |
 
-Your Wireshark container is at `172.30.0.2`.
+Your Wireshark container is at `10.10.3.2`.
 
 ---
 

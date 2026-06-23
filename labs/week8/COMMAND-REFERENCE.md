@@ -4,7 +4,7 @@ This document explains every command used in the De-ICE S1.100 lab in simple ter
 
 ## Network Discovery Commands
 
-### `nmap -sn 172.20.0.0/24`
+### `nmap -sn 10.10.8.0/24`
 **What it does:** Discovers which computers are "alive" on the network  
 **How it works:** Sends ping packets to all IP addresses from 172.20.0.1 to 172.20.0.254  
 **Output:** List of active IP addresses  

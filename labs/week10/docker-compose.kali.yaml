@@ -1,46 +1,11 @@
-version: '3.9'
-
-# Week 10: Exploit Development (Buffer Overflows)
-# Lab focus: stack buffer overflow analysis, GDB debugging, ret2win technique
-#
-# Full-chain flow: recon (nmap) → enumeration → exploit dev → privilege escalation
+# Week 10 — Kali VM mode
+# Run with: make run-week10-kali
+# Access targets from your Kali VM at HOST_IP:<port>
+#   Recon web:     HOST_IP:10080  (→ 10.10.10.10:80)
+#   SSH (lowpriv): HOST_IP:10022  (→ 10.10.10.11:22)
+#   Vuln service:  HOST_IP:10999  (→ 10.10.10.11:9999)
 
 services:
-
-  week10-attacker:
-    image: ethical-base
-    container_name: week10-attacker
-    hostname: kali-attacker
-    stdin_open: true
-    tty: true
-    user: root
-    networks:
-      week10-exploitnet:
-        ipv4_address: 10.10.10.2
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-      - SYS_PTRACE
-    security_opt:
-      - seccomp:unconfined
-    volumes:
-      - ./target-files:/root/tools:ro
-    command: >
-      /bin/bash -c "
-      apt-get update -qq &&
-      apt-get install -y -q gdb python3-pwntools gcc libc6-dev python3-pip &&
-      pip3 install --break-system-packages pwntools 2>/dev/null | tail -1 &&
-      echo '======================================================' &&
-      echo ' Week 10 Attacker Ready' &&
-      echo ' Tools: gdb, pwntools, gcc' &&
-      echo ' Exploit template: /root/tools/exploit_template.py' &&
-      echo ' Targets:' &&
-      echo '   10.10.10.10  week10-web-recon (HTTP :80)' &&
-      echo '   10.10.10.11  week10-vuln-target (vuln service :9999, SSH :22)' &&
-      echo ' Enter: docker exec -it week10-attacker bash' &&
-      echo '======================================================' &&
-      tail -f /dev/null"
-
   week10-web-recon:
     image: nginx:alpine
     container_name: week10-web-recon
@@ -50,6 +15,8 @@ services:
         ipv4_address: 10.10.10.10
     volumes:
       - ./recon-web:/usr/share/nginx/html:ro
+    ports:
+      - "10080:80"
     restart: unless-stopped
 
   week10-vuln-target:
@@ -67,6 +34,9 @@ services:
       - seccomp:unconfined
     volumes:
       - ./target-files:/opt/target:ro
+    ports:
+      - "10022:22"
+      - "10999:9999"
     command: >
       /bin/bash -c "
       apt-get update -qq &&
@@ -83,7 +53,6 @@ services:
       /usr/sbin/sshd &&
       cp /opt/target/vuln.c /tmp/vuln.c &&
       gcc -o /opt/vuln /tmp/vuln.c -fno-stack-protector -z execstack -no-pie &&
-      echo 'Vulnerable service compiled. Starting...' &&
       /opt/vuln"
     restart: unless-stopped
 

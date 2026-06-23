@@ -11,13 +11,13 @@
 This lab simulates a segmented corporate network. You start on the external network and must pivot through a compromised host to reach the internal network.
 
 ```
-EXTERNAL (172.90.10.0/24)          INTERNAL (172.90.20.0/24)
+EXTERNAL (10.10.9.0/24)          INTERNAL (10.10.90.0/24)
 ┌─────────────────────┐            ┌──────────────────────────┐
 │  week9-attacker     │            │  week9-internal-web :80  │
-│  172.90.10.2        │            │  172.90.20.20            │
+│  10.10.9.2        │            │  10.10.90.20            │
 │                     │            │                          │
 │  week9-pivot ───────┼────────────┤  week9-internal-db :3306 │
-│  172.90.10.10       │            │  172.90.20.21            │
+│  10.10.9.10       │            │  10.10.90.21            │
 └─────────────────────┘            └──────────────────────────┘
 ```
 

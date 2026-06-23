@@ -9,10 +9,10 @@
 
 | Host | IP | Services |
 |------|----|---------|
-| week7-mysql | 172.20.0.9 | MySQL (:3306) |
-| week7-telnet | 172.20.0.10 | Telnet (:23) |
-| week7-dvwa | 172.20.0.12 | HTTP (:8085) |
-| week7-juice-shop | 172.20.0.11 | HTTP (:3012) |
+| week7-mysql | 10.10.7.9 | MySQL (:3306) |
+| week7-telnet | 10.10.7.10 | Telnet (:23) |
+| week7-dvwa | 10.10.7.12 | HTTP (:8085) |
+| week7-juice-shop | 10.10.7.11 | HTTP (:3012) |
 
 ---
 

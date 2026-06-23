@@ -9,10 +9,10 @@
 
 | Host | IP | Services |
 |------|----|---------|
-| week10-web-recon | 172.100.0.10 | HTTP (:80) — recon hints |
-| week10-vuln-target | 172.100.0.11 | SSH (:22), vuln service (:9999) |
+| week10-web-recon | 10.10.10.10 | HTTP (:80) — recon hints |
+| week10-vuln-target | 10.10.10.11 | SSH (:22), vuln service (:9999) |
 
-Your attacker IP: `172.100.0.2`
+Your attacker IP: `10.10.10.2`
 
 ---
 

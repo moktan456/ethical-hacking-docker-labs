@@ -9,11 +9,11 @@
 
 | Host | IP | Services |
 |------|----|---------|
-| week4-web | 172.40.0.10 | HTTP (Nginx) |
-| week4-ftp | 172.40.0.11 | FTP (vsftpd) |
-| week4-ssh | 172.40.0.12 | SSH (OpenSSH) |
+| week4-web | 10.10.4.10 | HTTP (Nginx) |
+| week4-ftp | 10.10.4.11 | FTP (vsftpd) |
+| week4-ssh | 10.10.4.12 | SSH (OpenSSH) |
 
-Your attacker IP: `172.40.0.2`
+Your attacker IP: `10.10.4.2`
 
 ---
 

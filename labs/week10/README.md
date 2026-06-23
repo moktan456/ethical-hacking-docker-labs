@@ -12,9 +12,9 @@ This lab provides a full-chain pentest simulation: recon → enumeration → exp
 
 | Container | IP | Services |
 |---|---|---|
-| week10-attacker | 172.100.0.2 | Kali attacker — includes GDB, pwntools |
-| week10-web-recon | 172.100.0.10 | HTTP (port 80, Nginx) |
-| week10-vuln-target | 172.100.0.11 | Vulnerable debug service (port 9999), SSH (port 22) |
+| week10-attacker | 10.10.10.2 | Kali attacker — includes GDB, pwntools |
+| week10-web-recon | 10.10.10.10 | HTTP (port 80, Nginx) |
+| week10-vuln-target | 10.10.10.11 | Vulnerable debug service (port 9999), SSH (port 22) |
 
 **Target service:** `week10-vuln-target:9999` — a C network service compiled without stack canaries, ASLR, or PIE. Classic ret2win buffer overflow.
 

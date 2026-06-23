@@ -1,35 +1,11 @@
-version: '3.9'
-
-# Week 4: Reconnaissance and Information Gathering
-# Lab focus: Nmap scanning — version detection, OS fingerprinting, port enumeration
+# Week 4 — Kali VM mode
+# Run with: make run-week4-kali
+# Access targets from your Kali VM at HOST_IP:<port>
+#   HTTP:  HOST_IP:4080  (→ 10.10.4.10:80)
+#   FTP:   HOST_IP:4021  (→ 10.10.4.11:21)
+#   SSH:   HOST_IP:4022  (→ 10.10.4.12:22)
 
 services:
-
-  week4-attacker:
-    image: ethical-base
-    container_name: week4-attacker
-    hostname: kali-attacker
-    stdin_open: true
-    tty: true
-    user: root
-    networks:
-      week4-scannet:
-        ipv4_address: 10.10.4.2
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    command: >
-      /bin/bash -c "
-      echo '======================================================' &&
-      echo ' Week 4 Attacker Ready' &&
-      echo ' Targets on 10.10.4.0/24:' &&
-      echo '   10.10.4.10  week4-web  (HTTP/Nginx)' &&
-      echo '   10.10.4.11  week4-ftp  (FTP/vsftpd)' &&
-      echo '   10.10.4.12  week4-ssh  (SSH/OpenSSH)' &&
-      echo ' Enter: docker exec -it week4-attacker bash' &&
-      echo '======================================================' &&
-      tail -f /dev/null"
-
   week4-web:
     image: nginx:alpine
     container_name: week4-web
@@ -39,6 +15,8 @@ services:
         ipv4_address: 10.10.4.10
     volumes:
       - ./web-content:/usr/share/nginx/html:ro
+    ports:
+      - "4080:80"
     restart: unless-stopped
 
   week4-ftp:
@@ -50,6 +28,8 @@ services:
     networks:
       week4-scannet:
         ipv4_address: 10.10.4.11
+    ports:
+      - "4021:21"
     command: >
       /bin/bash -c "
       apt-get update -qq &&
@@ -78,6 +58,8 @@ services:
     networks:
       week4-scannet:
         ipv4_address: 10.10.4.12
+    ports:
+      - "4022:22"
     command: >
       /bin/bash -c "
       apt-get update -qq &&
@@ -88,8 +70,6 @@ services:
       echo 'sysadmin:ChangeMe2024!' | chpasswd &&
       sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
       sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
-      echo 'Banner /etc/ssh/banner' >> /etc/ssh/sshd_config &&
-      printf '**********************************************\n* CyberCorp Remote Management System v2.1   *\n* Authorised access only. Connections logged.*\n**********************************************\n' > /etc/ssh/banner &&
       /usr/sbin/sshd -D"
     restart: unless-stopped
 

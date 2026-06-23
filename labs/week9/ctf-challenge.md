@@ -8,14 +8,14 @@
 ## Network Topology
 
 ```
-[Attacker 172.90.10.2] ──── EXTERNAL ──── [Pivot 172.90.10.10]
+[Attacker 10.10.9.2] ──── EXTERNAL ──── [Pivot 10.10.9.10]
                                                     │
                                               INTERNAL
                                                     │
-                                    [Internal Web 172.90.20.20]
+                                    [Internal Web 10.10.90.20]
 ```
 
-The internal network (`172.90.20.0/24`) is **not directly reachable** from the attacker.  
+The internal network (`10.10.90.0/24`) is **not directly reachable** from the attacker.  
 You must pivot through the pivot host.
 
 ---
@@ -35,7 +35,7 @@ Log in and find the flag in the user's home directory.
 ### Flag 2 — root.txt
 
 Set up SSH port forwarding through the pivot host to reach the internal web server.  
-The flag is served at the web root of `172.90.20.20`.
+The flag is served at the web root of `10.10.90.20`.
 
 `root.txt` → `flag{________________________}`
 

@@ -26,8 +26,8 @@ Start a capture on the `eth0` interface.
 
 From the attacker container, generate some network traffic:
 ```bash
-ping 192.168.1.5
-curl http://192.168.1.5
+ping 10.10.1.5
+curl http://10.10.1.5
 ```
 
 ### 3. Filter and Analyse

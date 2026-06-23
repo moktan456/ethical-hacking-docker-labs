@@ -27,8 +27,8 @@ make run-week10
 docker exec -it week10-attacker bash
 
 # Verify targets
-ping -c 1 172.100.0.10 && echo "web-recon: UP" || echo "web-recon: DOWN"
-ping -c 1 172.100.0.11 && echo "vuln-target: UP" || echo "vuln-target: DOWN"
+ping -c 1 10.10.10.10 && echo "web-recon: UP" || echo "web-recon: DOWN"
+ping -c 1 10.10.10.11 && echo "vuln-target: UP" || echo "vuln-target: DOWN"
 ```
 
 ---
@@ -39,16 +39,16 @@ ping -c 1 172.100.0.11 && echo "vuln-target: UP" || echo "vuln-target: DOWN"
 
 ```bash
 # Comprehensive scan of the target
-nmap -sV -sC -A 172.100.0.0/24 -oA /tmp/week10-recon
+nmap -sV -sC -A 10.10.10.0/24 -oA /tmp/week10-recon
 ```
 
 **Fill in the discovery table:**
 
 | Host | Port | Service | Version |
 |------|------|---------|---------|
-| 172.100.0.10 | | | |
-| 172.100.0.11 | 22 | | |
-| 172.100.0.11 | 9999 | | |
+| 10.10.10.10 | | | |
+| 10.10.10.11 | 22 | | |
+| 10.10.10.11 | 9999 | | |
 
 ---
 
@@ -56,10 +56,10 @@ nmap -sV -sC -A 172.100.0.0/24 -oA /tmp/week10-recon
 
 ```bash
 # Fetch the web page
-curl http://172.100.0.10
+curl http://10.10.10.10
 
 # Enumerate directories
-gobuster dir -u http://172.100.0.10 -w /usr/share/wordlists/dirb/common.txt
+gobuster dir -u http://10.10.10.10 -w /usr/share/wordlists/dirb/common.txt
 ```
 
 **What clues did the web page give about the target?**
@@ -72,7 +72,7 @@ _________________________________
 
 ```bash
 # Probe the debug service manually
-nc 172.100.0.11 9999
+nc 10.10.10.11 9999
 ```
 
 Type a short name and press Enter.
@@ -113,7 +113,7 @@ SSH into the target to run GDB locally (gives a cleaner debugging experience):
 
 ```bash
 # SSH credentials: lowpriv / lowpriv123
-ssh lowpriv@172.100.0.11
+ssh lowpriv@10.10.10.11
 
 # On the target machine:
 gdb /opt/vuln
@@ -141,7 +141,7 @@ From your attacker machine (in a different terminal):
 
 ```bash
 docker exec -it week10-attacker bash
-python3 -c "print('A' * 200)" | nc 172.100.0.11 9999
+python3 -c "print('A' * 200)" | nc 10.10.10.11 9999
 ```
 
 **Did the service crash?**  ✓ Yes  ✓ No
@@ -165,7 +165,7 @@ run
 Use pwntools to generate a cyclic pattern (de Bruijn sequence):
 
 ```bash
-python3 -c "from pwn import *; print(cyclic(200).decode())" | nc 172.100.0.11 9999
+python3 -c "from pwn import *; print(cyclic(200).decode())" | nc 10.10.10.11 9999
 ```
 
 In GDB, the crash value in `rip` (or the segfault address) tells you the exact offset:
@@ -186,7 +186,7 @@ python3 -c "
 from pwn import *
 offset = <YOUR_OFFSET>
 payload = b'A' * offset + b'B' * 8 + b'\n'
-p = remote('172.100.0.11', 9999)
+p = remote('10.10.10.11', 9999)
 p.recvuntil(b': ')
 p.send(payload)
 p.close()

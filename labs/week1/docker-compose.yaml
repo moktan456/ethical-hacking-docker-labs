@@ -10,7 +10,7 @@ services:
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:Z
     networks:
       custom_network:
-        ipv4_address: 192.168.1.2
+        ipv4_address: 10.10.1.2
 
   wireshark:
     image: "ffeldhaus/wireshark:0.5"
@@ -38,7 +38,7 @@ services:
       - ./data:/root/Desktop/data
     networks:
       custom_network:
-        ipv4_address: 192.168.1.5
+        ipv4_address: 10.10.1.5
 
   attacker:
     image: ethical-base
@@ -58,4 +58,4 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 192.168.1.0/24
+        - subnet: 10.10.1.0/24

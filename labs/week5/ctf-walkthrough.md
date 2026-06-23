@@ -8,15 +8,15 @@
 
 **Step 1 — Enumerate SMB shares:**
 ```bash
-enum4linux -S 172.50.0.12
+enum4linux -S 10.10.5.12
 # or
-smbclient -L //172.50.0.12 -N
+smbclient -L //10.10.5.12 -N
 ```
 Output shows a `public` share with guest access.
 
 **Step 2 — Connect and retrieve the flag:**
 ```bash
-smbclient //172.50.0.12/public -N
+smbclient //10.10.5.12/public -N
 smb: \> ls
 smb: \> get user.txt
 smb: \> exit
@@ -29,7 +29,7 @@ cat user.txt
 
 **Step 1 — Connect to MySQL:**
 ```bash
-mysql -h 172.50.0.11 -u dbuser -pdbpass123 corpdb
+mysql -h 10.10.5.11 -u dbuser -pdbpass123 corpdb
 ```
 
 **Step 2 — List all tables:**

@@ -7,7 +7,7 @@ This week covers engagement scoping, legal boundaries, and applying Wireshark to
 ## Lab Environment
 
 - **week3-wireshark** — Wireshark GUI (port 3000)
-- **week3-target** — Sample target at `172.30.0.3`
+- **week3-target** — Sample target at `10.10.3.10`
 
 Access Wireshark at: `http://localhost:3000`
 
@@ -16,15 +16,15 @@ Access Wireshark at: `http://localhost:3000`
 ### 1. Define the Scope
 
 Document your target scope:
-- Target IP range: `172.30.0.0/24`
-- In-scope: `week3-target (172.30.0.3)`
+- Target IP range: `10.10.3.0/24`
+- In-scope: `week3-target (10.10.3.10)`
 - Out of scope: Everything else
 
 ### 2. Capture Traffic to the Target
 
 Start a Wireshark capture, then from the Wireshark container terminal:
 ```bash
-ping 172.30.0.3
+ping 10.10.3.10
 ```
 
 Observe ICMP packets in Wireshark.
@@ -39,7 +39,7 @@ Without sending any traffic, analyse what you can see from captured packets:
 
 Use Nmap from inside the Wireshark container or from the Docker host:
 ```bash
-nmap -sV 172.30.0.3
+nmap -sV 10.10.3.10
 ```
 
 Document all open ports and services.

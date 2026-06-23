@@ -20,7 +20,7 @@ docker exec -it de-ice-attacker bash
 - **Mail**: MailHog SMTP + Dovecot POP3/IMAP
 
 ## Lab Network
-All containers run in isolated network (172.20.0.0/24)
+All containers run in isolated network (10.10.8.0/24)
 
 ## Target Services
 

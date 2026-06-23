@@ -1,25 +1,12 @@
-services:
-  attacker:
-    image: ethical-base
-    container_name: de-ice-attacker
-    hostname: kali-attacker
-    tty: true
-    stdin_open: true
-    networks:
-      lab_network:
-        ipv4_address: 10.10.8.2
-    volumes:
-      - ./attacker-tools:/root/tools
-      - ./lab-files:/root/lab
-    environment:
-      - DEBIAN_FRONTEND=noninteractive
-    command: >
-      /bin/bash -c "
-      gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null || true &&
-      echo 'Kali attacker ready! Use: docker exec -it de-ice-attacker bash' &&
-      tail -f /dev/null"
-    restart: unless-stopped
+# Week 8 — Kali VM mode
+# Run with: make run-week8-kali
+# Access targets from your Kali VM at HOST_IP:<port>
+#   HTTP:  HOST_IP:80    (→ 10.10.8.10:80)   [already exposed]
+#   SSH:   HOST_IP:2222  (→ 10.10.8.11:22)   [already exposed]
+#   FTP:   HOST_IP:21    (→ 10.10.8.12:21)   [already exposed]
+#   SMTP:  HOST_IP:1025  (→ 10.10.8.13:1025) [already exposed]
 
+services:
   web:
     image: httpd:2.4
     container_name: de-ice-web
@@ -51,7 +38,6 @@ services:
       echo 'aadams ALL=(ALL) NOPASSWD: /bin/cat' >> /etc/sudoers &&
       echo 'PermitRootLogin no' >> /etc/ssh/sshd_config &&
       echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config &&
-      echo 'Port 22' >> /etc/ssh/sshd_config &&
       service ssh start &&
       tail -f /dev/null"
     ports:
@@ -74,11 +60,6 @@ services:
       echo 'anonymous_enable=YES' > /etc/vsftpd.conf &&
       echo 'local_enable=NO' >> /etc/vsftpd.conf &&
       echo 'write_enable=NO' >> /etc/vsftpd.conf &&
-      echo 'anon_upload_enable=NO' >> /etc/vsftpd.conf &&
-      echo 'anon_mkdir_write_enable=NO' >> /etc/vsftpd.conf &&
-      echo 'dirmessage_enable=YES' >> /etc/vsftpd.conf &&
-      echo 'xferlog_enable=YES' >> /etc/vsftpd.conf &&
-      echo 'connect_from_port_20=YES' >> /etc/vsftpd.conf &&
       echo 'listen=YES' >> /etc/vsftpd.conf &&
       echo 'listen_ipv6=NO' >> /etc/vsftpd.conf &&
       echo 'anon_root=/var/ftp' >> /etc/vsftpd.conf &&
@@ -103,18 +84,6 @@ services:
     networks:
       lab_network:
         ipv4_address: 10.10.8.13
-    restart: unless-stopped
-
-  mail:
-    image: dovecot/dovecot:latest
-    container_name: de-ice-mail
-    hostname: target-mail
-    ports:
-      - "110:110"
-      - "143:143"
-    networks:
-      lab_network:
-        ipv4_address: 10.10.8.14
     restart: unless-stopped
 
 networks:

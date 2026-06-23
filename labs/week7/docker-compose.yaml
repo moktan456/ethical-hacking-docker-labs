@@ -16,7 +16,7 @@ services:
       - seccomp:unconfined
     networks:
       security_net:
-        ipv4_address: 172.20.0.2
+        ipv4_address: 10.10.7.2
 
   ubuntu-desktop:
     image: dorowu/ubuntu-desktop-lxde-vnc
@@ -32,7 +32,7 @@ services:
     shm_size: "1gb"
     networks:
       security_net:
-        ipv4_address: 172.20.0.3
+        ipv4_address: 10.10.7.3
 
   secutils:
     image: michaelborck/secutils
@@ -46,7 +46,7 @@ services:
     command: ["/bin/sh", "-c", "/start.sh && exec /usr/bin/supervisord"]
     networks:
       security_net:
-        ipv4_address: 172.20.0.4
+        ipv4_address: 10.10.7.4
 
   attacker:
     image: ethical-base
@@ -55,7 +55,7 @@ services:
     tty: true
     networks:
       security_net:
-        ipv4_address: 172.20.0.13
+        ipv4_address: 10.10.7.13
     cap_add:
       - NET_ADMIN
     security_opt:
@@ -67,7 +67,7 @@ services:
     command: /bin/sh -c "while true; do sleep 3600; done"
     networks:
       security_net:
-        ipv4_address: 172.20.0.5
+        ipv4_address: 10.10.7.5
 
   netshoot:
     image: nicolaka/netshoot
@@ -75,7 +75,7 @@ services:
     command: tail -f /dev/null # Keeps the container running
     networks:
       security_net:
-        ipv4_address: 172.20.0.6
+        ipv4_address: 10.10.7.6
     cap_add:
       - NET_ADMIN # Allows advanced networking operations
     security_opt:
@@ -92,7 +92,7 @@ services:
       - "389:389"
     networks:
       security_net:
-        ipv4_address: 172.20.0.7
+        ipv4_address: 10.10.7.7
 
   mail:
     image: mailhog/mailhog
@@ -102,7 +102,7 @@ services:
       - "1025:1025"
     networks:
       security_net:
-        ipv4_address: 172.20.0.8
+        ipv4_address: 10.10.7.8
 
   mysql:
     image: mysql:latest
@@ -118,7 +118,7 @@ services:
       - ./mysql-init:/docker-entrypoint-initdb.d:ro
     networks:
       security_net:
-        ipv4_address: 172.20.0.9
+        ipv4_address: 10.10.7.9
 
   telnet:
     image: alpine:latest
@@ -135,7 +135,7 @@ services:
       - "23:23"
     networks:
       security_net:
-        ipv4_address: 172.20.0.10
+        ipv4_address: 10.10.7.10
 
   juice-shop:
     image: bkimminich/juice-shop
@@ -144,7 +144,7 @@ services:
       - 3012:3000
     networks:
       security_net:
-        ipv4_address: 172.20.0.11
+        ipv4_address: 10.10.7.11
 
   dvwa:
     image: vulnerables/web-dvwa
@@ -153,10 +153,10 @@ services:
       - "8085:80"
     networks:
       security_net:
-        ipv4_address: 172.20.0.12
+        ipv4_address: 10.10.7.12
 
 networks:
   security_net:
     ipam:
       config:
-        - subnet: 172.20.0.0/24
+        - subnet: 10.10.7.0/24

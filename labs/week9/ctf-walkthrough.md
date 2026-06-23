@@ -8,7 +8,7 @@
 
 **Step 1 — SSH to the pivot host:**
 ```bash
-ssh pivotuser@172.90.10.10
+ssh pivotuser@10.10.9.10
 # Password: pivot123
 ```
 
@@ -21,11 +21,11 @@ cat /home/pivotuser/user.txt
 
 ## Flag 2 — root.txt (`flag{w9_internal_net_breached}`)
 
-The internal web server at `172.90.20.20` is not reachable from the attacker directly.
+The internal web server at `10.10.90.20` is not reachable from the attacker directly.
 
 **Step 1 — Set up SSH local port forward:**
 ```bash
-ssh -L 8080:172.90.20.20:80 pivotuser@172.90.10.10 -N &
+ssh -L 8080:10.10.90.20:80 pivotuser@10.10.9.10 -N &
 ```
 
 **Step 2 — Retrieve the flag via the forwarded port:**
@@ -35,14 +35,14 @@ curl http://127.0.0.1:8080/root.txt
 
 **Alternative — Dynamic SOCKS proxy with proxychains:**
 ```bash
-ssh -D 1080 pivotuser@172.90.10.10 -N &
-proxychains curl http://172.90.20.20/root.txt
+ssh -D 1080 pivotuser@10.10.9.10 -N &
+proxychains curl http://10.10.90.20/root.txt
 ```
 
 **Alternative — Metasploit route:**
 ```
 msf6 > use auxiliary/server/socks_proxy
-msf6 > route add 172.90.20.0/24 <session_id>
+msf6 > route add 10.10.90.0/24 <session_id>
 ```
 
 ---

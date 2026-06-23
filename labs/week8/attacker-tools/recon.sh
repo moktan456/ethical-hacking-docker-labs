@@ -2,12 +2,12 @@
 
 # De-ICE S1.100 Reconnaissance Script
 echo "=== De-ICE S1.100 Reconnaissance ==="
-echo "Target: Lab network (172.20.0.0/24)"
+echo "Target: Lab network (10.10.8.0/24)"
 echo ""
 
 echo "[+] Step 1: Network Discovery"
-echo "nmap -sn 172.20.0.0/24"
-nmap -sn 172.20.0.0/24
+echo "nmap -sn 10.10.8.0/24"
+nmap -sn 10.10.8.0/24
 echo ""
 
 echo "[+] Step 2: Port Scanning Discovered Hosts"  

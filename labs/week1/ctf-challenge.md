@@ -9,7 +9,7 @@
 
 | Service | Address | Port |
 |---------|---------|------|
-| SecUtils desktop | 192.168.1.5 | 6080 (web) |
+| SecUtils desktop | 10.10.1.5 | 6080 (web) |
 | Wireshark | via proxy | 14500 |
 
 ---

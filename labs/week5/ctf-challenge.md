@@ -9,11 +9,11 @@
 
 | Host | IP | Services |
 |------|----|---------|
-| week5-ldap | 172.50.0.10 | LDAP (:389) |
-| week5-mysql | 172.50.0.11 | MySQL (:3306) |
-| week5-smb | 172.50.0.12 | SMB (:445) |
+| week5-ldap | 10.10.5.10 | LDAP (:389) |
+| week5-mysql | 10.10.5.11 | MySQL (:3306) |
+| week5-smb | 10.10.5.12 | SMB (:445) |
 
-Your attacker IP: `172.50.0.2`
+Your attacker IP: `10.10.5.2`
 
 ---
 

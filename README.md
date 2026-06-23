@@ -43,7 +43,11 @@ All labs share a single base image (`ethical-base`) built from `base.Dockerfile`
 **Build once before running any weekly lab:**
 
 ```bash
+# Using make (Linux / macOS / Git Bash / WSL2)
 make build-base
+
+# Direct docker command (Windows PowerShell / Command Prompt)
+docker build -t ethical-base -f base.Dockerfile .
 ```
 
 Verify the image exists:
@@ -164,9 +168,13 @@ Each week's `README.md` lists two relevant VulnHub machines for additional indep
 ```bash
 # Build the shared Kali image (once)
 make build-base
+# or on Windows without make:
+docker build -t ethical-base -f base.Dockerfile .
 
 # Start a weekly lab
 make run-week4
+# or on Windows:
+# cd labs\week4 && docker compose up -d
 
 # List running containers
 docker ps

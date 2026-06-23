@@ -8,13 +8,13 @@ This week covers web application vulnerabilities (SQL injection, XSS, command in
 
 | Container | IP | Access |
 |-----------|-----|--------|
-| week7-attacker | 172.20.0.13 | `docker exec -it week7-attacker bash` |
-| week7-dvwa | 172.20.0.12 | http://localhost:8085 (admin/password) |
-| week7-juice-shop | 172.20.0.11 | http://localhost:3012 |
-| week7-mysql | 172.20.0.9 | mysql -h 172.20.0.9 -u user -puserpassword |
-| week7-telnet | 172.20.0.10 | telnet 172.20.0.10 |
-| week7-ldap | 172.20.0.7 | ldapsearch -x -H ldap://172.20.0.7 |
-| week7-wireshark | 172.20.0.2 | http://localhost:3000 |
+| week7-attacker | 10.10.7.13 | `docker exec -it week7-attacker bash` |
+| week7-dvwa | 10.10.7.12 | http://localhost:8085 (admin/password) |
+| week7-juice-shop | 10.10.7.11 | http://localhost:3012 |
+| week7-mysql | 10.10.7.9 | mysql -h 10.10.7.9 -u user -puserpassword |
+| week7-telnet | 10.10.7.10 | telnet 10.10.7.10 |
+| week7-ldap | 10.10.7.7 | ldapsearch -x -H ldap://10.10.7.7 |
+| week7-wireshark | 10.10.7.2 | http://localhost:3000 |
 
 ## Exercises
 
@@ -47,7 +47,7 @@ Test:
 
 From the attacker container:
 ```bash
-mysql -h 172.20.0.9 -u user -puserpassword exampledb
+mysql -h 10.10.7.9 -u user -puserpassword exampledb
 ```
 ```sql
 SHOW TABLES;
@@ -59,7 +59,7 @@ SELECT * FROM employees;
 
 Capture traffic in Wireshark, then connect via Telnet:
 ```bash
-telnet 172.20.0.10
+telnet 10.10.7.10
 ```
 
 Observe the plaintext credentials in Wireshark.
@@ -67,7 +67,7 @@ Observe the plaintext credentials in Wireshark.
 ### 5. LDAP Enumeration
 
 ```bash
-ldapsearch -x -H ldap://172.20.0.7 -b "dc=example,dc=org" -D "cn=admin,dc=example,dc=org" -w admin
+ldapsearch -x -H ldap://10.10.7.7 -b "dc=example,dc=org" -D "cn=admin,dc=example,dc=org" -w admin
 ```
 
 ---

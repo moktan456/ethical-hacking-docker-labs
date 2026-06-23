@@ -30,7 +30,7 @@ make run-week4
 docker exec -it week4-attacker bash
 
 # Verify network connectivity
-ping -c 2 172.40.0.10
+ping -c 2 10.10.4.10
 ```
 
 **Check:** Do you see ping replies?  ✓ Yes  ✓ No
@@ -47,7 +47,7 @@ The most common Nmap scan type. Sends a SYN packet and listens for SYN-ACK.
 
 ```bash
 # Scan a single target
-nmap 172.40.0.10
+nmap 10.10.4.10
 ```
 
 **Write the open ports you found:**
@@ -67,7 +67,7 @@ _________________________________
 
 ```bash
 # Scan all three targets at once
-nmap 172.40.0.0/24
+nmap 10.10.4.0/24
 ```
 
 **How many hosts are up?** _____
@@ -86,7 +86,7 @@ nmap 172.40.0.0/24
 
 ```bash
 # Find live hosts without port scanning
-nmap -sn 172.40.0.0/24
+nmap -sn 10.10.4.0/24
 ```
 
 **How many hosts responded?** _____
@@ -105,18 +105,18 @@ The `-sV` flag makes Nmap probe open ports to identify the running software and 
 
 ```bash
 # Scan with version detection
-nmap -sV 172.40.0.10
-nmap -sV 172.40.0.11
-nmap -sV 172.40.0.12
+nmap -sV 10.10.4.10
+nmap -sV 10.10.4.11
+nmap -sV 10.10.4.12
 ```
 
 **Fill in the service version table:**
 
 | Target IP | Port | Service | Version |
 |-----------|------|---------|---------|
-| 172.40.0.10 | 80 | | |
-| 172.40.0.11 | 21 | | |
-| 172.40.0.12 | 22 | | |
+| 10.10.4.10 | 80 | | |
+| 10.10.4.11 | 21 | | |
+| 10.10.4.12 | 22 | | |
 
 **Question:** Why is knowing the exact version of a service useful for an attacker?
 
@@ -128,7 +128,7 @@ _________________________________
 
 ```bash
 # Aggressive scan: version + OS detection + scripts + traceroute
-nmap -A 172.40.0.0/24
+nmap -A 10.10.4.0/24
 ```
 
 This takes longer — while it runs, read ahead to the discussion questions.
@@ -149,7 +149,7 @@ If yes, which target and what OS? _________________________________
 
 ```bash
 # SYN scan — requires root/CAP_NET_RAW
-nmap -sS 172.40.0.0/24
+nmap -sS 10.10.4.0/24
 ```
 
 **Question:** How does a SYN scan differ from a full TCP connect scan (`-sT`)?
@@ -168,10 +168,10 @@ Nmap has built-in scripts (NSE) that run extra checks against detected services.
 
 ```bash
 # Run default scripts against FTP target
-nmap -sC -sV 172.40.0.11
+nmap -sC -sV 10.10.4.11
 
 # Specifically test for anonymous FTP login
-nmap --script ftp-anon 172.40.0.11
+nmap --script ftp-anon 10.10.4.11
 ```
 
 **Does the FTP server allow anonymous login?** ✓ Yes  ✓ No
@@ -186,10 +186,10 @@ _________________________________
 
 ```bash
 # Check SSH host key algorithms
-nmap --script ssh-hostkey 172.40.0.12
+nmap --script ssh-hostkey 10.10.4.12
 
 # Check SSH authentication methods
-nmap --script ssh-auth-methods --script-args="ssh.user=sysadmin" 172.40.0.12
+nmap --script ssh-auth-methods --script-args="ssh.user=sysadmin" 10.10.4.12
 ```
 
 **What authentication methods does the SSH server support?**
@@ -206,7 +206,7 @@ Pentest reports always include raw scan output. Nmap can save results in multipl
 
 ```bash
 # Save in all formats at once
-nmap -sV -oA /tmp/week4-scan 172.40.0.0/24
+nmap -sV -oA /tmp/week4-scan 10.10.4.0/24
 
 # View the normal text output
 cat /tmp/week4-scan.nmap
@@ -222,7 +222,7 @@ _________________________________
 
 Using your scan results, fill in this engagement-proposal-style summary. This is the kind of output you'd include in Assessment 1.
 
-**Target Network:** 172.40.0.0/24
+**Target Network:** 10.10.4.0/24
 
 **Hosts Discovered:**
 

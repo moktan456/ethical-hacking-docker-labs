@@ -12,7 +12,7 @@ This lab focuses on analyzing captured network traffic using Wireshark to inform
 1. Ensure base built: `make build-base` (from root).
 2. Start lab: From root, `cd labs/week3 && docker compose up -d`
 3. Access Wireshark: http://localhost:3000 (default creds: **abc/abc** — the linuxserver/wireshark image's actual default; override with the `PASSWORD` env var in `docker-compose.yaml` if you want something else).
-4. Sample target runs on 172.30.0.3 for live capture practice.
+4. Sample target runs on 10.10.3.10 for live capture practice.
 
 ## Activities
 1. **Static Analysis (30 min)**:
@@ -24,7 +24,7 @@ This lab focuses on analyzing captured network traffic using Wireshark to inform
    - Start a capture on Wireshark's own interface (the only traffic it can reliably see is traffic
      to/from its own container — see note below).
    - From a second terminal, generate traffic aimed *at* the Wireshark container so it shows up:
-     `docker exec -it week3-target nmap -sV 172.30.0.2`.
+     `docker exec -it week3-target nmap -sV 10.10.3.2`.
    - Analyze: Identify enumeration patterns in the resulting capture.
 
    > **Why aimed at .2, not a scan of `sample-target` itself:** on a standard Docker bridge network,

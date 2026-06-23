@@ -14,13 +14,13 @@ The `week3-target` container starts a Python HTTP server on port 8888 exposing t
 
 **Step 1 — Discover the port with Nmap (from Wireshark container or attacker):**
 ```bash
-nmap -sV 172.30.0.3
+nmap -sV 10.10.3.10
 ```
 Output shows port 8888 open (http / Python http.server).
 
 **Step 2 — Retrieve the flag:**
 ```bash
-curl http://172.30.0.3:8888/flags/user.txt
+curl http://10.10.3.10:8888/flags/user.txt
 ```
 
 ---
@@ -31,7 +31,7 @@ The file `root_b64.txt` contains the flag base64-encoded.
 
 **Step 1 — Download the encoded file:**
 ```bash
-curl http://172.30.0.3:8888/flags/root_b64.txt
+curl http://10.10.3.10:8888/flags/root_b64.txt
 ```
 
 **Step 2 — Decode:**

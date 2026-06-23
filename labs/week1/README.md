@@ -28,7 +28,7 @@ docker-compose up -d
 
 ### Proxy (HAProxy)
 
-- **IP address**: 192.168.1.2
+- **IP address**: 10.10.1.2
 - **Port**: 14500
 - **Configuration file**: `./haproxy.cfg`
 
@@ -46,7 +46,7 @@ docker-compose up -d
 
 ### Security Utilities
 
-- **IP address**: 192.168.1.5
+- **IP address**: 10.10.1.5
 - **Port**: 6080
 - **Username**: root
 - **Password**: rootpassword
@@ -57,7 +57,7 @@ docker-compose up -d
 
 - **Network name**: custom_network
 - **Driver**: bridge
-- **Subnet**: 192.168.1.0/24
+- **Subnet**: 10.10.1.0/24
 
 ## Stopping and Removing Services
 

@@ -27,7 +27,7 @@ make run-week5
 docker exec -it week5-attacker bash
 
 # Verify all targets are reachable
-for ip in 172.50.0.10 172.50.0.11 172.50.0.12; do
+for ip in 10.10.5.10 10.10.5.11 10.10.5.12; do
     echo -n "$ip: "; ping -c 1 -W 1 $ip > /dev/null && echo "UP" || echo "DOWN"
 done
 ```
@@ -44,10 +44,10 @@ LDAP (Lightweight Directory Access Protocol) stores user accounts, groups, and o
 
 ```bash
 # Check if port 389 is open
-nmap -p 389 172.50.0.10
+nmap -p 389 10.10.5.10
 
 # Attempt anonymous LDAP bind and list base DN
-ldapsearch -x -H ldap://172.50.0.10 -b "dc=cybercorp,dc=local"
+ldapsearch -x -H ldap://10.10.5.10 -b "dc=cybercorp,dc=local"
 ```
 
 **Did the anonymous query return results?**  ✓ Yes  ✓ No
@@ -62,7 +62,7 @@ _________________________________
 
 ```bash
 # Bind as readonly user and list all objects
-ldapsearch -x -H ldap://172.50.0.10 \
+ldapsearch -x -H ldap://10.10.5.10 \
   -D "cn=readonly,dc=cybercorp,dc=local" \
   -w readonly123 \
   -b "dc=cybercorp,dc=local" \
@@ -83,9 +83,9 @@ ldapsearch -x -H ldap://172.50.0.10 \
 
 ```bash
 # Nmap LDAP enumeration scripts
-nmap -p 389 --script ldap-rootdse 172.50.0.10
+nmap -p 389 --script ldap-rootdse 10.10.5.10
 nmap -p 389 --script ldap-search --script-args \
-  'ldap.base="dc=cybercorp,dc=local"' 172.50.0.10
+  'ldap.base="dc=cybercorp,dc=local"' 10.10.5.10
 ```
 
 **What does `ldap-rootdse` reveal about the server?**
@@ -104,10 +104,10 @@ _________________________________
 
 ```bash
 # Check MySQL port
-nmap -p 3306 -sV 172.50.0.11
+nmap -p 3306 -sV 10.10.5.11
 
 # Banner grab with netcat
-echo "" | nc -w 2 172.50.0.11 3306 | strings
+echo "" | nc -w 2 10.10.5.11 3306 | strings
 ```
 
 **What MySQL version is running?**
@@ -120,11 +120,11 @@ _________________________________
 
 ```bash
 # Enumerate databases (unauthenticated)
-nmap -p 3306 --script mysql-databases 172.50.0.11
+nmap -p 3306 --script mysql-databases 10.10.5.11
 
 # Try default credentials
 nmap -p 3306 --script mysql-brute --script-args \
-  brute.firstonly=true 172.50.0.11
+  brute.firstonly=true 10.10.5.11
 ```
 
 **Did the script find any accessible databases?**  ✓ Yes  ✓ No
@@ -139,7 +139,7 @@ _________________________________
 
 ```bash
 # Connect with known credentials
-mysql -h 172.50.0.11 -u dbuser -pdbpass123
+mysql -h 10.10.5.11 -u dbuser -pdbpass123
 
 # Inside MySQL shell:
 SHOW DATABASES;
@@ -170,7 +170,7 @@ _________________________________
 
 ```bash
 # Enumerate SMB shares and info
-nmap -p 445 --script smb-enum-shares,smb-enum-users,smb-os-discovery 172.50.0.12
+nmap -p 445 --script smb-enum-shares,smb-enum-users,smb-os-discovery 10.10.5.12
 ```
 
 **What shares are listed?**
@@ -191,7 +191,7 @@ nmap -p 445 --script smb-enum-shares,smb-enum-users,smb-os-discovery 172.50.0.12
 
 ```bash
 # Full enum4linux scan
-enum4linux -a 172.50.0.12
+enum4linux -a 10.10.5.12
 ```
 
 This will take 30–60 seconds. Look through the output for:
@@ -214,10 +214,10 @@ _________________________________
 
 ```bash
 # List shares anonymously
-smbclient -L //172.50.0.12 -N
+smbclient -L //10.10.5.12 -N
 
 # Access the public share as guest
-smbclient //172.50.0.12/public -N
+smbclient //10.10.5.12/public -N
 
 # Inside smbclient:
 ls
@@ -232,7 +232,7 @@ _________________________________
 **Try to access the private share as alice:**
 
 ```bash
-smbclient //172.50.0.12/private -U alice%alice123
+smbclient //10.10.5.12/private -U alice%alice123
 ls
 exit
 ```

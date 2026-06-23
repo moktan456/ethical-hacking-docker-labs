@@ -12,11 +12,11 @@ This lab provides three enumeration targets simulating a typical corporate netwo
 
 | Container | IP | Services |
 |---|---|---|
-| week5-attacker | 172.50.0.2 | Kali attacker (your machine) |
-| week5-ldap | 172.50.0.10 | LDAP (port 389, OpenLDAP) |
-| week5-mysql | 172.50.0.11 | MySQL (port 3306) |
-| week5-smb | 172.50.0.12 | SMB/Samba (port 445) |
-| week5-netshoot | 172.50.0.20 | Network diagnostic utility |
+| week5-attacker | 10.10.5.2 | Kali attacker (your machine) |
+| week5-ldap | 10.10.5.10 | LDAP (port 389, OpenLDAP) |
+| week5-mysql | 10.10.5.11 | MySQL (port 3306) |
+| week5-smb | 10.10.5.12 | SMB/Samba (port 445) |
+| week5-netshoot | 10.10.5.20 | Network diagnostic utility |
 
 **LDAP credentials** (for authenticated queries): `cn=readonly,dc=cybercorp,dc=local` / `readonly123`
 

@@ -21,7 +21,7 @@ EXTERNAL (10.10.9.0/24)          INTERNAL (10.10.90.0/24)
 └─────────────────────┘            └──────────────────────────┘
 ```
 
-The attacker **cannot directly reach** 172.90.20.x — all traffic must go through the pivot host.
+The attacker **cannot directly reach** 10.10.90.x — all traffic must go through the pivot host.
 
 ---
 

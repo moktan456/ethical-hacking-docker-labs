@@ -86,6 +86,7 @@ services:
       (echo bob456; echo bob456) | smbpasswd -a -s bob &&
       mkdir -p /srv/samba/public /srv/samba/private &&
       echo 'CyberCorp public share.' > /srv/samba/public/notice.txt &&
+      echo 'flag{w5_smb_guest_accessed}' > /srv/samba/public/user.txt &&
       echo 'Internal documents - confidential.' > /srv/samba/private/readme.txt &&
       printf '[global]\n  workgroup = CYBERCORP\n  server string = CyberCorp File Server\n  netbios name = SMB-SERVER\n  security = user\n  map to guest = bad user\n  dns proxy = no\n\n[public]\n  path = /srv/samba/public\n  browsable = yes\n  guest ok = yes\n  read only = yes\n\n[private]\n  path = /srv/samba/private\n  browsable = no\n  guest ok = no\n  valid users = alice\n  read only = yes\n' > /etc/samba/smb.conf &&
       smbd --foreground --no-process-group"

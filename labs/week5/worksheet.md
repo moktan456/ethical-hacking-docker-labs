@@ -339,3 +339,16 @@ Today you learned to:
 ✓ Explain why enumeration data requires careful handling
 
 **Instructor Contact:** _________________________________
+
+
+---
+
+## Optional: CTF Challenge
+
+Once you have completed all exercises above, test your skills with an optional Capture The Flag challenge.
+
+See **[ctf-challenge.md](./ctf-challenge.md)** for objectives.
+
+Two flags to capture: `user.txt` and `root.txt`  
+Flag format: `flag{...}`  
+No hints — instructor walkthrough released at end of session.

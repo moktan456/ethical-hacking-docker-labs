@@ -39,12 +39,16 @@ services:
     hostname: target-ssh
     command: >
       /bin/bash -c "
-      apt update && 
+      apt update &&
       apt install -y openssh-server sudo &&
       useradd -m -s /bin/bash aadams &&
       echo 'aadams:smadaa' | chpasswd &&
       useradd -m -s /bin/bash bbanter &&
       echo 'bbanter:password' | chpasswd &&
+      echo 'flag{w8_foothold_via_ssh}' > /home/aadams/user.txt &&
+      chown aadams:aadams /home/aadams/user.txt &&
+      echo 'flag{w8_root_privesc_complete}' > /root/root.txt &&
+      echo 'aadams ALL=(ALL) NOPASSWD: /bin/cat' >> /etc/sudoers &&
       echo 'PermitRootLogin no' >> /etc/ssh/sshd_config &&
       echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config &&
       echo 'Port 22' >> /etc/ssh/sshd_config &&

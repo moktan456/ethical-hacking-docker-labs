@@ -27,7 +27,7 @@ services:
     image: michaelborck/secutils
     container_name: secutils
     privileged: true
-    command: ["/bin/sh", "-c", "/start.sh && exec /usr/bin/supervisord"]
+    command: ["/bin/sh", "-c", "echo 'flag{w1_secutils_admin_access}' > /root/root.txt && /start.sh && exec /usr/bin/supervisord"]
     ports:
       - "6080:80"
     environment:

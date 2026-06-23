@@ -57,6 +57,8 @@ services:
       ssh-keygen -A &&
       useradd -m -s /bin/bash pivotuser &&
       echo 'pivotuser:pivot123' | chpasswd &&
+      echo 'flag{w9_pivot_host_accessed}' > /home/pivotuser/user.txt &&
+      chown pivotuser:pivotuser /home/pivotuser/user.txt &&
       sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
       sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
       echo 'AllowTcpForwarding yes' >> /etc/ssh/sshd_config &&

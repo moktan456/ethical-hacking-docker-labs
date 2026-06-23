@@ -114,6 +114,8 @@ services:
       MYSQL_PASSWORD: "userpassword"
     ports:
       - "3306:3306"
+    volumes:
+      - ./mysql-init:/docker-entrypoint-initdb.d:ro
     networks:
       security_net:
         ipv4_address: 172.20.0.9
@@ -121,7 +123,14 @@ services:
   telnet:
     image: alpine:latest
     container_name: week7-telnet
-    command: sh -c "apk add --no-cache busybox-extras && /usr/sbin/telnetd -F"
+    command: >
+      sh -c "apk add --no-cache busybox-extras shadow &&
+      adduser -D -s /bin/sh ctfuser &&
+      echo 'ctfuser:telnet123' | chpasswd &&
+      mkdir -p /home/ctfuser &&
+      echo 'flag{w7_telnet_protocol_breach}' > /home/ctfuser/root.txt &&
+      chown ctfuser:ctfuser /home/ctfuser/root.txt &&
+      /usr/sbin/telnetd -F"
     ports:
       - "23:23"
     networks:

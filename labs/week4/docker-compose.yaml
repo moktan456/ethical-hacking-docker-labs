@@ -56,6 +56,7 @@ services:
       apt-get install -y -q vsftpd &&
       mkdir -p /var/ftp/pub /var/run/vsftpd/empty &&
       echo 'CyberCorp Internal Repository - Authorised access only.' > /var/ftp/pub/README.txt &&
+      echo 'flag{w4_anon_ftp_reader}' > /var/ftp/pub/user.txt &&
       echo 'anonymous_enable=YES' > /etc/vsftpd.conf &&
       echo 'local_enable=NO' >> /etc/vsftpd.conf &&
       echo 'write_enable=NO' >> /etc/vsftpd.conf &&

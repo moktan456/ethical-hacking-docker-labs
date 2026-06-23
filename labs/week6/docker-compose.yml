@@ -37,6 +37,9 @@ services:
       echo 'root:password123' | chpasswd &&
       useradd -m admin && echo 'admin:letmein' | chpasswd &&
       useradd -m user1 && echo 'user1:qwerty' | chpasswd &&
+      mkdir -p /home/admin &&
+      echo 'flag{w6_password_cracked_ssh}' > /home/admin/user.txt &&
+      echo 'flag{w6_root_shell_obtained}' > /root/root.txt &&
       sed -i 's/#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config &&
       sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
       echo 'SSH Target Server Ready' &&

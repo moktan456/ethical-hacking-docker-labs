@@ -75,6 +75,9 @@ services:
       ssh-keygen -A &&
       useradd -m -s /bin/bash lowpriv &&
       echo 'lowpriv:lowpriv123' | chpasswd &&
+      echo 'flag{w10_ssh_initial_access}' > /home/lowpriv/user.txt &&
+      chown lowpriv:lowpriv /home/lowpriv/user.txt &&
+      echo 'flag{w10_buffer_overflow_rce}' > /root/root.txt &&
       sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
       sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
       /usr/sbin/sshd &&

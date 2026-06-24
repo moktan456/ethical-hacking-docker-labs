@@ -25,7 +25,7 @@ docker compose up -d
 
 ### Step 2 — Open Wireshark in your browser
 
-Once containers are running, open your browser and go to:
+Open your **host machine browser** (Windows/macOS/Linux — the same computer running Docker) and go to:
 
 ```
 http://localhost:14500
@@ -34,11 +34,13 @@ Password: **`wireshark`**
 
 This opens the Wireshark GUI (served via Xpra through HAProxy). Use this to capture and analyse network traffic on the lab network.
 
+> **Why does this work?** Docker maps container port 14500 → your host's `localhost:14500`, so any browser on your Windows/macOS machine can reach it directly.
+
 ---
 
 ### Step 3 — Open secutils desktop in your browser
 
-Open a second browser tab:
+Open a **second tab in the same host machine browser**:
 
 ```
 http://localhost:6080
@@ -64,8 +66,8 @@ This is your **Kali attacker shell**. Run reconnaissance and attack commands fro
 | Window | What it is | How to access |
 |--------|-----------|---------------|
 | Terminal | Kali attacker | `docker exec -it week1-attacker bash` |
-| Browser tab 1 | Wireshark GUI | `http://localhost:14500` (pw: wireshark) |
-| Browser tab 2 | secutils desktop | `http://localhost:6080` (pw: rootpassword) |
+| Browser tab 1 (host) | Wireshark GUI | `http://localhost:14500` (pw: wireshark) |
+| Browser tab 2 (host) | secutils desktop | `http://localhost:6080` (pw: rootpassword) |
 
 ---
 

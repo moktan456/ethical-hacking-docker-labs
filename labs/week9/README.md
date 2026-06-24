@@ -28,18 +28,22 @@ The attacker **cannot directly reach** 10.10.90.x — all traffic must go throug
 ## Prerequisites
 
 - Docker and Docker Compose installed
-- No `make build-base` needed — week9-attacker uses the Metasploit Framework image
+- No `make build-base` (or `docker build -t ethical-base -f base.Dockerfile .` on Windows) needed — week9-attacker uses the Metasploit Framework image
 
 ---
 
 ## Quick Start
 
 ```bash
+# Linux / macOS / Git Bash
 # Start Week 9 lab
 make run-week9
 
 # Enter the attacker container
 docker exec -it week9-attacker bash
+
+# Windows PowerShell / Command Prompt
+cd labs\week9 && docker compose up -d
 ```
 
 ---

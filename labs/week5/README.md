@@ -27,13 +27,14 @@ This lab provides three enumeration targets simulating a typical corporate netwo
 ## Prerequisites
 
 - Docker and Docker Compose installed
-- Shared `ethical-base` image built (`make build-base` from repo root)
+- Shared `ethical-base` image built (`make build-base` (or `docker build -t ethical-base -f base.Dockerfile .` on Windows) from repo root)
 
 ---
 
 ## Quick Start
 
 ```bash
+# Linux / macOS / Git Bash
 # Build base image (once)
 make build-base
 
@@ -42,6 +43,10 @@ make run-week5
 
 # Enter the attacker container
 docker exec -it week5-attacker bash
+
+# Windows PowerShell / Command Prompt
+docker build -t ethical-base -f base.Dockerfile .
+cd labs\week5 && docker compose up -d
 ```
 
 The attacker startup installs `enum4linux`, `ldap-utils`, `smbclient`, and `mysql-client` — this takes ~30 seconds on first run.

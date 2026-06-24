@@ -20,6 +20,7 @@ Scanning (Week 4) tells you what ports are open. Enumeration tells you *what's r
 ## Setup (5 minutes)
 
 ```bash
+# Linux / macOS / Git Bash
 # Start the lab (from repo root)
 make run-week5
 
@@ -30,6 +31,9 @@ docker exec -it week5-attacker bash
 for ip in 10.10.5.10 10.10.5.11 10.10.5.12; do
     echo -n "$ip: "; ping -c 1 -W 1 $ip > /dev/null && echo "UP" || echo "DOWN"
 done
+
+# Windows PowerShell / Command Prompt
+cd labs\week5 && docker compose up -d
 ```
 
 **Are all three targets up?**  ✓ Yes  ✓ No

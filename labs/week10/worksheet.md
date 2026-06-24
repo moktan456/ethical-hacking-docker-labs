@@ -20,6 +20,7 @@ Assessment 2 is a 3000-word practical pentest report. This lab generates the raw
 ## Setup (5 minutes)
 
 ```bash
+# Linux / macOS / Git Bash
 # Start the lab (allow ~60 seconds for compilation)
 make run-week10
 
@@ -29,6 +30,9 @@ docker exec -it week10-attacker bash
 # Verify targets
 ping -c 1 10.10.10.10 && echo "web-recon: UP" || echo "web-recon: DOWN"
 ping -c 1 10.10.10.11 && echo "vuln-target: UP" || echo "vuln-target: DOWN"
+
+# Windows PowerShell / Command Prompt
+cd labs\week10 && docker compose up -d
 ```
 
 ---

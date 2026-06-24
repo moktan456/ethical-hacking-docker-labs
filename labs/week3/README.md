@@ -9,7 +9,7 @@ This lab focuses on analyzing captured network traffic using Wireshark to inform
 - Draft a pentest scope/proposal based on analysis (e.g., target services, rules of engagement).
 
 ## Setup (2 min)
-1. Ensure base built: `make build-base` (from root).
+1. Ensure base built: `make build-base` (or `docker build -t ethical-base -f base.Dockerfile .` on Windows) (from root).
 2. Start lab: From root, `cd labs/week3 && docker compose up -d`
 3. Access Wireshark: http://localhost:3000 (default creds: **abc/abc** — the linuxserver/wireshark image's actual default; override with the `PASSWORD` env var in `docker-compose.yaml` if you want something else).
 4. Sample target runs on 10.10.3.10 for live capture practice.

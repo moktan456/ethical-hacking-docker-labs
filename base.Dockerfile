@@ -3,27 +3,53 @@ FROM kalilinux/kali-rolling
 # Install common security tools for all labs
 RUN apt-get update && \
     apt-get install -y \
+        # Network fundamentals — ping, ip, ifconfig, traceroute
+        iputils-ping \
+        iproute2 \
+        net-tools \
+        traceroute \
+        dnsutils \
+        tcpdump \
+        # Scanning & enumeration
         nmap \
+        gobuster \
+        dirb \
+        nikto \
+        # Password attacks
         hydra \
         medusa \
         john \
         hashcat \
-        wireshark \
+        # Exploitation & post-exploitation
         netcat-traditional \
-        telnet \
-        openssh-client \
-        curl \
-        wget \
-        git \
+        socat \
         python3 \
         python3-pip \
-        gobuster \
-        nikto \
+        python3-pwntools \
+        # Web & SQL
         sqlmap \
-        dirb \
+        curl \
+        wget \
+        # Protocols
+        telnet \
+        ftp \
+        openssh-client \
+        smbclient \
+        ldap-utils \
+        # Pivoting
+        proxychains4 \
+        # Wireless & packet analysis
+        wireshark \
+        # Misc
+        git \
+        vim \
+        nano \
+        less \
+        file \
+        binutils \
         wordlists \
-        && rm -rf /var/lib/apt/lists/* \
-        && gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null || true
+    && rm -rf /var/lib/apt/lists/* \
+    && gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null || true
 
 # Create hacker user
 RUN useradd -m -s /bin/bash hacker && \

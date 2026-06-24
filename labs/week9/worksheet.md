@@ -35,6 +35,7 @@ week9-attacker            week9-pivot                week9-internal-web
 ## Setup (5 minutes)
 
 ```bash
+# Linux / macOS / Git Bash
 # Start the lab
 make run-week9
 
@@ -43,6 +44,9 @@ docker exec -it week9-attacker bash
 
 # Confirm you CANNOT reach the internal network directly
 ping -c 1 10.10.90.20
+
+# Windows PowerShell / Command Prompt
+cd labs\week9 && docker compose up -d
 ```
 
 **Did the ping fail?**  ✓ Yes (expected)  ✓ No

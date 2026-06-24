@@ -23,13 +23,14 @@ This lab provides a full-chain pentest simulation: recon → enumeration → exp
 ## Prerequisites
 
 - Docker and Docker Compose installed
-- Shared `ethical-base` image built (`make build-base` from repo root)
+- Shared `ethical-base` image built (`make build-base` (or `docker build -t ethical-base -f base.Dockerfile .` on Windows) from repo root)
 
 ---
 
 ## Quick Start
 
 ```bash
+# Linux / macOS / Git Bash
 # Build base image (once)
 make build-base
 
@@ -38,6 +39,10 @@ make run-week10
 
 # Enter attacker container
 docker exec -it week10-attacker bash
+
+# Windows PowerShell / Command Prompt
+docker build -t ethical-base -f base.Dockerfile .
+cd labs\week10 && docker compose up -d
 ```
 
 **Note:** The attacker startup installs `gdb` and `pwntools` (~60s on first run). The target compiles the vulnerable service from source using `gcc` with protections disabled.

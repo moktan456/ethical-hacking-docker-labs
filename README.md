@@ -217,7 +217,7 @@ ethical-hacking-docker-labs/
 
 ## Troubleshooting
 
-**`make build-base` fails with a network error**
+**`make build-base` (or `docker build -t ethical-base -f base.Dockerfile .` on Windows) fails with a network error**
 Docker is not running, or no internet access. Start Docker Desktop and retry.
 
 **`docker compose up` fails with "port already in use"**

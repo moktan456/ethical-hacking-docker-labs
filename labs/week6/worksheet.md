@@ -23,7 +23,9 @@ chmod +x setup.sh
 ./setup.sh
 
 # Step 3: Build the shared base image (only needed once, from the repo root)
-cd ../.. && make build-base && cd labs/week6
+# From repo root:
+docker build -t ethical-base -f base.Dockerfile .
+cd labs/week6
 
 # Step 4: Start the lab environment
 docker-compose up -d

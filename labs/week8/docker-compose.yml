@@ -3,6 +3,9 @@ services:
     image: ethical-base
     container_name: de-ice-attacker
     hostname: kali-attacker
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
     tty: true
     stdin_open: true
     networks:

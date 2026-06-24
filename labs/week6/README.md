@@ -51,6 +51,30 @@ docker exec -it password-cracking-lab sh
 # You're ready to start!
 ```
 
+
+## 💻 Two-Shell Lab Setup (Recommended)
+
+Running two terminal windows side-by-side gives you the real attacker/victim experience:
+
+**Terminal 1 — Start the lab (victim machines)**
+```bash
+# Linux / macOS / Git Bash
+cd labs/week6
+docker compose up -d
+
+# Windows PowerShell
+cd labs\week6
+docker compose up -d
+```
+
+**Terminal 2 — Enter Kali (attacker machine)**
+```bash
+docker exec -it password-cracking-lab bash
+```
+
+> Think of Terminal 1 as the victim network running in the background, and Terminal 2 as your Kali attacking machine. All commands in the worksheets are run from Terminal 2 (inside Kali).
+
+---
 ---
 
 ## 📁 Repository Structure

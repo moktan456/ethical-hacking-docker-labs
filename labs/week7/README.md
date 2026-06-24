@@ -2,6 +2,31 @@
 
 This repository contains a Docker Compose configuration to set up the required Docker containers for the Ethical Hacking Lab. This environment provides a comprehensive set of tools and services for hands-on learning and experimentation in network security.
 
+
+## 💻 Two-Shell Lab Setup (Recommended)
+
+Running two terminal windows side-by-side gives you the real attacker/victim experience:
+
+**Terminal 1 — Start the lab (victim machines)**
+```bash
+# Linux / macOS / Git Bash
+cd labs/week7
+docker compose up -d
+
+# Windows PowerShell
+cd labs\week7
+docker compose up -d
+```
+
+**Terminal 2 — Enter Kali (attacker machine)**
+```bash
+docker exec -it week7-attacker bash
+```
+
+> Think of Terminal 1 as the victim network running in the background, and Terminal 2 as your Kali attacking machine. All commands in the worksheets are run from Terminal 2 (inside Kali).
+
+---
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed on your system:

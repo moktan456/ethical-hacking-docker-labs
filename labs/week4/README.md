@@ -22,13 +22,14 @@ In this lab you will use Nmap to perform reconnaissance against three simulated 
 ## Prerequisites
 
 - Docker and Docker Compose installed
-- Shared `ethical-base` image built (`make build-base` from repo root)
+- Shared `ethical-base` image built (`make build-base` (or `docker build -t ethical-base -f base.Dockerfile .` on Windows) from repo root)
 
 ---
 
 ## Quick Start
 
 ```bash
+# Linux / macOS / Git Bash
 # From repo root — build the base image once if you haven't already
 make build-base
 
@@ -37,6 +38,10 @@ make run-week4
 
 # Enter the attacker container
 docker exec -it week4-attacker bash
+
+# Windows PowerShell / Command Prompt
+docker build -t ethical-base -f base.Dockerfile .
+cd labs\week4 && docker compose up -d
 ```
 
 ---

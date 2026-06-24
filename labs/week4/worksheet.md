@@ -20,6 +20,7 @@ Assessment 1 asks you to write an engagement proposal. A good proposal depends o
 ## Setup (5 minutes)
 
 ```bash
+# Linux / macOS / Git Bash
 # From the repo root — only needed once
 make build-base
 
@@ -31,6 +32,10 @@ docker exec -it week4-attacker bash
 
 # Verify network connectivity
 ping -c 2 10.10.4.10
+
+# Windows PowerShell / Command Prompt
+docker build -t ethical-base -f base.Dockerfile .
+cd labs\week4 && docker compose up -d
 ```
 
 **Check:** Do you see ping replies?  ✓ Yes  ✓ No

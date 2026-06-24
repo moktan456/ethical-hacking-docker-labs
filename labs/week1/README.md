@@ -3,11 +3,14 @@
 This repository contains a `docker compose.yaml` file that sets up a Network Security Toolkit with HAProxy, Wireshark, and Security Utilities. The provided `docker compose.yaml` file creates a custom Docker network and connects all services to it.
 
 
-## 💻 Two-Shell Lab Setup (Recommended)
+## 💻 Week 1 Lab Setup
 
-Running two terminal windows side-by-side gives you the real attacker/victim experience:
+Week 1 uses **browser-based GUIs** for Wireshark and secutils — open three windows side by side:
 
-**Terminal 1 — Start the lab (victim machines)**
+---
+
+### Step 1 — Start all containers (one terminal)
+
 ```bash
 # Linux / macOS / Git Bash
 cd labs/week1
@@ -18,12 +21,51 @@ cd labs\week1
 docker compose up -d
 ```
 
-**Terminal 2 — Enter Kali (attacker machine)**
+---
+
+### Step 2 — Open Wireshark in your browser
+
+Once containers are running, open your browser and go to:
+
+```
+http://localhost:14500
+```
+Password: **`wireshark`**
+
+This opens the Wireshark GUI (served via Xpra through HAProxy). Use this to capture and analyse network traffic on the lab network.
+
+---
+
+### Step 3 — Open secutils desktop in your browser
+
+Open a second browser tab:
+
+```
+http://localhost:6080
+```
+Password: **`rootpassword`**
+
+This opens a full Linux desktop with security tools pre-installed (nmap, hydra, nikto, netcat, sqlmap, etc.) — this is your **victim/utility machine**.
+
+---
+
+### Step 4 — Enter Kali (attacker machine, new terminal)
+
 ```bash
 docker exec -it week1-attacker bash
 ```
 
-> Think of Terminal 1 as the victim network running in the background, and Terminal 2 as your Kali attacking machine. All commands in the worksheets are run from Terminal 2 (inside Kali).
+This is your **Kali attacker shell**. Run reconnaissance and attack commands from here.
+
+---
+
+### Window layout summary
+
+| Window | What it is | How to access |
+|--------|-----------|---------------|
+| Terminal | Kali attacker | `docker exec -it week1-attacker bash` |
+| Browser tab 1 | Wireshark GUI | `http://localhost:14500` (pw: wireshark) |
+| Browser tab 2 | secutils desktop | `http://localhost:6080` (pw: rootpassword) |
 
 ---
 

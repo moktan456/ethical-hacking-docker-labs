@@ -23,7 +23,7 @@ docker exec -it wireshark cat /home/wireshark/user.txt
 
 ## Flag 2 — root.txt (`flag{w1_secutils_admin_access}`)
 
-Planted at `/root/root.txt` inside the SecUtils container during startup via the modified `command` in docker-compose.
+Planted at `/root/root.txt` inside the SecUtils container during startup via the modified `command` in docker compose.
 
 **Via SecUtils noVNC terminal:**
 ```bash

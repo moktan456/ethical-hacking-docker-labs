@@ -25,7 +25,7 @@ Before you begin, ensure you have the following installed on your system:
 3. Start the Docker environment:
 
    ```
-   docker-compose up -d
+   docker compose up -d
    ```
 
    This command will download the necessary images and start all the containers.
@@ -79,18 +79,18 @@ If you encounter any issues:
 
 1. Ensure all containers are running:
    ```
-   docker-compose ps
+   docker compose ps
    ```
 
 2. Check container logs:
    ```
-   docker-compose logs [service_name]
+   docker compose logs [service_name]
    ```
 
 3. Restart the environment:
    ```
-   docker-compose down
-   docker-compose up -d
+   docker compose down
+   docker compose up -d
    ```
 
 ## Contributing

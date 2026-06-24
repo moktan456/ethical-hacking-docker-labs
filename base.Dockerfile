@@ -1,31 +1,85 @@
 FROM kalilinux/kali-rolling
 
-# Install common security tools for all labs
-RUN apt-get update && \
-    apt-get install -y \
-        # Network fundamentals — ping, ip, ifconfig, traceroute
+# ── System update ─────────────────────────────────────────────────────────────
+RUN apt-get update && apt-get upgrade -y
+
+# ── Core Linux utilities (ensure nothing is missing from slim base) ────────────
+RUN apt-get install -y \
+        # Shell & text
+        bash \
+        zsh \
+        vim \
+        nano \
+        less \
+        man-db \
+        tree \
+        htop \
+        # File & archive
+        file \
+        zip \
+        unzip \
+        tar \
+        gzip \
+        bzip2 \
+        p7zip-full \
+        # Process & system
+        procps \
+        lsof \
+        util-linux \
+        psmisc \
+        # Network — basic
         iputils-ping \
+        iputils-tracepath \
         iproute2 \
         net-tools \
         traceroute \
         dnsutils \
+        whois \
+        arp-scan \
+        # Data & encoding
+        xxd \
+        bsdmainutils \
+        openssl \
+        base64 \
+        # Build tools
+        gcc \
+        g++ \
+        make \
+        perl \
+        ruby \
+        python3 \
+        python3-pip \
+        git \
+        binutils \
+        strace \
+        ltrace \
+        gdb \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── Cybersecurity tools ───────────────────────────────────────────────────────
+RUN apt-get update && apt-get install -y \
+        # Packet analysis
         tcpdump \
+        tshark \
+        wireshark \
         # Scanning & enumeration
         nmap \
         gobuster \
         dirb \
         nikto \
+        ffuf \
+        # SMB / AD enumeration
+        smbclient \
+        enum4linux \
+        ldap-utils \
         # Password attacks
         hydra \
         medusa \
         john \
         hashcat \
-        # Exploitation & post-exploitation
+        # Exploitation
         netcat-traditional \
         socat \
-        python3 \
-        python3-pip \
-        python3-pwntools \
         # Web & SQL
         sqlmap \
         curl \
@@ -34,26 +88,34 @@ RUN apt-get update && \
         telnet \
         ftp \
         openssh-client \
-        smbclient \
-        ldap-utils \
         # Pivoting
         proxychains4 \
-        # Wireless & packet analysis
-        wireshark \
-        # Misc
-        git \
-        vim \
-        nano \
-        less \
-        file \
-        binutils \
+        # Exploit search
+        exploitdb \
+        # Post-exploitation
+        sudo \
+        # Python security libs
+        python3-pwntools \
+        python3-impacket \
+        # Wordlists
         wordlists \
     && rm -rf /var/lib/apt/lists/* \
     && gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null || true
 
-# Create hacker user
+# ── MySQL client (week 5 & 7 labs) ────────────────────────────────────────────
+RUN apt-get update && apt-get install -y default-mysql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── Verify key commands are available ─────────────────────────────────────────
+RUN ping -c1 127.0.0.1 > /dev/null 2>&1 && echo "ping OK" && \
+    ip addr show lo > /dev/null 2>&1    && echo "ip OK"   && \
+    ifconfig lo > /dev/null 2>&1        && echo "ifconfig OK" && \
+    nmap -V > /dev/null 2>&1            && echo "nmap OK"
+
+# ── Create hacker user with sudo ──────────────────────────────────────────────
 RUN useradd -m -s /bin/bash hacker && \
     echo 'hacker:hacker' | chpasswd && \
+    echo 'hacker ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     usermod -aG sudo hacker
 
 USER hacker

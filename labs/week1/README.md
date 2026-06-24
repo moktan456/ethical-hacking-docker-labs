@@ -1,6 +1,6 @@
 # Docker Compose: Network Security Toolkit
 
-This repository contains a `docker-compose.yaml` file that sets up a Network Security Toolkit with HAProxy, Wireshark, and Security Utilities. The provided `docker-compose.yaml` file creates a custom Docker network and connects all services to it.
+This repository contains a `docker compose.yaml` file that sets up a Network Security Toolkit with HAProxy, Wireshark, and Security Utilities. The provided `docker compose.yaml` file creates a custom Docker network and connects all services to it.
 
 ## Services
 
@@ -21,7 +21,7 @@ cd ethical-hacking-docker-labs/labs/week1
 ```
 4. Create and start the services with Docker Compose:
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Service Configuration
@@ -64,7 +64,7 @@ docker-compose up -d
 To stop and remove the services, use the following command:
 
 ```
-docker-compose down
+docker compose down
 ```
 
 ## Connecting to the Wireshark Container

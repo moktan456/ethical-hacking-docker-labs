@@ -43,7 +43,7 @@ docker build -t ethical-base -f base.Dockerfile .
 cd labs/week6
 
 # 4. Start the lab environment
-docker-compose up -d
+docker compose up -d
 
 # 5. Enter the lab container
 docker exec -it password-cracking-lab sh
@@ -58,7 +58,7 @@ docker exec -it password-cracking-lab sh
 ```
 labs/week6/
 ├── README.md                  # This file
-├── docker-compose.yml         # Docker lab environment (3 containers)
+├── docker compose.yml         # Docker lab environment (3 containers)
 ├── setup.sh                   # Auto-setup script
 ├── worksheet.md                # Main lab exercises (student-facing)
 ├── web-target/
@@ -197,7 +197,7 @@ Always obtain written authorization before testing any system you don't own.
 ### Docker Issues
 ```bash
 # Reset everything
-docker-compose down -v
+docker compose down -v
 docker system prune -a
 # Then start fresh
 ```
@@ -304,7 +304,7 @@ After completing this lab:
 
 ```bash
 # Start lab
-docker-compose up -d
+docker compose up -d
 docker exec -it password-cracking-lab sh
 
 # Generate hash
@@ -324,7 +324,7 @@ hydra -l admin -P /wordlists/basic.txt web-target http-post-form "/login:user=^U
 
 # Stop lab
 exit
-docker-compose down
+docker compose down
 ```
 
 ---

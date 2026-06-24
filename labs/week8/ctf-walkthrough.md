@@ -16,7 +16,7 @@ ftp> bye
 cat user.txt
 ```
 
-The file is planted at `/var/ftp/pub/user.txt` (copied from `./ftp-data/` via docker-compose volume).
+The file is planted at `/var/ftp/pub/user.txt` (copied from `./ftp-data/` via docker compose volume).
 
 ---
 

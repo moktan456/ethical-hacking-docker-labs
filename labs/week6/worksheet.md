@@ -28,7 +28,7 @@ docker build -t ethical-base -f base.Dockerfile .
 cd labs/week6
 
 # Step 4: Start the lab environment
-docker-compose up -d
+docker compose up -d
 
 # Step 5: Enter the container
 docker exec -it password-cracking-lab sh
@@ -316,7 +316,7 @@ What should you do? (Circle one)
 exit
 
 # Stop the lab
-docker-compose down
+docker compose down
 ```
 
 ---
@@ -355,7 +355,7 @@ Today you learned:
 - Can't get a command to work? Check for typos!
 - Getting errors? Ask your instructor or partner
 - Confused about a concept? That's normal - ask questions!
-- Lab not working? Try: `docker-compose restart`
+- Lab not working? Try: `docker compose restart`
 
 **Instructor Contact:** _________________________________
 

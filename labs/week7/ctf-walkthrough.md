@@ -53,4 +53,4 @@ cat /home/ctfuser/root.txt
 - Database enumeration (`SHOW TABLES`, `SELECT *`) should always cover all tables, not just expected ones
 - Telnet transmits credentials in plaintext — Wireshark capture of the login session will reveal them
 - Legacy protocols (Telnet, FTP, HTTP) are high-value targets because they lack encryption
-- MySQL credentials `user:userpassword` are weak defaults matching the `MYSQL_USER`/`MYSQL_PASSWORD` env vars in docker-compose
+- MySQL credentials `user:userpassword` are weak defaults matching the `MYSQL_USER`/`MYSQL_PASSWORD` env vars in docker compose

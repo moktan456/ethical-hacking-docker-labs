@@ -1,4 +1,4 @@
-.PHONY: build-base \
+.PHONY: build-base kali \
         run-week1 run-week2 run-week3 run-week4 run-week5 \
         run-week6 run-week7 run-week8 run-week9 run-week10 \
         run-week11 run-week12 \
@@ -7,6 +7,10 @@
 # ── Build the shared Kali attacker image (run once before any lab) ──────────
 build-base:
 	docker build -f base.Dockerfile -t ethical-base .
+
+# ── Run standalone Kali shell (no lab targets needed) ───────────────────────
+kali:
+	docker run -it --rm 		--name kali-shell 		--cap-add=NET_RAW 		--cap-add=NET_ADMIN 		--hostname kali 		ethical-base bash
 
 # ── Start a weekly lab ───────────────────────────────────────────────────────
 run-week1:

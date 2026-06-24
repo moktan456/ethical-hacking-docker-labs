@@ -85,13 +85,21 @@ cd labs/week4 && docker compose down
 ### Stop all running labs
 
 ```bash
+# Linux / macOS / Git Bash
 make stop-all
+
+# Windows PowerShell / Command Prompt
+for ($i=1; $i -le 10; $i++) { $w="labs\week$i"; if (Test-Path $w) { cd $w; docker compose down; cd ..\.. } }
 ```
 
 ### Full cleanup (removes stopped containers and dangling images)
 
 ```bash
+# Linux / macOS / Git Bash
 make clean-all
+
+# Windows PowerShell / Command Prompt
+docker system prune -f
 ```
 
 ---
@@ -190,9 +198,13 @@ cd labs/week4 && docker compose down
 
 # Stop all weeks
 make stop-all
+# or on Windows:
+# for ($i=1; $i -le 10; $i++) { $w="labs\week$i"; if (Test-Path $w) { cd $w; docker compose down; cd ..\.. } }
 
 # Full cleanup
 make clean-all
+# or on Windows:
+# docker system prune -f
 ```
 
 ---
@@ -221,7 +233,7 @@ ethical-hacking-docker-labs/
 Docker is not running, or no internet access. Start Docker Desktop and retry.
 
 **`docker compose up` fails with "port already in use"**
-Another lab week is still running on a conflicting port. Run `make stop-all` first.
+Another lab week is still running on a conflicting port. Run `make stop-all` (Linux/macOS) or the Windows loop above first.
 
 **Container exits immediately**
 Check logs: `docker logs <container-name>`. Most common cause is a missing `apt-get update` before an install — all compose files in this repo already include it.

@@ -76,49 +76,6 @@ This drops you straight into an interactive Kali terminal with all tools availab
 
 ---
 
-### Run multiple weeks with a shared Kali attacker
-
-You can start several weeks simultaneously and have a single Kali container connected to all their networks at once.
-
-**Linux / macOS / Git Bash**
-```bash
-# Start week 1 + week 3 with shared Kali
-make multi WEEKS="week1 week3"
-
-# Start any combination
-make multi WEEKS="week1 week3 week4 week5"
-
-# Enter the shared Kali shell
-docker exec -it kali-multi bash
-
-# Stop everything
-make stop-multi WEEKS="week1 week3"
-```
-
-**Windows PowerShell**
-```powershell
-# Start week 1 + week 3 with shared Kali
-.\run-multi.ps1 week1 week3
-
-# Start any combination
-.\run-multi.ps1 week1 week3 week4 week5
-
-# Enter the shared Kali shell
-docker exec -it kali-multi bash
-
-# Stop everything
-.\stop-multi.ps1 week1 week3
-```
-
-Inside the Kali shell you can reach targets from all running weeks:
-- `ping 10.10.1.10` (week 1 target)
-- `nmap 10.10.3.0/24` (week 3 targets)
-- etc.
-
-> **Note:** Each week still uses its own isolated subnet (`10.10.WEEK.0/24`). The shared Kali attacker is bridged into each network but the weekly target containers cannot reach each other.
-
----
-
 ### Start a week
 
 ```bash
@@ -231,6 +188,53 @@ Students work from `ctf-challenge.md`. The instructor releases `ctf-walkthrough.
 ## VulnHub Practice Machines
 
 Each week's `README.md` lists two relevant VulnHub machines for additional independent practice (all Easy or Medium difficulty). VulnHub machines run as standalone VMs — see [KALI-VM-GUIDE.md](./KALI-VM-GUIDE.md) for setup instructions.
+
+---
+
+---
+
+## Optional: Multi-Week Lab Mode
+
+> **This is an advanced / optional feature.** For normal weekly labs just use `docker compose up -d` inside the relevant week folder.
+
+You can start several weeks simultaneously and have a single Kali container connected to all their networks at once.
+
+**Linux / macOS / Git Bash**
+```bash
+# Start week 1 + week 3 with shared Kali
+make multi WEEKS="week1 week3"
+
+# Start any combination
+make multi WEEKS="week1 week3 week4 week5"
+
+# Enter the shared Kali shell
+docker exec -it kali-multi bash
+
+# Stop everything
+make stop-multi WEEKS="week1 week3"
+```
+
+**Windows PowerShell**
+```powershell
+# Start week 1 + week 3 with shared Kali
+.\run-multi.ps1 week1 week3
+
+# Start any combination
+.\run-multi.ps1 week1 week3 week4 week5
+
+# Enter the shared Kali shell
+docker exec -it kali-multi bash
+
+# Stop everything
+.\stop-multi.ps1 week1 week3
+```
+
+Inside the Kali shell you can reach targets from all running weeks:
+- `ping 10.10.1.10` (week 1 target)
+- `nmap 10.10.3.0/24` (week 3 targets)
+- etc.
+
+> **Note:** Each week still uses its own isolated subnet (`10.10.WEEK.0/24`). The shared Kali attacker is bridged into each network but the weekly target containers cannot reach each other.
 
 ---
 

@@ -1,4 +1,4 @@
-.PHONY: build-base kali \
+.PHONY: build-base kali multi stop-multi \
         run-week1 run-week2 run-week3 run-week4 run-week5 \
         run-week6 run-week7 run-week8 run-week9 run-week10 \
         run-week11 run-week12 \
@@ -51,6 +51,14 @@ run-week11:
 run-week12:
 	@echo "Week 12: Social engineering — no Docker needed."
 	@cat labs/week12/README.md 2>/dev/null || true
+
+# ── Multi-week lab (Linux / macOS / Git Bash) ────────────────────────────────
+# Usage: make multi WEEKS="week1 week3"
+multi:
+	@bash run-multi.sh $(WEEKS)
+
+stop-multi:
+	@bash stop-multi.sh $(WEEKS)
 
 # ── Teardown ─────────────────────────────────────────────────────────────────
 stop-all:

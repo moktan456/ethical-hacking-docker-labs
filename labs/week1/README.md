@@ -2,6 +2,31 @@
 
 This repository contains a `docker compose.yaml` file that sets up a Network Security Toolkit with HAProxy, Wireshark, and Security Utilities. The provided `docker compose.yaml` file creates a custom Docker network and connects all services to it.
 
+
+## 💻 Two-Shell Lab Setup (Recommended)
+
+Running two terminal windows side-by-side gives you the real attacker/victim experience:
+
+**Terminal 1 — Start the lab (victim machines)**
+```bash
+# Linux / macOS / Git Bash
+cd labs/week1
+docker compose up -d
+
+# Windows PowerShell
+cd labs\week1
+docker compose up -d
+```
+
+**Terminal 2 — Enter Kali (attacker machine)**
+```bash
+docker exec -it week1-attacker bash
+```
+
+> Think of Terminal 1 as the victim network running in the background, and Terminal 2 as your Kali attacking machine. All commands in the worksheets are run from Terminal 2 (inside Kali).
+
+---
+
 ## Services
 
 1. **proxy** (HAProxy): A high-performance and highly-robust TCP/HTTP load balancer. The configuration file is mapped from the local `haproxy.cfg` file.

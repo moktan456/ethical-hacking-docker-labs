@@ -2,6 +2,31 @@
 
 This Docker project simulates the VulnHub De-ICE S1.100 vulnerable machine using **pull-only images** with a dedicated Kali Linux attacker container.
 
+
+## 💻 Two-Shell Lab Setup (Recommended)
+
+Running two terminal windows side-by-side gives you the real attacker/victim experience:
+
+**Terminal 1 — Start the lab (victim machines)**
+```bash
+# Linux / macOS / Git Bash
+cd labs/week8
+docker compose up -d
+
+# Windows PowerShell
+cd labs\week8
+docker compose up -d
+```
+
+**Terminal 2 — Enter Kali (attacker machine)**
+```bash
+docker exec -it de-ice-attacker bash
+```
+
+> Think of Terminal 1 as the victim network running in the background, and Terminal 2 as your Kali attacking machine. All commands in the worksheets are run from Terminal 2 (inside Kali).
+
+---
+
 ## Quick Start
 
 **All Platforms (Linux/Mac/Windows):**

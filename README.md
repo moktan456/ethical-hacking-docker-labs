@@ -60,6 +60,22 @@ docker images | grep ethical-base
 
 ## Running a Lab
 
+### Run standalone Kali shell
+
+You can launch a Kali shell at any time — no weekly lab needed:
+
+```bash
+# Linux / macOS / Git Bash
+make kali
+
+# Windows PowerShell / Command Prompt
+docker run -it --rm --name kali-shell --cap-add=NET_RAW --cap-add=NET_ADMIN --hostname kali ethical-base bash
+```
+
+This drops you straight into an interactive Kali terminal with all tools available (`nmap`, `hydra`, `john`, `gobuster`, `ping`, `ip a`, `ifconfig`, etc.). The container is ephemeral — it is removed when you type `exit`.
+
+---
+
 ### Start a week
 
 ```bash

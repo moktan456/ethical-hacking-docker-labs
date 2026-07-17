@@ -75,7 +75,7 @@ This is your **Kali attacker shell**. Run reconnaissance and attack commands fro
 
 1. **proxy** (HAProxy): A high-performance and highly-robust TCP/HTTP load balancer. The configuration file is mapped from the local `haproxy.cfg` file.
 2. **wireshark** (ffeldhaus/wireshark): A Docker container running Wireshark with Xpra for remote access. It is connected to the proxy service and uses the same network.
-3. **secutils** (michaelborck/secutils): A Docker container containing various security utilities, including Wireshark, nmap, snort, hydra, nikto, wget, curl, ping, netcat, and sqlmap.. It is also connected to the custom network.
+3. **secutils** (lscr.io/linuxserver/webtop:ubuntu-xfce): A browser-accessible Ubuntu desktop, used here as the "admin box" target for this week's second CTF flag. It is also connected to the custom network.
 
 ## Usage
 
@@ -165,7 +165,7 @@ There are two ways to connect to the Secutils container:
 docker exec -it secutils bash
 ```
 
-3. You can now use the command line tools available within the container, such as Wireshark, nmap, snort, hydra, nikto, wget, curl, ping, netcat, and sqlmap.
+3. You can now use the command line tools available within the container: `nmap`, `hydra`, `nikto`, `sqlmap`, `netcat`, plus the base OS utilities `curl`, `wget`, and `ping`. See the [SecUtils GUI Box user guide](#-secutils-gui-box--security-tools-user-guide) below for details.
 
 ### Option 2: Graphical User Interface
 
@@ -176,7 +176,58 @@ docker exec -it secutils bash
 3. you will now have access to the Linux container's graphical interface, where you can use the available security tools.
 
 Remember to ensure that the Secutils container is up and running before attempting to connect using either method.
-## License
+
+---
+
+## 🧰 SecUtils GUI Box — Security Tools User Guide
+
+The `secutils` container is a full Ubuntu XFCE desktop running in your browser (via [LinuxServer's webtop](https://docs.linuxserver.io/images/docker-webtop/)). On top of the base desktop, the following command-line security tools are automatically installed the first time the container starts:
+
+| Tool | Purpose |
+|------|---------|
+| `nmap` | Port scanning / service discovery |
+| `hydra` | Online password brute-forcing |
+| `nikto` | Web server vulnerability scanner |
+| `sqlmap` | Automated SQL injection testing |
+| `netcat` (`nc`) | Reading/writing raw TCP & UDP connections |
+
+`curl`, `wget`, and `ping` come with the base Ubuntu desktop image, so they don't need to be installed separately.
+
+### How the install works
+
+These packages are installed at container **startup**, not baked into the image. This is done via a small script — `labs/week1/secutils-init/10-install-security-tools.sh` — mounted read-only into the container's [`/custom-cont-init.d`](https://docs.linuxserver.io/general/container-customization/) directory, which LinuxServer.io images run automatically on every start, after their own init but before the desktop starts.
+
+The script is deliberately **hardened** rather than assuming the base Ubuntu image has everything it needs:
+1. Runs `apt-get update`.
+2. Explicitly enables the `universe` and `multiverse` repositories (`nikto` and `sqlmap` live in `universe`) — it doesn't just assume they're already on, since that varies between base images.
+3. Updates the package index again, then installs the tool list.
+4. If any package fails to install (e.g. a flaky mirror), it logs a clear warning and lets the desktop start anyway rather than crashing the container.
+
+To add or remove tools, edit the package list at the bottom of `labs/week1/secutils-init/10-install-security-tools.sh` and re-run `docker compose up -d` — no image rebuild needed.
+
+> ⏱️ **First-boot delay:** the first time you run `docker compose up -d` for this lab, the `secutils` container takes an extra **20–60 seconds** after startup to finish installing packages before they're usable — this is normal. Subsequent restarts of the *same* container are instant, but a full `docker compose down` + `up` reinstalls them again (the install doesn't persist across container recreation).
+
+> 🔍 **Troubleshooting:** if a tool seems missing, check the install log with `docker logs secutils | grep secutils-init` — it'll show exactly which step ran and whether any package failed.
+
+### Using the tools
+
+**Option A — GUI terminal (recommended, no extra setup):**
+1. Open `http://localhost:6080` and log in (`root` / `rootpassword`).
+2. Open a terminal app from the desktop (right-click desktop → *Open Terminal*, or use the taskbar).
+3. Run any of the tools directly, e.g.:
+   ```bash
+   nmap -sV 10.10.1.0/24
+   nikto -h http://<target-ip>
+   ```
+
+**Option B — `docker exec` from your host terminal:**
+```bash
+docker exec -it secutils nmap -sV 10.10.1.0/24
+```
+
+Both options run inside the same container on the same `custom_network`, so either way you're scanning the actual lab network at `10.10.1.0/24`.
+
+---
 
 This project is released under the MIT License. See the [LICENSE](LICENSE) file for details.
 

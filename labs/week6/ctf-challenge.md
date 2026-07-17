@@ -11,7 +11,7 @@
 |------|-----------|---------|
 | ssh-target | `ssh-target` | SSH (:22) |
 
-Identify the target's IP with: `nmap -sn 172.0.0.0/8` or check via `docker network inspect`.
+Identify the target's IP with: `nmap -sn 10.10.6.0/24` or check via `docker network inspect`.
 
 ---
 

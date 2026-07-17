@@ -8,7 +8,7 @@
 
 **Step 1 — Find the target IP:**
 ```bash
-nmap -sn 172.0.0.0/8 2>/dev/null | grep -A1 "Nmap scan"
+nmap -sn 10.10.6.0/24 2>/dev/null | grep -A1 "Nmap scan"
 # or check: docker inspect ssh-target | grep IPAddress
 ```
 

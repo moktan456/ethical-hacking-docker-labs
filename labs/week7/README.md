@@ -65,7 +65,7 @@ Before you begin, ensure you have the following installed on your system:
 |----------------|--------------------------------------------------------|----------------------------------------------------------|
 | Wireshark      | Network protocol analyser                              | `http://localhost:3000` (login: `abc`/`abc` by default)  |
 | Workstation    | Basic Alpine Linux workstation                         | `docker exec -it week7-workstation sh`                   |
-| SecUtils       | Basic security utilities                               | `docker exec -it week7-secutils sh`                      |
+| SecUtils       | Browser-based security toolbox desktop                 | `http://localhost:6081` (login: `root`/`rootpassword`)<br>or `docker exec -it week7-secutils bash` |
 | Netshoot       | Network troubleshooting container                      | `docker exec -it week7-netshoot sh`                      |
 | Ubuntu Desktop | Ubuntu LXDE desktop environment                        | VNC: `localhost:5900`<br>NoVNC (browser): `http://localhost:6080` |
 | OpenLDAP       | LDAP server                                            | `ldap://localhost:389`                                   |
@@ -80,7 +80,9 @@ Before you begin, ensure you have the following installed on your system:
 
 1. **Wireshark**: Access the web-based Wireshark interface to analyse network traffic.
 
-2. **Workstation, SecUtils, and Netshoot**: Use these containers for various command-line operations and network troubleshooting. Access them using the `docker exec` command as shown in the table above.
+2. **Workstation and Netshoot**: Use these containers for various command-line operations and network troubleshooting. Access them using the `docker exec` command as shown in the table above.
+
+2b. **SecUtils**: A browser-based GUI security toolbox — see the [SecUtils GUI Box user guide](#-secutils-gui-box--security-tools-user-guide) below for its tool list and usage.
 
 3. **Ubuntu Desktop**: Connect using a VNC client or access via a web browser for a graphical Linux environment.
 
@@ -97,6 +99,56 @@ Before you begin, ensure you have the following installed on your system:
 ## Security Notice
 
 This environment contains intentionally vulnerable applications and services for educational purposes. Do not deploy this in a production environment or on a public network. Always use this setup in a controlled, isolated environment.
+
+---
+
+## 🧰 SecUtils GUI Box — Security Tools User Guide
+
+The `week7-secutils` container is a full Ubuntu XFCE desktop running in your browser (via [LinuxServer's webtop](https://docs.linuxserver.io/images/docker-webtop/)). On top of the base desktop, the following command-line security tools are automatically installed the first time the container starts:
+
+| Tool | Purpose |
+|------|---------|
+| `nmap` | Port scanning / service discovery |
+| `hydra` | Online password brute-forcing |
+| `nikto` | Web server vulnerability scanner |
+| `sqlmap` | Automated SQL injection testing |
+| `netcat` (`nc`) | Reading/writing raw TCP & UDP connections |
+
+`curl`, `wget`, and `ping` come with the base Ubuntu desktop image, so they don't need to be installed separately.
+
+### How the install works
+
+These packages are installed at container **startup**, not baked into the image. This is done via a small script — `labs/week7/secutils-init/10-install-security-tools.sh` — mounted read-only into the container's [`/custom-cont-init.d`](https://docs.linuxserver.io/general/container-customization/) directory, which LinuxServer.io images run automatically on every start, after their own init but before the desktop starts.
+
+The script is deliberately **hardened** rather than assuming the base Ubuntu image has everything it needs:
+1. Runs `apt-get update`.
+2. Explicitly enables the `universe` and `multiverse` repositories (`nikto` and `sqlmap` live in `universe`) — it doesn't just assume they're already on, since that varies between base images.
+3. Updates the package index again, then installs the tool list.
+4. If any package fails to install (e.g. a flaky mirror), it logs a clear warning and lets the desktop start anyway rather than crashing the container.
+
+To add or remove tools, edit the package list at the bottom of `labs/week7/secutils-init/10-install-security-tools.sh` and re-run `docker compose up -d` — no image rebuild needed.
+
+> ⏱️ **First-boot delay:** the first time you run `docker compose up -d`, the `week7-secutils` container takes an extra **20–60 seconds** after startup to finish installing packages before they're usable — this is normal. A full `docker compose down` + `up` reinstalls them again (the install doesn't persist across container recreation).
+
+> 🔍 **Troubleshooting:** if a tool seems missing, check the install log with `docker logs week7-secutils | grep secutils-init` — it'll show exactly which step ran and whether any package failed.
+
+### Using the tools
+
+**Option A — GUI terminal (recommended, no extra setup):**
+1. Open `http://localhost:6081` and log in (`root` / `rootpassword`).
+2. Open a terminal app from the desktop.
+3. Run any of the tools directly, e.g.:
+   ```bash
+   nmap -sV 10.10.7.0/24
+   nikto -h http://<target-ip>
+   ```
+
+**Option B — `docker exec` from your host terminal:**
+```bash
+docker exec -it week7-secutils nmap -sV 10.10.7.0/24
+```
+
+Both options run inside the same container on the same `security_net`, so either way you're scanning the actual lab network at `10.10.7.0/24`.
 
 ## Troubleshooting
 

@@ -101,6 +101,21 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
     && gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null || true
 
+# ── Fix Kali bug #9085 (nmap unusable in Docker) ──────────────────────────────
+# Kali's nmap package sets file capabilities on its binary during install:
+#   setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/lib/nmap/nmap
+# cap_net_admin is NOT in Docker's default capability set, and a process can
+# never execute a binary whose file capabilities exceed its own capability
+# bounding set — so nmap fails to run at all ("Operation not permitted",
+# exit 126) in a stock Docker container, including during this very build.
+# Fix (per Kali's own maintainer, https://bugs.kali.org/view.php?id=9085):
+# re-apply setcap without cap_net_admin. cap_net_raw alone is enough for raw
+# packet scans and IS in Docker's default bounding set, so this still lets
+# `hacker` run most nmap scans without needing sudo.
+RUN apt-get update && apt-get install -y --no-install-recommends libcap2-bin \
+    && setcap cap_net_raw,cap_net_bind_service+eip /usr/lib/nmap/nmap \
+    && rm -rf /var/lib/apt/lists/*
+
 # ── MySQL client (week 5 & 7 labs) ────────────────────────────────────────────
 RUN apt-get update && apt-get install -y default-mysql-client \
     && rm -rf /var/lib/apt/lists/*

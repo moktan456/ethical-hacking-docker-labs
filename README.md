@@ -56,7 +56,7 @@ All labs share a single base image (`ethical-base`) built from `base.Dockerfile`
 make build-base
 
 # Direct docker command (Windows PowerShell / Command Prompt)
-docker build -t ethical-base -f base.Dockerfile .
+docker build -t ethical-base -f base.Dockerfile . #(Don't miss this dot)
 ```
 
 Verify the image exists:

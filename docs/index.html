@@ -261,7 +261,11 @@
       <div class="step">
         <div class="sn">3</div>
         <div>
-          <h3>Build the shared Kali image</h3>
+          <h3>Get the shared Kali image</h3>
+          <p class="tip" style="margin-top:0">Fastest path — pull the prebuilt image and tag it locally (no build, skips all apt/network build issues):<br>
+            <span class="cmd">docker pull ghcr.io/michael-borck/ethical-base:latest</span><br>
+            <span class="cmd">docker tag ghcr.io/michael-borck/ethical-base:latest ethical-base</span></p>
+          <p style="font-size:14px;margin:6px 0 12px">Or build it yourself from <span class="mono">base.Dockerfile</span>:</p>
           <div class="ostabs" role="tablist" aria-label="Choose your setup">
             <button role="tab" type="button" data-os="make">make (macOS / Linux / Git Bash / WSL2)</button>
             <button role="tab" type="button" data-os="win">Windows without make</button>
@@ -276,7 +280,7 @@
 
           <div class="ospane" data-os="win">
             <ol>
-              <li>Run <span class="cmd">docker build -t ethical-base -f base.Dockerfile .</span></li>
+              <li>Run <span class="cmd">docker build -t ethical-base -f base.Dockerfile .</span> <b>(don't miss the trailing dot)</b></li>
               <li>Verify it built: <span class="cmd">docker images | grep ethical-base</span></li>
             </ol>
           </div>
@@ -400,9 +404,9 @@
   const MODULES = [
     { n:"01", slug:"week1", tag:"cli", title:"Docker Environment Setup",
       teaser:"Boot your Kali attacker container and get oriented with Wireshark + SecUtils.",
-      teach:"Stand up the week 1 stack, get comfortable inside the shared Kali attacker container, and confirm Wireshark and SecUtils are reachable before the graded labs start.",
-      run:["make run-week1  (Windows: cd labs\\week1 && docker compose up -d)","docker exec -it week1-attacker bash","Explore the toolkit: nmap, wireshark, secutils"],
-      cmds:["nmap -V","which wireshark","which hydra"],
+      teach:"Stand up the week 1 stack, get comfortable inside the shared Kali attacker container, and confirm Wireshark and the SecUtils browser desktop are reachable before the graded labs start.",
+      run:["make run-week1  (Windows: cd labs\\week1 && docker compose up -d)","docker exec -it week1-attacker bash","Wireshark GUI → http://localhost:14500 (pw: wireshark)","SecUtils desktop → http://localhost:6080 (root / rootpassword)"],
+      cmds:["nmap -V","nmap -sV 10.10.1.5","which hydra"],
       net:{ subnet:"10.10.1.0/24", hosts:["attacker · 10.10.1.2","proxy · 10.10.1.2","secutils · 10.10.1.5"] },
       ctf:true },
     { n:"02", tag:"docs", title:"Ethics & Legal Issues", noMap:true,
@@ -443,7 +447,7 @@
       teach:"Attack two deliberately vulnerable web apps — DVWA and OWASP Juice Shop — covering SQL injection, cross-site scripting, and more.",
       run:["make run-week7","docker exec -it week7-attacker bash","Browse to Juice Shop / DVWA and work the challenges"],
       cmds:["sqlmap -u <target-url> --batch","nmap -sV 10.10.7.0/24"],
-      net:{ subnet:"10.10.7.0/24", hosts:["attacker · 10.10.7.13","ldap · 10.10.7.7","mysql · 10.10.7.9","telnet · 10.10.7.10","juice-shop · 10.10.7.11","dvwa · 10.10.7.12"] },
+      net:{ subnet:"10.10.7.0/24", hosts:["attacker · 10.10.7.13","secutils · 10.10.7.4 (GUI :6081)","ldap · 10.10.7.7","mysql · 10.10.7.9","telnet · 10.10.7.10","juice-shop · 10.10.7.11","dvwa · 10.10.7.12"] },
       ctf:true },
     { n:"08", slug:"week8", tag:"cli", title:"Privilege Escalation (De-ICE)",
       teaser:"Own the De-ICE box end to end: recon, crack, escalate.",

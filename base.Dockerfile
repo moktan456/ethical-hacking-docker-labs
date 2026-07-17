@@ -21,7 +21,7 @@ RUN apt-get install -y \
         tar \
         gzip \
         bzip2 \
-        p7zip-full \
+        7zip \
         # Process & system
         procps \
         lsof \
@@ -33,14 +33,13 @@ RUN apt-get install -y \
         iproute2 \
         net-tools \
         traceroute \
-        dnsutils \
+        bind9-dnsutils \
         whois \
         arp-scan \
         # Data & encoding
         xxd \
         bsdmainutils \
         openssl \
-        base64 \
         # Build tools
         gcc \
         g++ \

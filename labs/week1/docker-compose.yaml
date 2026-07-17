@@ -23,19 +23,30 @@ services:
     volumes:
       - ./data:/home/wireshark
 
+  # NOTE: michaelborck/secutils was retired from Docker Hub (image no longer
+  # exists — `docker compose up` would fail here). Replaced with LinuxServer's
+  # webtop image, which serves the same purpose (browser-accessible desktop
+  # for a GUI "admin box"). Same port/credentials as before so the lab docs
+  # still apply. The CTF root flag is now delivered via a mounted file instead
+  # of the dead image's custom entrypoint.
   secutils:
-    image: michaelborck/secutils
+    image: lscr.io/linuxserver/webtop:ubuntu-xfce
     container_name: secutils
-    privileged: true
-    command: ["/bin/sh", "-c", "echo 'flag{w1_secutils_admin_access}' > /root/root.txt && /start.sh && exec /usr/bin/supervisord"]
+    security_opt:
+      - seccomp:unconfined
+    shm_size: "1gb"
     ports:
-      - "6080:80"
+      - "6080:3000"
     environment:
-      - USER=root
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - CUSTOM_USER=root
       - PASSWORD=rootpassword
-      - SSL=false
     volumes:
       - ./data:/root/Desktop/data
+      - ./secutils-flag/root.txt:/root/root.txt:ro
+      - ./secutils-init:/custom-cont-init.d:ro
     networks:
       custom_network:
         ipv4_address: 10.10.1.5

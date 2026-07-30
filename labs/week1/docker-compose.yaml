@@ -1,30 +1,35 @@
-version: '3.9'
 services:
-  # Wireshark's HTML5 (Xpra) GUI. Serves on 14500 over HTTPS with a
-  # self-signed cert, so browse to https://localhost:14500 (not http://).
-  # Default password is set below via XPRA_PW.
+  # Wireshark's HTML5 (KasmVNC) GUI from LinuxServer.io — multi-arch, so it
+  # runs natively on both Intel and Apple Silicon. Browse to
+  # http://localhost:14500 (no password by default).
   #
-  # NOTE: this previously sat behind a `proxy` (HAProxy) container via
-  # network_mode: "service:proxy". That proxy's haproxy.cfg was entirely
-  # commented out (it forwarded nothing), and the shared-namespace setup was
-  # what caused the "failed to set up container networking: Address already
-  # in use" error on `docker compose up`. The proxy added no value for a
-  # single service, so it's been removed and wireshark now publishes its own
-  # port directly.
+  # NOTE 1: this previously used ffeldhaus/wireshark:0.5, which is amd64-only
+  # and fails under emulation on Apple Silicon. Switched to the multi-arch
+  # LinuxServer image (same one week 3 uses) to fix that.
+  # NOTE 2: it also previously forced a static IP (10.10.1.2) and sat behind a
+  # dead HAProxy proxy. The static .2 address collides with Docker Desktop's
+  # bridge gateway on some hosts ("failed to set up container networking:
+  # Address already in use"), and nothing depends on a fixed address, so it
+  # now takes a dynamic IP on the network.
   wireshark:
-    image: "ffeldhaus/wireshark:0.5"
+    image: lscr.io/linuxserver/wireshark:latest
     container_name: wireshark
     restart: unless-stopped
-    privileged: true
-    ports:
-      - "14500:14500"
     environment:
-      - XPRA_PW=wireshark
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    ports:
+      - "14500:3000"
     volumes:
-      - ./data:/home/wireshark
+      - ./data:/config
+      - ./data:/home/wireshark:ro
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - seccomp:unconfined
     networks:
-      custom_network:
-        ipv4_address: 10.10.1.2
+      - custom_network
 
   # NOTE: michaelborck/secutils was retired from Docker Hub (image no longer
   # exists — `docker compose up` would fail here). Replaced with LinuxServer's

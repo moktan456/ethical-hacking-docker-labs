@@ -18,7 +18,7 @@ docker exec -it week1-attacker bash
 
 ### 1. Start a Packet Capture
 
-Open the Wireshark interface via `https://localhost:14500` (password: `wireshark`).
+Open the Wireshark interface via `http://localhost:14500` (no password by default).
 
 Start a capture on the `eth0` interface.
 

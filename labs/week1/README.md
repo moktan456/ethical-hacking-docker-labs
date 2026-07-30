@@ -28,15 +28,15 @@ docker compose up -d
 Open your **host machine browser** (Windows/macOS/Linux — the same computer running Docker) and go to:
 
 ```
-https://localhost:14500
+http://localhost:14500
 ```
-Password: **`wireshark`**
+No password is required by default — the page opens straight into the Wireshark GUI.
 
-This opens the Wireshark GUI (served via Xpra). Use this to capture and analyse network traffic on the lab network.
+This opens the Wireshark GUI (LinuxServer's browser-based build). Use this to capture and analyse network traffic on the lab network.
 
-> **Note on HTTPS:** the Wireshark container serves over HTTPS with a *self-signed* certificate, so your browser will show a "your connection is not private" warning the first time. That's expected for this local lab — click **Advanced → Proceed to localhost** to continue. Make sure you use `https://`, not `http://`, or the page won't load.
+> **Multi-arch image:** this uses `lscr.io/linuxserver/wireshark`, which runs natively on both Intel and Apple Silicon Macs — no emulation, no platform warnings.
 
-> **Why does this work?** Docker maps container port 14500 → your host's `localhost:14500`, so any browser on your Windows/macOS machine can reach it directly.
+> **Why does this work?** Docker maps container port 3000 → your host's `localhost:14500`, so any browser on your Windows/macOS machine can reach it directly.
 
 ---
 
@@ -68,14 +68,14 @@ This is your **Kali attacker shell**. Run reconnaissance and attack commands fro
 | Window | What it is | How to access |
 |--------|-----------|---------------|
 | Terminal | Kali attacker | `docker exec -it week1-attacker bash` |
-| Browser tab 1 (host) | Wireshark GUI | `https://localhost:14500` (pw: wireshark) |
+| Browser tab 1 (host) | Wireshark GUI | `http://localhost:14500` (no password) |
 | Browser tab 2 (host) | secutils desktop | `http://localhost:6080` (pw: rootpassword) |
 
 ---
 
 ## Services
 
-1. **wireshark** (ffeldhaus/wireshark): A Docker container running Wireshark with Xpra for browser-based remote access. It sits on the lab network at `10.10.1.2` and publishes its web UI on port `14500`.
+1. **wireshark** (lscr.io/linuxserver/wireshark): A multi-arch Docker container running Wireshark with a browser-based GUI (works natively on Intel and Apple Silicon). It publishes its web UI on host port `14500`.
 2. **secutils** (lscr.io/linuxserver/webtop:ubuntu-xfce): A browser-accessible Ubuntu desktop, used here as the "admin box" target for this week's second CTF flag. It is also connected to the custom network.
 
 ## Usage
@@ -99,8 +99,8 @@ docker compose up -d
 ### Wireshark
 
 - **IP address**: 10.10.1.2
-- **Port**: 14500 (served over HTTPS with a self-signed certificate — browse to `https://localhost:14500`)
-- **Access password**: "wireshark"
+- **Port**: 14500 on the host (maps to the container's internal port 3000) — browse to `http://localhost:14500`
+- **Access password**: none by default
 - **Captured files**: Stored in the local `./data` directory
 
 ### Security Utilities
@@ -130,16 +130,13 @@ docker compose down
 
 To access the Wireshark container remotely, follow these steps:
 
-1. Open your web browser and go to `https://localhost:14500`.
+1. Open your web browser and go to `http://localhost:14500`.
 
-2. You will be prompted to enter the Xpra username and password. Use the following credentials:
+2. The Wireshark GUI loads directly — no username or password is required by default.
 
-   - **Username**: wireshark
-   - **Password**: wireshark
+3. You now have full access to the Wireshark interface in your browser.
 
-3. After successful authentication, you will be able to access the Wireshark interface remotely.
-
-Please note that the Wireshark container serves its web UI on port 14500 over HTTPS. Make sure the `wireshark` container is up and running (`docker ps`) before attempting to connect, and remember to use `https://` — the certificate is self-signed, so accept the browser warning for `localhost`.
+Please note that the Wireshark container serves its web UI on host port 14500 over plain HTTP with no password. Make sure the `wireshark` container is up and running (`docker ps`) before attempting to connect.
 
 ## Connecting to the Secutils Container
 

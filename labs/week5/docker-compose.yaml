@@ -1,5 +1,3 @@
-version: '3.9'
-
 # Week 5: System and Network Enumeration
 # Lab focus: LDAP, MySQL, SMB enumeration using enum4linux, ldapsearch, nmap scripts
 

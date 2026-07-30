@@ -6,7 +6,7 @@ This week introduces Wireshark for packet capture and network protocol analysis.
 
 ## Lab Environment
 
-- **Wireshark** — GUI packet analyser (accessible via proxy on port 14500)
+- **Wireshark** — GUI packet analyser (browser-based, on port 14500)
 - **SecUtils** — Security utilities desktop (accessible on port 6080)
 - **week1-attacker** — Kali-based attacker container
 
@@ -18,7 +18,7 @@ docker exec -it week1-attacker bash
 
 ### 1. Start a Packet Capture
 
-Open the Wireshark interface via `http://localhost:14500` (password: `wireshark`).
+Open the Wireshark interface via `https://localhost:14500` (password: `wireshark`).
 
 Start a capture on the `eth0` interface.
 

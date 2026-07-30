@@ -1,6 +1,6 @@
 # Docker Compose: Network Security Toolkit
 
-This repository contains a `docker compose.yaml` file that sets up a Network Security Toolkit with HAProxy, Wireshark, and Security Utilities. The provided `docker compose.yaml` file creates a custom Docker network and connects all services to it.
+This repository contains a `docker compose.yaml` file that sets up a Network Security Toolkit with Wireshark and Security Utilities. The provided `docker compose.yaml` file creates a custom Docker network and connects all services to it.
 
 
 ## 💻 Week 1 Lab Setup
@@ -28,11 +28,13 @@ docker compose up -d
 Open your **host machine browser** (Windows/macOS/Linux — the same computer running Docker) and go to:
 
 ```
-http://localhost:14500
+https://localhost:14500
 ```
 Password: **`wireshark`**
 
-This opens the Wireshark GUI (served via Xpra through HAProxy). Use this to capture and analyse network traffic on the lab network.
+This opens the Wireshark GUI (served via Xpra). Use this to capture and analyse network traffic on the lab network.
+
+> **Note on HTTPS:** the Wireshark container serves over HTTPS with a *self-signed* certificate, so your browser will show a "your connection is not private" warning the first time. That's expected for this local lab — click **Advanced → Proceed to localhost** to continue. Make sure you use `https://`, not `http://`, or the page won't load.
 
 > **Why does this work?** Docker maps container port 14500 → your host's `localhost:14500`, so any browser on your Windows/macOS machine can reach it directly.
 
@@ -66,16 +68,15 @@ This is your **Kali attacker shell**. Run reconnaissance and attack commands fro
 | Window | What it is | How to access |
 |--------|-----------|---------------|
 | Terminal | Kali attacker | `docker exec -it week1-attacker bash` |
-| Browser tab 1 (host) | Wireshark GUI | `http://localhost:14500` (pw: wireshark) |
+| Browser tab 1 (host) | Wireshark GUI | `https://localhost:14500` (pw: wireshark) |
 | Browser tab 2 (host) | secutils desktop | `http://localhost:6080` (pw: rootpassword) |
 
 ---
 
 ## Services
 
-1. **proxy** (HAProxy): A high-performance and highly-robust TCP/HTTP load balancer. The configuration file is mapped from the local `haproxy.cfg` file.
-2. **wireshark** (ffeldhaus/wireshark): A Docker container running Wireshark with Xpra for remote access. It is connected to the proxy service and uses the same network.
-3. **secutils** (lscr.io/linuxserver/webtop:ubuntu-xfce): A browser-accessible Ubuntu desktop, used here as the "admin box" target for this week's second CTF flag. It is also connected to the custom network.
+1. **wireshark** (ffeldhaus/wireshark): A Docker container running Wireshark with Xpra for browser-based remote access. It sits on the lab network at `10.10.1.2` and publishes its web UI on port `14500`.
+2. **secutils** (lscr.io/linuxserver/webtop:ubuntu-xfce): A browser-accessible Ubuntu desktop, used here as the "admin box" target for this week's second CTF flag. It is also connected to the custom network.
 
 ## Usage
 
@@ -95,21 +96,10 @@ docker compose up -d
 
 ## Service Configuration
 
-### Proxy (HAProxy)
-
-- **IP address**: 10.10.1.2
-- **Port**: 14500
-- **Configuration file**: `./haproxy.cfg`
-
-> **Note:** `haproxy.cfg` ships with every frontend/listen block commented out — this is intentional,
-> not broken. Wireshark's web UI works on port 14500 without HAProxy doing anything, because the
-> Wireshark container shares this proxy container's network namespace. HAProxy here is only needed
-> if you want it to relay another protocol (HTTP, SMB, NFS, etc.) through itself so Wireshark can
-> observe that traffic — uncomment and configure the relevant block in `haproxy.cfg` for that.
-
 ### Wireshark
 
-- **Network**: shares the `proxy` container's network namespace (`network_mode: "service:proxy"`), so it has no IP address of its own — it's reachable via the proxy container.
+- **IP address**: 10.10.1.2
+- **Port**: 14500 (served over HTTPS with a self-signed certificate — browse to `https://localhost:14500`)
 - **Access password**: "wireshark"
 - **Captured files**: Stored in the local `./data` directory
 
@@ -140,7 +130,7 @@ docker compose down
 
 To access the Wireshark container remotely, follow these steps:
 
-1. Open your web browser and go to `http://localhost:14500`.
+1. Open your web browser and go to `https://localhost:14500`.
 
 2. You will be prompted to enter the Xpra username and password. Use the following credentials:
 
@@ -149,7 +139,7 @@ To access the Wireshark container remotely, follow these steps:
 
 3. After successful authentication, you will be able to access the Wireshark interface remotely.
 
-Please note that the Wireshark container is connected to the proxy service, which listens on port 14500. Make sure the proxy service is up and running before attempting to connect to the Wireshark container.
+Please note that the Wireshark container serves its web UI on port 14500 over HTTPS. Make sure the `wireshark` container is up and running (`docker ps`) before attempting to connect, and remember to use `https://` — the certificate is self-signed, so accept the browser warning for `localhost`.
 
 ## Connecting to the Secutils Container
 

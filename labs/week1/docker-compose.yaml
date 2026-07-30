@@ -1,27 +1,30 @@
 version: '3.9'
 services:
-  proxy:
-    image: haproxy:1
-    container_name: proxy
-    restart: always
-    ports:
-      - 14500:14500
-    volumes:
-      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:Z
-    networks:
-      custom_network:
-        ipv4_address: 10.10.1.2
-
+  # Wireshark's HTML5 (Xpra) GUI. Serves on 14500 over HTTPS with a
+  # self-signed cert, so browse to https://localhost:14500 (not http://).
+  # Default password is set below via XPRA_PW.
+  #
+  # NOTE: this previously sat behind a `proxy` (HAProxy) container via
+  # network_mode: "service:proxy". That proxy's haproxy.cfg was entirely
+  # commented out (it forwarded nothing), and the shared-namespace setup was
+  # what caused the "failed to set up container networking: Address already
+  # in use" error on `docker compose up`. The proxy added no value for a
+  # single service, so it's been removed and wireshark now publishes its own
+  # port directly.
   wireshark:
     image: "ffeldhaus/wireshark:0.5"
     container_name: wireshark
-    restart: always
+    restart: unless-stopped
     privileged: true
-    network_mode: "service:proxy"
+    ports:
+      - "14500:14500"
     environment:
       - XPRA_PW=wireshark
     volumes:
       - ./data:/home/wireshark
+    networks:
+      custom_network:
+        ipv4_address: 10.10.1.2
 
   # NOTE: michaelborck/secutils was retired from Docker Hub (image no longer
   # exists — `docker compose up` would fail here). Replaced with LinuxServer's

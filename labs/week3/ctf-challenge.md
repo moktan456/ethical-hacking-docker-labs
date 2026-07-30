@@ -9,6 +9,7 @@
 
 | Host | IP | Notes |
 |------|----|-------|
+| week3-attacker | 10.10.3.3 | Kali attacker — `docker exec -it week3-attacker bash` |
 | week3-target | 10.10.3.10 | Sample target container |
 
 Your Wireshark container is at `10.10.3.2`.

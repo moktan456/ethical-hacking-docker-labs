@@ -405,7 +405,7 @@
     { n:"01", slug:"week1", tag:"cli", title:"Docker Environment Setup",
       teaser:"Boot your Kali attacker container and get oriented with Wireshark + SecUtils.",
       teach:"Stand up the week 1 stack, get comfortable inside the shared Kali attacker container, and confirm Wireshark and the SecUtils browser desktop are reachable before the graded labs start.",
-      run:["make run-week1  (Windows: cd labs\\week1 && docker compose up -d)","docker exec -it week1-attacker bash","Wireshark GUI → http://localhost:14500 (pw: wireshark)","SecUtils desktop → http://localhost:6080 (root / rootpassword)"],
+      run:["make run-week1  (Windows: cd labs\\week1 && docker compose up -d)","docker exec -it week1-attacker bash","Wireshark GUI → https://localhost:14500 (pw: wireshark)","SecUtils desktop → http://localhost:6080 (root / rootpassword)"],
       cmds:["nmap -V","nmap -sV 10.10.1.5","which hydra"],
       net:{ subnet:"10.10.1.0/24", hosts:["attacker · 10.10.1.2","proxy · 10.10.1.2","secutils · 10.10.1.5"] },
       ctf:true },

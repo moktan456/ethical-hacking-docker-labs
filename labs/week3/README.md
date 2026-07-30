@@ -23,16 +23,20 @@ This lab focuses on analyzing captured network traffic using Wireshark to inform
 2. **Live Capture (20 min)**:
    - Start a capture on Wireshark's own interface (the only traffic it can reliably see is traffic
      to/from its own container — see note below).
-   - From a second terminal, generate traffic aimed *at* the Wireshark container so it shows up:
-     `docker exec -it week3-target nmap -sV 10.10.3.2`.
+   - From a second terminal, get into the Kali attacker container and generate traffic aimed *at*
+     the Wireshark container so it shows up in the capture:
+     ```bash
+     docker exec -it week3-attacker bash
+     nmap -sV 10.10.3.2
+     ```
    - Analyze: Identify enumeration patterns in the resulting capture.
 
-   > **Why aimed at .2, not a scan of `sample-target` itself:** on a standard Docker bridge network,
+   > **Why aimed at .2 (Wireshark), not `sample-target`:** on a standard Docker bridge network,
    > a container only sees traffic addressed to/from itself — it can't passively sniff arbitrary
-   > traffic between two *other* containers the way a hub or mirrored switch port would. If you want
-   > students to observe traffic between two unrelated services, route it through a proxy that shares
-   > Wireshark's network namespace (see Week 1's HAProxy setup) rather than relying on this network
-   > to "see everything."
+   > traffic between two *other* containers the way a hub or mirrored switch port would. Scanning
+   > the Wireshark box directly is what makes your scan visible in a live capture. (To also probe
+   > the sample-target's services, run `nmap -sV 10.10.3.10` from the same Kali shell — you just
+   > won't see that one in Wireshark's live capture, since it's traffic between two other hosts.)
 
 3. **Proposal Draft (40 min)**:
    - Based on findings, write a scope doc (use template in root/docs if exists):

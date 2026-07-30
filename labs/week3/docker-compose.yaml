@@ -37,6 +37,26 @@ services:
       - NET_ADMIN
     restart: unless-stopped
 
+  # Kali attacker — uniform with every other lab week. Get in with
+  # `docker exec -it week3-attacker bash`, then generate traffic with nmap.
+  # For the live-capture exercise, scan the Wireshark box (10.10.3.2): on a
+  # Docker bridge network a container only sees traffic to/from itself, so
+  # aiming the scan at Wireshark is what makes it visible in a live capture.
+  attacker:
+    image: ethical-base
+    container_name: week3-attacker
+    stdin_open: true
+    tty: true
+    networks:
+      traffic_net:
+        ipv4_address: 10.10.3.3
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    security_opt:
+      - seccomp:unconfined
+    restart: unless-stopped
+
 networks:
   traffic_net:
     driver: bridge

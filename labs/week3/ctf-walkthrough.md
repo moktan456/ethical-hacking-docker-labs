@@ -12,8 +12,9 @@ The `week3-target` container starts a Python HTTP server on port 8888 exposing t
 
 ## Flag 1 — user.txt (`flag{w3_wireshark_scope_expert}`)
 
-**Step 1 — Discover the port with Nmap (from Wireshark container or attacker):**
+**Step 1 — From the Kali attacker, discover the port with Nmap:**
 ```bash
+docker exec -it week3-attacker bash
 nmap -sV 10.10.3.10
 ```
 Output shows port 8888 open (http / Python http.server).

@@ -7,6 +7,7 @@ This week covers engagement scoping, legal boundaries, and applying Wireshark to
 ## Lab Environment
 
 - **week3-wireshark** — Wireshark GUI (port 3000)
+- **week3-attacker** — Kali attacker at `10.10.3.3` (`docker exec -it week3-attacker bash`)
 - **week3-target** — Sample target at `10.10.3.10`
 
 Access Wireshark at: `http://localhost:3000`
@@ -37,12 +38,13 @@ Without sending any traffic, analyse what you can see from captured packets:
 
 ### 4. Active Discovery
 
-Use Nmap from inside the Wireshark container or from the Docker host:
+Get into the Kali attacker container and scan the target:
 ```bash
+docker exec -it week3-attacker bash
 nmap -sV 10.10.3.10
 ```
 
-Document all open ports and services.
+Document all open ports and services. (To see a scan appear in Wireshark's live capture, scan the Wireshark box instead — `nmap -sV 10.10.3.2` — since a container only sees traffic to/from itself.)
 
 ### 5. Report Your Findings
 

@@ -135,12 +135,12 @@ docker system prune -f
 
 ## Network Architecture
 
-All weeks use the `10.10.WEEK.0/24` subnet — the week number is always visible in the address. The attacker is always at `.2`; targets start at `.10`.
+All weeks use the `10.10.WEEK.0/24` subnet — the week number is always visible in the address. The attacker is at `.2` in most weeks (exceptions: week 1's attacker is DHCP, week 3's is `.3`, week 7's is `.13`); targets start at `.10`.
 
 | Week | Subnet | Attacker | Targets |
 |------|--------|----------|---------|
-| 1 | 10.10.1.0/24 | 10.10.1.2 | 10.10.1.2 proxy · 10.10.1.5 secutils |
-| 3 | 10.10.3.0/24 | 10.10.3.2 | 10.10.3.10 sample-target |
+| 1 | 10.10.1.0/24 | (dhcp) | 10.10.1.2 wireshark · 10.10.1.5 secutils |
+| 3 | 10.10.3.0/24 | 10.10.3.3 | 10.10.3.2 wireshark · 10.10.3.10 sample-target |
 | 4 | 10.10.4.0/24 | 10.10.4.2 | 10.10.4.10 web · .11 ftp · .12 ssh |
 | 5 | 10.10.5.0/24 | 10.10.5.2 | 10.10.5.10 ldap · .11 mysql · .12 smb |
 | 6 | 10.10.6.0/24 | 10.10.6.2 | 10.10.6.10 ssh-target · .11 web-target |

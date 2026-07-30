@@ -1,5 +1,3 @@
-version: '3.9'
-
 # Week 4: Reconnaissance and Information Gathering
 # Lab focus: Nmap scanning — version detection, OS fingerprinting, port enumeration
 

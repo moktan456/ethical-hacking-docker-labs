@@ -1,5 +1,3 @@
-version: '3.9'
-
 # Week 10: Exploit Development (Buffer Overflows)
 # Lab focus: stack buffer overflow analysis, GDB debugging, ret2win technique
 #

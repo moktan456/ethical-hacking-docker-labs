@@ -1,6 +1,11 @@
 # Container runtime/session state — never commit this
 **/.cache/
 **/.config/
+**/.XDG/
+**/.dbus/
+**/.local/
+labs/week1/data/.bashrc
+labs/week1/data/ssl/
 .Xauthority
 *.Xauthority
 

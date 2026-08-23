@@ -143,7 +143,9 @@ _________________________________
 
 ```bash
 # Connect with known credentials
-mysql -h 10.10.5.11 -u dbuser -pdbpass123
+# --skip-ssl is required: the attacker container's mysql client (MariaDB client)
+# rejects the MySQL server's self-signed TLS certificate by default.
+mysql -h 10.10.5.11 -u dbuser -pdbpass123 --skip-ssl
 
 # Inside MySQL shell:
 SHOW DATABASES;

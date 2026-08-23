@@ -29,7 +29,7 @@ cat user.txt
 
 **Step 1 — Connect to MySQL:**
 ```bash
-mysql -h 10.10.5.11 -u dbuser -pdbpass123 corpdb
+mysql -h 10.10.5.11 -u dbuser -pdbpass123 --skip-ssl corpdb
 ```
 
 **Step 2 — List all tables:**

@@ -91,6 +91,7 @@ nmap 10.10.4.0/24
 
 ```bash
 # Find live hosts without port scanning
+# -sn : ping scan only — skip port scanning and just report which hosts respond
 nmap -sn 10.10.4.0/24
 ```
 
@@ -110,6 +111,7 @@ The `-sV` flag makes Nmap probe open ports to identify the running software and 
 
 ```bash
 # Scan with version detection
+# -sV : probe open ports to determine service/version info (the banner)
 nmap -sV 10.10.4.10
 nmap -sV 10.10.4.11
 nmap -sV 10.10.4.12
@@ -133,6 +135,8 @@ _________________________________
 
 ```bash
 # Aggressive scan: version + OS detection + scripts + traceroute
+# -A : enables OS detection, version detection, default script scanning, and
+#      traceroute all in a single flag
 nmap -A 10.10.4.0/24
 ```
 
@@ -154,6 +158,8 @@ If yes, which target and what OS? _________________________________
 
 ```bash
 # SYN scan — requires root/CAP_NET_RAW
+# -sS : TCP SYN ("half-open") scan — sends a SYN and reads the reply without
+#       completing the handshake, making it faster and stealthier than -sT
 nmap -sS 10.10.4.0/24
 ```
 
@@ -173,9 +179,12 @@ Nmap has built-in scripts (NSE) that run extra checks against detected services.
 
 ```bash
 # Run default scripts against FTP target
+# -sC : run Nmap's default set of NSE scripts against detected services
+# -sV : probe open ports to determine service/version info (see Exercise 2.1)
 nmap -sC -sV 10.10.4.11
 
 # Specifically test for anonymous FTP login
+# --script <name> : run the named Nmap Scripting Engine (NSE) script
 nmap --script ftp-anon 10.10.4.11
 ```
 
@@ -194,6 +203,8 @@ _________________________________
 nmap --script ssh-hostkey 10.10.4.12
 
 # Check SSH authentication methods
+# --script-args <k=v> : pass parameters to the script (here, the username to
+#                        test authentication methods against)
 nmap --script ssh-auth-methods --script-args="ssh.user=sysadmin" 10.10.4.12
 ```
 
@@ -211,6 +222,8 @@ Pentest reports always include raw scan output. Nmap can save results in multipl
 
 ```bash
 # Save in all formats at once
+# -oA <basename> : save output in all three formats (.nmap, .xml, .gnmap)
+#                   using this basename
 nmap -sV -oA /tmp/week4-scan 10.10.4.0/24
 
 # View the normal text output

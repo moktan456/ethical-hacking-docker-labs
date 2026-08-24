@@ -43,9 +43,11 @@ make run-week9
 docker exec -it week9-attacker bash
 
 # Confirm you CANNOT reach the internal network directly
+# -c 1 : send only 1 ICMP echo request packet
 ping -c 1 10.10.90.20
 
 # Windows PowerShell / Command Prompt
+# -d : run containers in detached mode (in the background)
 cd labs\week9 && docker compose up -d
 ```
 
@@ -61,9 +63,11 @@ If no, something is wrong — ask your instructor before continuing.
 
 ```bash
 # Check the pivot is on your network
+# -c 2 : send 2 ICMP echo request packets, then stop
 ping -c 2 10.10.9.10
 
 # Confirm SSH is running
+# -p 22 : scan only port 22 (the standard SSH port)
 nmap -p 22 10.10.9.10
 ```
 
@@ -108,7 +112,9 @@ From your SSH session on the pivot host:
 ```bash
 # Check what's on the internal network
 ip route
+# -c 1 : send only 1 ICMP echo request packet (same flag as earlier pings)
 ping -c 1 10.10.90.20
+# -c 1 : send only 1 ICMP echo request packet
 ping -c 1 10.10.90.21
 ```
 
@@ -129,6 +135,10 @@ docker exec -it week9-attacker bash
 
 # Forward local port 8080 to the internal web server via the pivot
 # This creates: attacker:8080 → pivot:22 → internal-web:80
+# -L <local-port>:<remote-host>:<remote-port> : forward a local port to a
+#    host:port reachable from the SSH server (local port forwarding)
+# -N : don't execute a remote command — just forward, no interactive shell
+# -f : go into the background once authenticated (backgrounds the tunnel)
 ssh -L 8080:10.10.90.20:80 pivotuser@10.10.9.10 -N -f
 ```
 
@@ -155,15 +165,23 @@ _________________________________
 
 ```bash
 # Forward local port 3307 to the internal MySQL server
+# -L <local-port>:<remote-host>:<remote-port> : local port forward (see 2.1)
+# -N / -f : no remote command / background the tunnel (see 2.1)
 ssh -L 3307:10.10.90.21:3306 pivotuser@10.10.9.10 -N -f
 
 # Connect to the internal MySQL via the tunnel
+# -h <host>  : server to connect to
+# -P <port>  : TCP port to connect to (capital P — lowercase -p is the password flag)
+# -u <user>  : username to authenticate as
+# -p<pass>   : password, concatenated directly after -p with NO space
+#              (a space would make mysql prompt for the password instead)
 mysql -h 127.0.0.1 -P 3307 -u appuser -papppass456
 ```
 
 If mysql client is not in the Metasploit container, use nmap to confirm connectivity:
 
 ```bash
+# -p 3307 : scan only port 3307 (the locally forwarded MySQL tunnel port)
 nmap -p 3307 127.0.0.1
 ```
 
@@ -180,9 +198,16 @@ A SOCKS proxy lets you route *all* your traffic through the tunnel, not just one
 ```bash
 # Open a SOCKS5 proxy on local port 1080
 # All traffic sent to this proxy will tunnel through the pivot
+# -D <port> : dynamic port forwarding — turns the SSH connection into a
+#             SOCKS proxy listening on this local port
+# -N / -f   : no remote command / background the tunnel (see 2.1)
 ssh -D 1080 pivotuser@10.10.9.10 -N -f
 
 # Check it's listening
+# -t : show TCP sockets
+# -l : show only listening sockets
+# -n : show numeric addresses/ports instead of resolving names
+# -p : show the process using each socket
 ss -tlnp | grep 1080
 ```
 
@@ -197,6 +222,9 @@ ss -tlnp | grep 1080
 proxychains curl http://10.10.90.20
 
 # Scan internal network through the proxy
+# -sT : TCP connect scan (completes the full 3-way handshake, unlike -sS)
+# -Pn : skip host discovery (treat all hosts as up) — proxied connections
+#       can't send the raw ICMP/ARP probes normal discovery relies on
 proxychains nmap -sT -Pn 10.10.90.0/24
 ```
 
@@ -306,6 +334,8 @@ run
 
 ```bash
 # Kill any background SSH processes
+# -f : match against the full command line, not just the process name
+#      (needed since the process name is just "ssh")
 pkill -f "ssh -"
 exit
 

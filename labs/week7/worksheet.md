@@ -47,6 +47,11 @@ Test:
 
 From the attacker container:
 ```bash
+# Connect to MySQL with known credentials
+# -h <host> : server to connect to
+# -u <user> : username to authenticate as
+# -p<pass>  : password, concatenated directly after -p with NO space
+#             (a space would make mysql prompt for the password instead)
 mysql -h 10.10.7.9 -u user -puserpassword exampledb
 ```
 ```sql
@@ -67,6 +72,13 @@ Observe the plaintext credentials in Wireshark.
 ### 5. LDAP Enumeration
 
 ```bash
+# Bind as admin and list all objects under the base DN
+# -x       : simple authentication (username/password or anonymous) instead of SASL
+# -H <uri> : LDAP server URI (host and protocol) to connect to
+# -b <dn>  : search base — the point in the directory tree to start searching from
+# -D <dn>  : bind DN — the identity to authenticate as
+# -w <pw>  : bind password, given directly on the command line (use -W to be
+#            prompted interactively instead, so the password isn't left in shell history)
 ldapsearch -x -H ldap://10.10.7.7 -b "dc=example,dc=org" -D "cn=admin,dc=example,dc=org" -w admin
 ```
 

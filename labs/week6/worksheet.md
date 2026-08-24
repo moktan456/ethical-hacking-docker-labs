@@ -49,6 +49,8 @@ A hash is like a fingerprint for a password. Let's create some!
 
 ```bash
 # Type this command to hash the word "hello"
+# -n : suppress the trailing newline echo normally adds, so it isn't
+#      included in the hash
 echo -n "hello" | md5sum
 ```
 
@@ -56,6 +58,7 @@ echo -n "hello" | md5sum
 
 Now try with your first name:
 ```bash
+# -n : suppress trailing newline (see above)
 echo -n "yourname" | md5sum
 ```
 
@@ -70,6 +73,7 @@ Let's see how different hash types look:
 
 ```bash
 # Same password, different hash types
+# -n : suppress trailing newline (see above)
 echo -n "password" | md5sum    # 32 characters
 echo -n "password" | sha1sum   # 40 characters
 echo -n "password" | sha256sum # 64 characters
@@ -105,6 +109,8 @@ echo "5d41402abc4b2a76b9719d911017c592" > myfirst.txt
 john myfirst.txt
 
 # See what password it found
+# --show : print the already-cracked password for this hash file instead
+#          of attempting to crack it again
 john --show myfirst.txt
 ```
 
@@ -124,9 +130,12 @@ head /wordlists/basic.txt
 echo "5f4dcc3b5aa765d61d8327deb882cf99" > test2.txt
 
 # Use the wordlist
+# --wordlist=<file> : try each word in this file as a candidate password,
+#                      instead of John's default guessing rules
 john --wordlist=/wordlists/basic.txt test2.txt
 
 # Check the result
+# --show : print the already-cracked password (see above)
 john --show test2.txt
 ```
 
@@ -141,6 +150,7 @@ Now let's create and crack your own password:
 ```bash
 # Pick a simple word (like: cat, dog, sun)
 # Create its hash
+# -n : suppress trailing newline (see above)
 echo -n "yourword" | md5sum
 
 # Copy the hash (without the dash at the end)
@@ -148,6 +158,7 @@ echo -n "yourword" | md5sum
 echo "paste_your_hash_here" > myhash.txt
 
 # Try to crack it
+# --wordlist=<file> : try each word in this file as a candidate password
 john --wordlist=/wordlists/basic.txt myhash.txt
 ```
 
@@ -181,6 +192,10 @@ echo "123456" >> minilist.txt
 echo "letmein" >> minilist.txt
 
 # Run Hydra (this might take 30 seconds)
+# -l <user>  : the single username to try (lowercase L; use -L for a file
+#              of usernames instead of just one)
+# -P <file>  : password list — try each line in this file as a candidate
+#              password (uppercase P; use -p for a single password instead)
 hydra -l admin -P minilist.txt ssh://ssh-target
 ```
 
@@ -209,6 +224,8 @@ Let's test different passwords to see which are strong:
 
 ```bash
 # Test these passwords
+# -c <code> : run the following string as a Python program instead of
+#             reading a script file
 python3 -c "
 passwords = ['123456', 'password', 'MyDog123', 'MyDogIsMax2024!']
 for p in passwords:

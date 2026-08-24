@@ -41,6 +41,7 @@ Without sending any traffic, analyse what you can see from captured packets:
 Get into the Kali attacker container and scan the target:
 ```bash
 docker exec -it week3-attacker bash
+# -sV : probe open ports to determine service/version info
 nmap -sV 10.10.3.10
 ```
 

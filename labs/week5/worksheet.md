@@ -48,9 +48,13 @@ LDAP (Lightweight Directory Access Protocol) stores user accounts, groups, and o
 
 ```bash
 # Check if port 389 is open
+# -p 389 : scan only port 389 (the standard LDAP port)
 nmap -p 389 10.10.5.10
 
 # Attempt anonymous LDAP bind and list base DN
+# -x         : use simple authentication (username/password or anonymous) instead of SASL
+# -H <uri>   : LDAP server URI (host and protocol) to connect to
+# -b <dn>    : search base — the point in the directory tree to start searching from
 ldapsearch -x -H ldap://10.10.5.10 -b "dc=cybercorp,dc=local"
 ```
 
@@ -66,6 +70,13 @@ _________________________________
 
 ```bash
 # Bind as readonly user and list all objects
+# -x       : simple authentication (see 1.1)
+# -H <uri> : LDAP server URI
+# -D <dn>  : bind DN — the identity to authenticate as
+# -w <pw>  : bind password, given directly on the command line (use -W to be
+#            prompted interactively instead, so the password isn't left in shell history)
+# -b <dn>  : search base
+# "(objectClass=*)" : the search filter — matches every object under the base DN
 ldapsearch -x -H ldap://10.10.5.10 \
   -D "cn=readonly,dc=cybercorp,dc=local" \
   -w readonly123 \
@@ -87,6 +98,8 @@ ldapsearch -x -H ldap://10.10.5.10 \
 
 ```bash
 # Nmap LDAP enumeration scripts
+# --script <name>       : run the named Nmap Scripting Engine (NSE) script
+# --script-args <k=v>   : pass parameters to the script (here, the search base to query)
 nmap -p 389 --script ldap-rootdse 10.10.5.10
 nmap -p 389 --script ldap-search --script-args \
   'ldap.base="dc=cybercorp,dc=local"' 10.10.5.10
@@ -108,9 +121,11 @@ _________________________________
 
 ```bash
 # Check MySQL port
+# -sV : probe open ports to determine service/version info (the banner)
 nmap -p 3306 -sV 10.10.5.11
 
 # Banner grab with netcat
+# -w 2 : give up and close the connection after 2 seconds of no data
 echo "" | nc -w 2 10.10.5.11 3306 | strings
 ```
 
@@ -127,6 +142,8 @@ _________________________________
 nmap -p 3306 --script mysql-databases 10.10.5.11
 
 # Try default credentials
+# --script-args brute.firstonly=true : stop as soon as one valid login is
+#   found, instead of continuing to brute-force every remaining combination
 nmap -p 3306 --script mysql-brute --script-args \
   brute.firstonly=true 10.10.5.11
 ```
@@ -143,8 +160,12 @@ _________________________________
 
 ```bash
 # Connect with known credentials
-# --skip-ssl is required: the attacker container's mysql client (MariaDB client)
-# rejects the MySQL server's self-signed TLS certificate by default.
+# -h <host>   : server to connect to
+# -u <user>   : username to authenticate as
+# -p<pass>    : password, concatenated directly after -p with NO space
+#               (a space would make mysql prompt for the password instead)
+# --skip-ssl  : required — the attacker container's mysql client (MariaDB client)
+#               rejects the MySQL server's self-signed TLS certificate by default
 mysql -h 10.10.5.11 -u dbuser -pdbpass123 --skip-ssl
 
 # Inside MySQL shell:
@@ -176,6 +197,7 @@ _________________________________
 
 ```bash
 # Enumerate SMB shares and info
+# --script a,b,c : run multiple NSE scripts in one pass (comma-separated, no spaces)
 nmap -p 445 --script smb-enum-shares,smb-enum-users,smb-os-discovery 10.10.5.12
 ```
 
@@ -197,6 +219,8 @@ nmap -p 445 --script smb-enum-shares,smb-enum-users,smb-os-discovery 10.10.5.12
 
 ```bash
 # Full enum4linux scan
+# -a : do all simple enumeration (shares, users, groups, OS info, password
+#      policy, etc.) — equivalent to running every basic module at once
 enum4linux -a 10.10.5.12
 ```
 
@@ -220,6 +244,8 @@ _________________________________
 
 ```bash
 # List shares anonymously
+# -L      : list the shares available on the server, rather than connecting to one
+# -N      : suppress the password prompt (null/guest session, no credentials)
 smbclient -L //10.10.5.12 -N
 
 # Access the public share as guest
@@ -238,6 +264,8 @@ _________________________________
 **Try to access the private share as alice:**
 
 ```bash
+# -U <user>%<password> : authenticate as this user (password inline, so it
+#                         isn't a separate interactive prompt)
 smbclient //10.10.5.12/private -U alice%alice123
 ls
 exit

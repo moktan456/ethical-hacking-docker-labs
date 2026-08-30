@@ -31,7 +31,7 @@ cd labs/week6
 docker compose up -d
 
 # Step 5: Enter the container
-docker exec -it password-cracking-lab sh
+docker exec -it week6-attacker sh
 
 # Step 6: Check you're in the right place
 pwd

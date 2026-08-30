@@ -46,7 +46,7 @@ cd labs/week6
 docker compose up -d
 
 # 5. Enter the lab container
-docker exec -it password-cracking-lab sh
+docker exec -it week6-attacker sh
 
 # You're ready to start!
 ```
@@ -69,7 +69,7 @@ docker compose up -d
 
 **Terminal 2 — Enter Kali (attacker machine)**
 ```bash
-docker exec -it password-cracking-lab bash
+docker exec -it week6-attacker bash
 ```
 
 > Think of Terminal 1 as the victim network running in the background, and Terminal 2 as your Kali attacking machine. All commands in the worksheets are run from Terminal 2 (inside Kali).
@@ -159,7 +159,7 @@ labs/week6/
 ## 🛠️ What's Included
 
 ### Docker Containers
-1. **password-cracking-lab:** Main workspace with all tools
+1. **week6-attacker:** Main workspace with all tools
 2. **ssh-target:** Practice target for network attacks
 3. **web-target:** Optional HTTP target
 
@@ -329,7 +329,7 @@ After completing this lab:
 ```bash
 # Start lab
 docker compose up -d
-docker exec -it password-cracking-lab sh
+docker exec -it week6-attacker sh
 
 # Generate hash
 echo -n "password" | md5sum

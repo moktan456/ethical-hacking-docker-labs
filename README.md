@@ -163,7 +163,7 @@ All weeks use the `10.10.WEEK.0/24` subnet — the week number is always visible
 | 3 | Scope & Proposal Development | Traffic analysis | Wireshark GUI → `http://localhost:3000` |
 | 4 | Reconnaissance & Information Gathering | Nmap scanning | `docker exec -it week4-attacker bash` |
 | 5 | System & Network Enumeration | LDAP, MySQL, SMB | `docker exec -it week5-attacker bash` |
-| 6 | Password Cracking | Hydra, John, Hashcat | `docker exec -it password-cracking-lab bash` |
+| 6 | Password Cracking | Hydra, John, Hashcat | `docker exec -it week6-attacker bash` |
 | 7 | Web Application Vulnerabilities | DVWA, Juice Shop | `docker exec -it week7-attacker bash` |
 | 8 | Privilege Escalation (De-ICE) | Full pentest chain | `docker exec -it de-ice-attacker bash` |
 | 9 | Lateral Movement & Pivoting | Multi-subnet pivot | `docker exec -it week9-attacker bash` |

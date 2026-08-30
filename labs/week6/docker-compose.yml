@@ -1,7 +1,7 @@
 services:
-  hacking-tools:
+  week6-attacker:
     image: ethical-base
-    container_name: password-cracking-lab
+    container_name: week6-attacker
     hostname: hacklab
     stdin_open: true
     tty: true

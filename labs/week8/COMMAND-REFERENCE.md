@@ -133,12 +133,12 @@ EOF
 - `-d`: Detached mode (runs in background)  
 **Output:** Status of each container starting
 
-### `docker exec -it de-ice-attacker bash`
+### `docker exec -it week8-attacker bash`
 **What it does:** Opens command line inside the attacker container  
 **Flags explained:**
 - `exec`: Execute command in running container  
 - `-it`: Interactive terminal  
-- `de-ice-attacker`: Container name  
+- `week8-attacker`: Container name  
 - `bash`: Command to run (shell)  
 **Result:** You're now "inside" the Kali Linux attacker machine
 

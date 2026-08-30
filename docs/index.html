@@ -452,7 +452,7 @@
     { n:"08", slug:"week8", tag:"cli", title:"Privilege Escalation (De-ICE)",
       teaser:"Own the De-ICE box end to end: recon, crack, escalate.",
       teach:"A full mini-pentest against a De-ICE target — reconnaissance, cracking, and privilege escalation, start to finish.",
-      run:["make run-week8","docker exec -it de-ice-attacker bash","Follow the pentest chain in worksheet.md"],
+      run:["make run-week8","docker exec -it week8-attacker bash","Follow the pentest chain in worksheet.md"],
       cmds:["nmap -sV 10.10.8.0/24","hydra -l user -P rockyou.txt ssh://10.10.8.11","sudo -l"],
       net:{ subnet:"10.10.8.0/24", hosts:["attacker · 10.10.8.2","web · 10.10.8.10","ssh · 10.10.8.11","ftp · 10.10.8.12"] },
       ctf:true },

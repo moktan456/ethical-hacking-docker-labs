@@ -20,7 +20,7 @@ docker compose up -d
 
 **Terminal 2 — Enter Kali (attacker machine)**
 ```bash
-docker exec -it de-ice-attacker bash
+docker exec -it week8-attacker bash
 ```
 
 > Think of Terminal 1 as the victim network running in the background, and Terminal 2 as your Kali attacking machine. All commands in the worksheets are run from Terminal 2 (inside Kali).
@@ -32,7 +32,7 @@ docker exec -it de-ice-attacker bash
 **All Platforms (Linux/Mac/Windows):**
 ```bash
 docker compose up -d
-docker exec -it de-ice-attacker bash
+docker exec -it week8-attacker bash
 ```
 
 ## Architecture
@@ -69,7 +69,7 @@ All containers run in isolated network (10.10.8.0/24)
 
 **Attach to attacker container:**
 ```bash
-docker exec -it de-ice-attacker bash
+docker exec -it week8-attacker bash
 ```
 
 **Inside the Kali container:**

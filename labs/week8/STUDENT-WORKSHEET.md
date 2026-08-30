@@ -10,7 +10,7 @@ You have been hired to perform a penetration test on De-ICE Corporation's web se
 
 ## Pre-Lab Setup
 □ Start the lab environment: `docker compose up -d`  
-□ Access attacker machine: `docker exec -it de-ice-attacker bash`  
+□ Access attacker machine: `docker exec -it week8-attacker bash`  
 □ Verify you're in the Kali container: `whoami` (should show "root")
 
 ---

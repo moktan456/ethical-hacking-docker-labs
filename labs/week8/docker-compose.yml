@@ -1,7 +1,7 @@
 services:
   attacker:
     image: ethical-base
-    container_name: de-ice-attacker
+    container_name: week8-attacker
     hostname: kali-attacker
     cap_add:
       - NET_RAW
@@ -19,7 +19,7 @@ services:
     command: >
       /bin/bash -c "
       gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null || true &&
-      echo 'Kali attacker ready! Use: docker exec -it de-ice-attacker bash' &&
+      echo 'Kali attacker ready! Use: docker exec -it week8-attacker bash' &&
       tail -f /dev/null"
     restart: unless-stopped
 

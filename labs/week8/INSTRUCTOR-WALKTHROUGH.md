@@ -7,7 +7,7 @@ This document provides complete solutions for educators running the De-ICE S1.10
 ### 1. Start the Lab Environment
 ```bash
 docker compose up -d
-docker exec -it de-ice-attacker bash
+docker exec -it week8-attacker bash
 ```
 
 ### 2. Verify All Services Are Running
@@ -260,7 +260,7 @@ telnet 10.10.8.13 143
 
 ### Error: "Host not found"
 **Cause:** Student not in attacker container
-**Solution:** `docker exec -it de-ice-attacker bash`
+**Solution:** `docker exec -it week8-attacker bash`
 
 ### Error: "Hydra shows no results"
 **Cause:** Wrong port or service specification

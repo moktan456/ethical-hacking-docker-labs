@@ -32,8 +32,13 @@ Credentials: `user` / `userpassword`
 
 ### Flag 2 — root.txt
 
-A legacy Telnet service is running on the network. A user account has been created on it.  
-Discover the credentials, connect via Telnet, and read the flag in the user's home directory.
+A legacy Telnet service is running on the network, with a second account on it that isn't
+the one you used in the worksheet exercise. Discover its credentials, connect via Telnet,
+and read the flag in that user's home directory.
+
+These credentials are not meant to be guessed or brute-forced. You already have read
+access to a data source elsewhere in this lab — look at *everything* it returned for
+Flag 1, not just the row that looked like a flag.
 
 `root.txt` → `flag{________________________}`
 

@@ -64,12 +64,20 @@ SELECT * FROM employees;
 
 ### 4. Telnet Analysis
 
-Capture traffic in Wireshark, then connect via Telnet:
+Start a packet capture in Wireshark first, then log in via Telnet with the
+credentials below — this lets you see your own login travel across the
+network in plain text, since Telnet has no encryption at all.
+
+Credentials: `student` / `capture123`
+
 ```bash
 telnet 10.10.7.10
+# Login: student / capture123
 ```
 
-Observe the plaintext credentials in Wireshark.
+Find your login in the Wireshark capture (filter on `telnet`, then
+right-click a packet → Follow → TCP Stream). Confirm you can read both the
+username and password exactly as you typed them.
 
 ### 5. LDAP Enumeration
 

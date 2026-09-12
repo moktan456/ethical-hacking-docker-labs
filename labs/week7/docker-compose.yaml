@@ -134,11 +134,13 @@ services:
     container_name: week7-telnet
     command: >
       sh -c "apk add --no-cache busybox-extras shadow &&
-      adduser -D -s /bin/sh ctfuser &&
-      echo 'ctfuser:telnet123' | chpasswd &&
-      mkdir -p /home/ctfuser &&
-      echo 'flag{w7_telnet_protocol_breach}' > /home/ctfuser/root.txt &&
-      chown ctfuser:ctfuser /home/ctfuser/root.txt &&
+      adduser -D -s /bin/sh student &&
+      echo 'student:capture123' | chpasswd &&
+      adduser -D -s /bin/sh svc_diag &&
+      echo 'svc_diag:Qa9vLp2x' | chpasswd &&
+      mkdir -p /home/svc_diag &&
+      echo 'flag{w7_telnet_protocol_breach}' > /home/svc_diag/root.txt &&
+      chown svc_diag:svc_diag /home/svc_diag/root.txt &&
       /usr/sbin/telnetd -F"
     ports:
       - "23:23"

@@ -8,7 +8,7 @@
 
 **Step 1 — Connect to MySQL:**
 ```bash
-mysql -h 10.10.7.9 -u user -puserpassword exampledb
+mysql -h 10.10.7.9 -u user -puserpassword --skip-ssl exampledb
 ```
 
 **Step 2 — Enumerate tables:**

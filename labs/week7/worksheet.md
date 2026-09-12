@@ -11,7 +11,7 @@ This week covers web application vulnerabilities (SQL injection, XSS, command in
 | week7-attacker | 10.10.7.13 | `docker exec -it week7-attacker bash` |
 | week7-dvwa | 10.10.7.12 | http://localhost:8085 (admin/password) |
 | week7-juice-shop | 10.10.7.11 | http://localhost:3012 |
-| week7-mysql | 10.10.7.9 | mysql -h 10.10.7.9 -u user -puserpassword |
+| week7-mysql | 10.10.7.9 | mysql -h 10.10.7.9 -u user -puserpassword --skip-ssl |
 | week7-telnet | 10.10.7.10 | telnet 10.10.7.10 |
 | week7-ldap | 10.10.7.7 | ldapsearch -x -H ldap://10.10.7.7 |
 | week7-wireshark | 10.10.7.2 | http://localhost:3000 |
@@ -52,7 +52,9 @@ From the attacker container:
 # -u <user> : username to authenticate as
 # -p<pass>  : password, concatenated directly after -p with NO space
 #             (a space would make mysql prompt for the password instead)
-mysql -h 10.10.7.9 -u user -puserpassword exampledb
+# --skip-ssl : required — the attacker container's mysql client (MariaDB client)
+#              rejects the MySQL server's self-signed TLS certificate by default
+mysql -h 10.10.7.9 -u user -puserpassword --skip-ssl exampledb
 ```
 ```sql
 SHOW TABLES;

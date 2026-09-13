@@ -1,5 +1,18 @@
 USE exampledb;
 
+CREATE TABLE IF NOT EXISTS employees (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    department VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL
+);
+
+INSERT INTO employees (username, department, email) VALUES
+('rlopez', 'IT', 'rlopez@example.local'),
+('kchen', 'Finance', 'kchen@example.local'),
+('dnguyen', 'HR', 'dnguyen@example.local'),
+('smartin', 'Engineering', 'smartin@example.local');
+
 CREATE TABLE IF NOT EXISTS ctf_flags (
     id INT AUTO_INCREMENT PRIMARY KEY,
     level VARCHAR(10) NOT NULL,

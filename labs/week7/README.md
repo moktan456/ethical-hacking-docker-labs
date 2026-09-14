@@ -94,7 +94,7 @@ Before you begin, ensure you have the following installed on your system:
 
 7. **Telnet**: Use for learning about insecure protocols and practising secure alternatives.
 
-8. **OWASP Juice Shop and DVWA**: These intentionally vulnerable web applications are excellent for practising web application security techniques.
+8. **OWASP Juice Shop and DVWA**: These intentionally vulnerable web applications are excellent for practising web application security techniques. DVWA's database is initialized automatically by a one-shot `dvwa-init` helper container on first boot — no manual "Create / Reset Database" click needed. Give it ~20 seconds after `docker compose up` before logging in.
 
 ## Security Notice
 

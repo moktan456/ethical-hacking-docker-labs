@@ -162,9 +162,25 @@ services:
     container_name: week7-dvwa
     ports:
       - "8085:80"
+    volumes:
+      - ./dvwa-web/.env:/var/www/html/.env:ro
     networks:
       security_net:
         ipv4_address: 10.10.7.12
+
+  # One-shot helper: DVWA ships with no database, so every login silently
+  # fails until setup.php's "Create / Reset Database" is triggered. This
+  # does that automatically so the lab works right after `docker compose up`.
+  dvwa-init:
+    image: alpine:latest
+    container_name: week7-dvwa-init
+    depends_on:
+      - dvwa
+    volumes:
+      - ./dvwa-init/init.sh:/init.sh:ro
+    command: sh -c "apk add --no-cache curl >/dev/null && sh /init.sh"
+    networks:
+      security_net:
 
 networks:
   security_net:

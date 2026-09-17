@@ -165,9 +165,9 @@ All weeks use the `10.10.WEEK.0/24` subnet — the week number is always visible
 | 5 | System & Network Enumeration | LDAP, MySQL, SMB | `docker exec -it week5-attacker bash` |
 | 6 | Password Cracking | Hydra, John, Hashcat | `docker exec -it week6-attacker bash` |
 | 7 | Web Application Vulnerabilities | DVWA, Juice Shop | `docker exec -it week7-attacker bash` |
-| 8 | Privilege Escalation (De-ICE) | Full pentest chain | `docker exec -it week8-attacker bash` |
+| 8 | Privilege Escalation | SUID, cron, sudo, GTFOBins | `docker exec -it week8-attacker bash` |
 | 9 | Lateral Movement & Pivoting | Multi-subnet pivot | `docker exec -it week9-attacker bash` |
-| 10 | Exploit Development (BOF) | Stack buffer overflow | `docker exec -it week10-attacker bash` |
+| 10 | Mock Penetration Test (De-ICE) | Full pentest chain | `docker exec -it week10-attacker bash` |
 | 11 | Physical Access Controls | Discussion only | See `labs/week11/README.md` |
 | 12 | Social Engineering | Discussion only | See `labs/week12/README.md` |
 

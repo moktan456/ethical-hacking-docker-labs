@@ -1,0 +1,76 @@
+services:
+  attacker:
+    image: ethical-base
+    container_name: week8-attacker
+    stdin_open: true
+    tty: true
+    networks:
+      security_net:
+        ipv4_address: 10.10.8.2
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - seccomp:unconfined
+
+  # Target 1: SUID binary + writable cron job
+  workstation:
+    image: ubuntu:22.04
+    container_name: week8-workstation
+    hostname: workstation
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: >
+      /bin/bash -c "
+      apt-get update &&
+      apt-get install -y cron sudo &&
+      useradd -m -s /bin/bash lowpriv &&
+      echo 'lowpriv:lowpriv' | chpasswd &&
+      chmod u+s /usr/bin/find &&
+      mkdir -p /opt/scripts &&
+      echo '#!/bin/bash' > /opt/scripts/backup.sh &&
+      echo 'tar -czf /root/backup.tar.gz /var/log 2>/dev/null' >> /opt/scripts/backup.sh &&
+      chmod 777 /opt/scripts/backup.sh &&
+      echo '* * * * * root /opt/scripts/backup.sh' > /etc/cron.d/backup &&
+      chmod 644 /etc/cron.d/backup &&
+      echo 'flag{w8_suid_or_cron_root}' > /root/user.txt &&
+      chmod 600 /root/user.txt &&
+      cron -f"
+    networks:
+      security_net:
+        ipv4_address: 10.10.8.10
+    restart: unless-stopped
+
+  # Target 2: sudo NOPASSWD GTFOBins binary + hardcoded credentials
+  ubuntu-desktop:
+    image: ubuntu:22.04
+    container_name: week8-ubuntu-desktop
+    hostname: ubuntu-desktop
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: >
+      /bin/bash -c "
+      apt-get update &&
+      apt-get install -y sudo less &&
+      useradd -m -s /bin/bash deskuser &&
+      echo 'deskuser:deskuser' | chpasswd &&
+      echo 'deskuser ALL=(ALL) NOPASSWD: /usr/bin/less' >> /etc/sudoers &&
+      mkdir -p /etc/app &&
+      echo 'db_host=127.0.0.1' > /etc/app/db.conf &&
+      echo 'db_user=appsvc' >> /etc/app/db.conf &&
+      echo 'root_password=CorrectHorseBattery42' >> /etc/app/db.conf &&
+      chmod 644 /etc/app/db.conf &&
+      echo 'root:CorrectHorseBattery42' | chpasswd &&
+      echo 'flag{w8_gtfobins_sudo_root}' > /root/root.txt &&
+      chmod 600 /root/root.txt &&
+      tail -f /dev/null"
+    networks:
+      security_net:
+        ipv4_address: 10.10.8.11
+    restart: unless-stopped
+
+networks:
+  security_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.8.0/24

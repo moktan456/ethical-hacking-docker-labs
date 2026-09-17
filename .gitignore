@@ -26,13 +26,15 @@ __pycache__/
 # Week 9 runtime state
 labs/week9/internal-web/.DS_Store
 
-# Week 10 compiled artifacts
-labs/week10/target-files/*.o
-labs/week10/target-files/vuln
-
 # GDB sessions
 .gdb_history
 .gdb_index
 
 # pwntools cache
 /tmp/.pwntools-cache*/
+
+# CTF answer keys — untracked from week 8 onwards until the class using them
+# finishes. Remove these lines once the course has moved past that content.
+labs/week8/ctf-walkthrough.md
+labs/week9/ctf-walkthrough.md
+labs/week10/ctf-walkthrough.md

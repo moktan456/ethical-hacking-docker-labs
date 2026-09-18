@@ -1,7 +1,11 @@
 # Week 8: Privilege Escalation
 
-This week covers turning a low-privilege foothold into full root access —
-the step that follows initial access in almost every real attack chain.
+This week covers the full chain, not just the end of it: gaining a
+low-privilege foothold through real weak-credential attacks (SSH password
+brute force, an SMB share leaking a login), then turning that foothold into
+full root access. As with every other week, you work from the attacker
+container and reach the targets over the network — nothing is handed to you
+directly via `docker exec` into a target.
 
 ## Setup
 
@@ -18,11 +22,11 @@ docker compose up -d
 | Container | Description | Access |
 |-----------|-------------|--------|
 | week8-attacker | Kali-based attack box (ethical-base image) | `docker exec -it week8-attacker bash` |
-| week8-workstation | Linux target — vulnerable SUID binary + writable cron job | `docker exec -it -u lowpriv week8-workstation bash` |
-| week8-ubuntu-desktop | Linux target — sudo NOPASSWD GTFOBins entry + hardcoded credential | `docker exec -it -u deskuser week8-ubuntu-desktop bash` |
+| week8-workstation | Linux target — SSH weak password, then SUID binary + writable cron job | earn it: Hydra-crack `lowpriv`'s SSH password, then `ssh lowpriv@10.10.8.10` |
+| week8-ubuntu-desktop | Linux target — SMB credential leak, then sudo NOPASSWD GTFOBins entry + hardcoded credential | earn it: pull `deskuser`'s password from the `notices` SMB share, then `ssh deskuser@10.10.8.11` |
 
-Both targets start you as a low-privilege user on purpose — see
-[worksheet.md](./worksheet.md) for the full walkthrough.
+Neither target hands you a shell for free — see [worksheet.md](./worksheet.md)
+for the full walkthrough, initial access through root.
 
 ## Why "Windows-like" commands were adapted
 
@@ -53,8 +57,9 @@ workflow from `docker compose up` and will be walked through separately.
 
 ## Security Notice
 
-Every vulnerability here (SUID binary, writable cron job, sudo
-misconfiguration, hardcoded credential) is deliberately planted for teaching
-purposes and is a real, common misconfiguration pattern seen in production
-systems. Never attempt these techniques against systems you don't own or
-have explicit written authorization to test.
+Every vulnerability here (weak SSH password, anonymous SMB share leaking a
+credential, SUID binary, writable cron job, sudo misconfiguration, hardcoded
+credential) is deliberately planted for teaching purposes and is a real,
+common misconfiguration pattern seen in production systems. Never attempt
+these techniques against systems you don't own or have explicit written
+authorization to test.

@@ -9,7 +9,7 @@
 
 | Host | IP | Services |
 |------|----|---------|
-| week8-workstation | 10.10.8.10 | SSH |
+| week8-workstation | 10.10.8.10 | SSH, HTTP |
 | week8-ubuntu-desktop | 10.10.8.11 | SSH, SMB |
 
 Neither target hands you a shell. You'll need to get in yourself first.

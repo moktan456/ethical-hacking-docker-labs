@@ -453,7 +453,7 @@
       teaser:"Break in with weak creds, then turn that shell into root.",
       teach:"Earn a low-privilege foothold on each target with real weak-credential attacks (SSH password brute force, an SMB share leaking a login), then escalate to full root using misconfigured SUID binaries, writable cron jobs, sudo NOPASSWD entries (GTFOBins), and hardcoded credentials.",
       run:["make run-week8","docker exec -it week8-attacker bash","Hydra-crack SSH into week8-workstation, then find and exploit the SUID/cron vectors","Pull creds from the week8-ubuntu-desktop SMB share, then exploit the sudo/credential vectors"],
-      cmds:["hydra -l lowpriv -P pw.txt 10.10.8.10 ssh","smbclient -L //10.10.8.11/ -N","sudo -l","find . -exec /bin/sh -p \\; -quit"],
+      cmds:["curl 10.10.8.10 | grep -i account","hydra -l USERNAME -P pw.txt 10.10.8.10 ssh","smbclient -L //10.10.8.11/ -N","sudo -l"],
       net:{ subnet:"10.10.8.0/24", hosts:["attacker · 10.10.8.2","workstation · 10.10.8.10","ubuntu-desktop · 10.10.8.11"] },
       ctf:true },
     { n:"09", slug:"week9", tag:"cli", title:"Lateral Movement & Pivoting",

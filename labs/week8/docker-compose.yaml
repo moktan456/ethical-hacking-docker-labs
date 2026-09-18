@@ -12,8 +12,9 @@ services:
     security_opt:
       - seccomp:unconfined
 
-  # Target 1: initial access via SSH weak-password brute force (Hydra),
-  # then privesc via SUID `find` binary + writable cron job
+  # Target 1: initial access via web recon (username hidden in HTML source)
+  # + SSH weak-password brute force (Hydra), then privesc via SUID `find`
+  # binary + writable cron job
   workstation:
     image: ubuntu:22.04
     container_name: week8-workstation
@@ -23,7 +24,7 @@ services:
     command: >
       /bin/bash -c "
       apt-get update &&
-      apt-get install -y cron sudo openssh-server &&
+      apt-get install -y cron sudo openssh-server nginx &&
       useradd -m -s /bin/bash lowpriv &&
       echo 'lowpriv:sunshine1' | chpasswd &&
       sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
@@ -38,6 +39,14 @@ services:
       chmod 644 /etc/cron.d/backup &&
       echo 'flag{w8_suid_or_cron_root}' > /root/user.txt &&
       chmod 600 /root/user.txt &&
+      echo '<html><head><title>Workstation Portal</title></head><body>' > /var/www/html/index.html &&
+      echo '<h1>IT Notice</h1>' >> /var/www/html/index.html &&
+      echo '<p>This workstation is being prepared for a new contractor onboarding.</p>' >> /var/www/html/index.html &&
+      echo '<p>A temporary low-privilege account has been provisioned for initial setup access.</p>' >> /var/www/html/index.html &&
+      echo '<p>Contact IT with any issues.</p>' >> /var/www/html/index.html &&
+      echo '<!-- account: lowpriv -->' >> /var/www/html/index.html &&
+      echo '</body></html>' >> /var/www/html/index.html &&
+      service nginx start &&
       service ssh start &&
       cron -f"
     networks:

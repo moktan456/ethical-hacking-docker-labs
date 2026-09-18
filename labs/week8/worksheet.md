@@ -33,15 +33,27 @@ make run-week8
 
 ### Task 1: Gain Initial Access (SSH weak-password attack)
 
-From earlier recon on this network, you've identified that `week8-workstation`
-has a local account named `lowpriv`. You don't have its password yet.
+You don't have a username or a password yet — both need to be discovered.
 
 ```bash
 docker exec -it week8-attacker bash
 
-# Confirm SSH is open
-nmap -sV -p 22 10.10.8.10
+# Scan for open services
+nmap -sV -p 22,80 10.10.8.10
 ```
+
+**A port scan on a target should always be followed by checking what's
+actually running on the open ports.** Port 80 is open — see what's there:
+```bash
+curl http://10.10.8.10
+```
+
+**Question:** Read the page carefully, including the HTML source (not just
+the rendered text). What account name is mentioned, and where exactly did
+you find it? (Hint: developers leave things in HTML comments more often
+than they should.)
+
+_________________________________
 
 **Build a small password list** (matching the Week 6 approach — a short,
 targeted list, not a full rockyou run):
@@ -52,20 +64,20 @@ echo "letmein" >> /tmp/pw.txt
 echo "admin123" >> /tmp/pw.txt
 ```
 
-**Brute-force it with Hydra:**
+**Brute-force it with Hydra**, using the username you found:
 ```bash
 # -l <user> : the single username to try
 # -P <file> : password list — try each line as a candidate password
-hydra -l lowpriv -P /tmp/pw.txt 10.10.8.10 ssh
+hydra -l <username> -P /tmp/pw.txt 10.10.8.10 ssh
 ```
 
 **What password did Hydra find?**
 
 _________________________________
 
-**Log in:**
+**Log in** (using the username and password you found):
 ```bash
-ssh lowpriv@10.10.8.10
+ssh <username>@10.10.8.10
 ```
 
 ### Task 2: Enumerate

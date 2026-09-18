@@ -22,7 +22,7 @@ docker compose up -d
 | Container | Description | Access |
 |-----------|-------------|--------|
 | week8-attacker | Kali-based attack box (ethical-base image) | `docker exec -it week8-attacker bash` |
-| week8-workstation | Linux target — SSH weak password, then SUID binary + writable cron job | earn it: Hydra-crack `lowpriv`'s SSH password, then `ssh lowpriv@10.10.8.10` |
+| week8-workstation | Linux target — SSH weak password, then SUID binary + writable cron job | earn it: find the username via web recon on port 80, Hydra-crack its SSH password, then SSH in |
 | week8-ubuntu-desktop | Linux target — SMB credential leak, then sudo NOPASSWD GTFOBins entry + hardcoded credential | earn it: pull `deskuser`'s password from the `notices` SMB share, then `ssh deskuser@10.10.8.11` |
 
 Neither target hands you a shell for free — see [worksheet.md](./worksheet.md)

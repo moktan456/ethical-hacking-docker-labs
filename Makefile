@@ -42,7 +42,7 @@ run-week9:
 	cd labs/week9 && docker compose up -d
 
 run-week10:
-	cd labs/week10 && docker compose up -d
+	@echo "Week 10: provided separately by the instructor."
 
 run-week11:
 	@echo "Week 11: Physical access controls — no Docker needed."
@@ -62,7 +62,7 @@ stop-multi:
 
 # ── Teardown ─────────────────────────────────────────────────────────────────
 stop-all:
-	for week in 1 3 4 5 6 7 8 9 10; do \
+	for week in 1 3 4 5 6 7 8 9; do \
 		(cd labs/week$$week && docker compose down 2>/dev/null || true); \
 	done
 

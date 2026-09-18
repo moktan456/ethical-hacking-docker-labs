@@ -25,6 +25,7 @@ services:
       - NET_RAW
     command: >
       /bin/bash -c "
+      apk add --no-cache openssh-client mysql-client proxychains-ng iproute2 > /dev/null 2>&1 &&
       echo '======================================================' &&
       echo ' Week 9 Attacker Ready (Metasploit included)' &&
       echo ' Your IP: 10.10.9.2 (external network only)' &&
@@ -47,22 +48,24 @@ services:
         ipv4_address: 10.10.9.10
       week9-internal:
         ipv4_address: 10.10.90.10
+    cap_add:
+      - NET_ADMIN
     command: >
       /bin/bash -c "
       apt-get update -qq &&
-      apt-get install -y -q openssh-server iproute2 iptables net-tools &&
+      apt-get install -y -q openssh-server iproute2 iptables net-tools iputils-ping &&
       mkdir -p /var/run/sshd &&
       ssh-keygen -A &&
-      useradd -m -s /bin/bash pivotuser &&
+      id -u pivotuser &>/dev/null || useradd -m -s /bin/bash pivotuser &&
       echo 'pivotuser:pivot123' | chpasswd &&
       echo 'flag{w9_pivot_host_accessed}' > /home/pivotuser/user.txt &&
       chown pivotuser:pivotuser /home/pivotuser/user.txt &&
       sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
       sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
-      echo 'AllowTcpForwarding yes' >> /etc/ssh/sshd_config &&
-      echo 'PermitTunnel yes' >> /etc/ssh/sshd_config &&
-      echo 'GatewayPorts yes' >> /etc/ssh/sshd_config &&
-      echo 1 > /proc/sys/net/ipv4/ip_forward &&
+      grep -q AllowTcpForwarding /etc/ssh/sshd_config || echo 'AllowTcpForwarding yes' >> /etc/ssh/sshd_config &&
+      grep -q PermitTunnel /etc/ssh/sshd_config || echo 'PermitTunnel yes' >> /etc/ssh/sshd_config &&
+      grep -q GatewayPorts /etc/ssh/sshd_config || echo 'GatewayPorts yes' >> /etc/ssh/sshd_config &&
+      (echo 1 > /proc/sys/net/ipv4/ip_forward 2>/dev/null || true) &&
       echo 'Pivot host ready. Internal network: 10.10.90.0/24' &&
       /usr/sbin/sshd -D"
     restart: unless-stopped

@@ -106,12 +106,16 @@ Let's crack our first password! We'll start with something easy.
 echo "5d41402abc4b2a76b9719d911017c592" > myfirst.txt
 
 # Try to crack it
-john myfirst.txt
+# --format=Raw-MD5 : tell John this is a plain MD5 hash. A bare 32-character
+#                     hex string is ambiguous (MD5? LM? NT?), and John's
+#                     auto-detection guesses wrong (LM) without this flag,
+#                     silently failing to crack it
+john --format=Raw-MD5 myfirst.txt
 
 # See what password it found
 # --show : print the already-cracked password for this hash file instead
 #          of attempting to crack it again
-john --show myfirst.txt
+john --format=Raw-MD5 --show myfirst.txt
 ```
 
 **What password did John find?** _________________
@@ -130,13 +134,15 @@ head /wordlists/basic.txt
 echo "5f4dcc3b5aa765d61d8327deb882cf99" > test2.txt
 
 # Use the wordlist
+# --format=Raw-MD5 : see the note in Exercise 2.1 — required or John
+#                     misdetects this hash type and finds nothing
 # --wordlist=<file> : try each word in this file as a candidate password,
 #                      instead of John's default guessing rules
-john --wordlist=/wordlists/basic.txt test2.txt
+john --format=Raw-MD5 --wordlist=/wordlists/basic.txt test2.txt
 
 # Check the result
 # --show : print the already-cracked password (see above)
-john --show test2.txt
+john --format=Raw-MD5 --show test2.txt
 ```
 
 **What password was it?** _________________
@@ -158,8 +164,10 @@ echo -n "yourword" | md5sum
 echo "paste_your_hash_here" > myhash.txt
 
 # Try to crack it
+# --format=Raw-MD5 : see the note in Exercise 2.1 — required or John
+#                     misdetects this hash type and finds nothing
 # --wordlist=<file> : try each word in this file as a candidate password
-john --wordlist=/wordlists/basic.txt myhash.txt
+john --format=Raw-MD5 --wordlist=/wordlists/basic.txt myhash.txt
 ```
 
 **Did John crack your password?** ✓ Yes ✓ No

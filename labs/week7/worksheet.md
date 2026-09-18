@@ -193,6 +193,13 @@ SELECT * FROM employees;
 
 ### 8. Telnet Analysis
 
+Open the Wireshark box's own desktop at `http://localhost:3000` (noVNC) and
+do **everything below from a terminal inside that desktop** — not from the
+attacker container. The lab network is a Docker bridge, which behaves like a
+switch: it only delivers traffic to/from a container's own interface, so a
+`telnet` run from anywhere else never reaches the Wireshark box's capture at
+all (same behaviour you already saw in Week 1/Week 3).
+
 Start a packet capture in Wireshark first, then log in via Telnet with the
 credentials below — this lets you see your own login travel across the
 network in plain text, since Telnet has no encryption at all.

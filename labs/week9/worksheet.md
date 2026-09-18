@@ -213,6 +213,14 @@ ss -tlnp | grep 1080
 
 **Is the SOCKS proxy listening on port 1080?**  ✓ Yes  ✓ No
 
+By default, proxychains is configured to talk to a Tor proxy (`socks4 127.0.0.1 9050`), not the SOCKS5 proxy you just opened. Point it at your tunnel before continuing:
+
+```bash
+# Edit /etc/proxychains/proxychains.conf (or /etc/proxychains4.conf if that's
+# the path on your system) and replace the last line with:
+sed -i 's/^socks4.*9050/socks5 127.0.0.1 1080/' /etc/proxychains/proxychains.conf
+```
+
 ---
 
 ### Exercise 3.2: Route Traffic via Proxychains
@@ -225,7 +233,11 @@ proxychains curl http://10.10.90.20
 # -sT : TCP connect scan (completes the full 3-way handshake, unlike -sS)
 # -Pn : skip host discovery (treat all hosts as up) — proxied connections
 #       can't send the raw ICMP/ARP probes normal discovery relies on
-proxychains nmap -sT -Pn 10.10.90.0/24
+# -p  : scope to the ports we care about — every proxied connection is
+#       serialised through one tunnel, so a full-port /24 sweep with no
+#       -p can take a very long time; scope it to finish in a reasonable
+#       window
+proxychains nmap -sT -Pn -p 22,80,443,3306,8080 10.10.90.0/24
 ```
 
 **What hosts did proxychains nmap find?**

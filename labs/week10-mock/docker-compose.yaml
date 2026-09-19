@@ -1,0 +1,102 @@
+# Week 10 Mock Exam: Practice Penetration Test
+#
+# A shorter, friendlier rehearsal for the real Week 10 capstone. Same chain
+# of skills (recon -> web/FTP enum -> crack a password -> foothold ->
+# privilege escalation), different scenario, different specifics, more
+# direct hints along the way.
+
+services:
+  attacker:
+    image: ethical-base
+    container_name: week10mock-attacker
+    hostname: kali-attacker
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    tty: true
+    stdin_open: true
+    networks:
+      lab_network:
+        ipv4_address: 10.10.50.2
+    command: >
+      /bin/bash -c "
+      echo 'Week 10 Mock Exam attacker ready! Use: docker exec -it week10mock-attacker bash' &&
+      tail -f /dev/null"
+    restart: unless-stopped
+
+  web:
+    image: nginx:alpine
+    container_name: week10mock-web
+    hostname: technova-web
+    volumes:
+      - ./web-content:/usr/share/nginx/html:ro
+    networks:
+      lab_network:
+        ipv4_address: 10.10.50.10
+    restart: unless-stopped
+
+  ftp:
+    image: ubuntu:22.04
+    container_name: week10mock-ftp
+    hostname: technova-ftp
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    volumes:
+      - ./ftp-data:/var/ftp-source:ro
+    command: >
+      /bin/bash -c "
+      apt-get update -qq &&
+      apt-get install -y -q vsftpd &&
+      mkdir -p /srv/ftp/pub &&
+      cp /var/ftp-source/* /srv/ftp/pub/ &&
+      chown root:root /srv/ftp &&
+      chmod 755 /srv/ftp &&
+      mkdir -p /var/run/vsftpd/empty &&
+      echo 'anonymous_enable=YES' > /etc/vsftpd.conf &&
+      echo 'local_enable=NO' >> /etc/vsftpd.conf &&
+      echo 'write_enable=NO' >> /etc/vsftpd.conf &&
+      echo 'anon_root=/srv/ftp' >> /etc/vsftpd.conf &&
+      echo 'listen=YES' >> /etc/vsftpd.conf &&
+      echo 'listen_ipv6=NO' >> /etc/vsftpd.conf &&
+      echo 'pasv_enable=YES' >> /etc/vsftpd.conf &&
+      echo 'pasv_min_port=21100' >> /etc/vsftpd.conf &&
+      echo 'pasv_max_port=21110' >> /etc/vsftpd.conf &&
+      /usr/sbin/vsftpd /etc/vsftpd.conf"
+    networks:
+      lab_network:
+        ipv4_address: 10.10.50.11
+    restart: unless-stopped
+
+  ssh-target:
+    image: ubuntu:22.04
+    container_name: week10mock-ssh
+    hostname: technova-ssh
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: >
+      /bin/bash -c "
+      apt-get update -qq &&
+      apt-get install -y -q openssh-server sudo less &&
+      id -u jreyes &>/dev/null || useradd -m -s /bin/bash jreyes &&
+      echo 'jreyes:Rusty2024' | chpasswd &&
+      echo 'flag{mock10_ssh_foothold}' > /home/jreyes/user.txt &&
+      chown jreyes:jreyes /home/jreyes/user.txt &&
+      echo 'flag{mock10_privesc_complete}' > /root/root.txt &&
+      chmod 600 /root/root.txt &&
+      grep -q 'jreyes ALL' /etc/sudoers || echo 'jreyes ALL=(ALL) NOPASSWD: /usr/bin/less' >> /etc/sudoers &&
+      sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
+      sed -i 's/PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config &&
+      ssh-keygen -A &&
+      mkdir -p /var/run/sshd &&
+      /usr/sbin/sshd -D"
+    networks:
+      lab_network:
+        ipv4_address: 10.10.50.12
+    restart: unless-stopped
+
+networks:
+  lab_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.50.0/24

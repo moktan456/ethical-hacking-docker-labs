@@ -37,6 +37,8 @@ labs/week9/internal-web/.DS_Store
 # finishes. Remove these lines once the course has moved past that content.
 labs/week8/ctf-walkthrough.md
 labs/week9/ctf-walkthrough.md
+labs/week10-mock/ctf-walkthrough.md
+labs/week10-mock/INSTRUCTOR-WALKTHROUGH.md
 
 # Week 10 is a live exam — never track/push it. Publish it deliberately
 # (e.g. `git add -f labs/week10 && git commit`) only when ready to release it.

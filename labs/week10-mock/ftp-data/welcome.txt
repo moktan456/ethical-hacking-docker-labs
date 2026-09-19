@@ -1,0 +1,10 @@
+Welcome to the TechNova Solutions FTP server.
+
+IT NOTICE: Password rotation is overdue this quarter. Reminder policy for
+temporary passwords: PetName + current year. James still hasn't changed his
+from when it was set up — his old dog was called "Rusty". You know the year.
+
+See backup_notice.txt.enc for the latest handover memo (encrypted — ask IT
+for the password if you don't already know our policy).
+
+- IT Team

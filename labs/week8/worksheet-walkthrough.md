@@ -106,6 +106,15 @@ whoami
 **Verified result:** drops into a root shell (`whoami` → `root`);
 `cat /root/user.txt` → **`flag{w8_suid_or_cron_root}`**.
 
+**Common student mistake:** dropping the `-p` flag (typed as
+`find . -exec /bin/sh \; -quit`, no `-p`) still spawns a shell, but
+`whoami` comes back `lowpriv`, not `root`. This isn't a lab bug — `/bin/sh`
+on this image is `dash`, which drops effective privileges back to the real
+uid at startup unless told not to via `-p`. If a student reports "the
+exploit ran but I'm still lowpriv," check for the missing `-p` first. `id`
+is also a more reliable check than `whoami` here — it shows `euid=0(root)`
+even in cases where the prompt itself looks unchanged.
+
 **Path B — writable cron job:**
 ```bash
 echo '#!/bin/bash' > /opt/scripts/backup.sh

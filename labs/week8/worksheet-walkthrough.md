@@ -273,24 +273,3 @@ cat /root/root.txt
    every other user's data. Almost every real breach narrative treats
    escalation as the pivot point between "an incident" and "a
    catastrophic breach."
-
----
-
-## Notes for the Instructor
-
-- Both flags are shared across their respective two paths by design
-  (`flag{w8_suid_or_cron_root}` for either Part 1 path,
-  `flag{w8_gtfobins_sudo_root}` for either Part 2 path) — this is
-  intentional so students can validate success regardless of which path
-  they chose, not a sign the two paths are the same vulnerability.
-- The SMB share listing (`smbclient -L`) prints a benign
-  `smbXcli_negprot_smb1_done` warning before falling back and succeeding —
-  don't let students think the command failed; the share listing itself
-  still comes through correctly (see also the Week 5 walkthrough's note on
-  this same behaviour).
-- The GTFOBins `less` escalation is normally taught as the interactive
-  `!/bin/sh` escape inside the pager (a full root shell). This walkthrough
-  verified the equivalent non-interactive form (`sudo less
-  /root/root.txt`, direct arbitrary-file-read) for scripted verification —
-  demonstrate the interactive shell-escape version live in class, since it
-  better shows students the full extent of what NOPASSWD `less` grants.

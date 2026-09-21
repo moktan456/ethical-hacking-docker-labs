@@ -187,15 +187,30 @@ ssh deskuser@10.10.8.11
 ### Task 2: Enumerate
 
 ```bash
-# Enumerate users and groups (Linux equivalent of net user / net localgroup)
+# cat /etc/passwd  : lists every local user account — Linux equivalent of
+#                     Windows' net user
 cat /etc/passwd
+
+# getent group sudo : lists members of the sudo group — who can escalate
+#                      to root, equivalent of net localgroup administrators
 getent group sudo
 
-# Check for processes running as root
+# ps aux | grep root : lists processes currently running as root — reveals
+#                       what's running with elevated privileges, and
+#                       therefore worth targeting
 ps aux | grep root
 
-# Search for exposed credentials
+# find / -name "*.conf"  : search the whole filesystem for config files
+# 2>/dev/null             : hide "permission denied" noise you can't read
+# grep -v "^/proc"        : filter out /proc's virtual files — not real
+#                            configs, just clutter
 find / -name "*.conf" 2>/dev/null | grep -v "^/proc"
+
+# grep -ri password <files> : search those config files for the word
+#                              "password" — hunting for hardcoded
+#                              credentials left in plaintext, a very
+#                              common real-world finding
+# -r : recursive   -i : case-insensitive
 grep -ri password /etc/app/*.conf 2>/dev/null
 ```
 

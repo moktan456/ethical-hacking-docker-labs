@@ -5,10 +5,9 @@ enumeration, FTP enumeration, password cracking, SSH foothold, privilege
 escalation), a different scenario, and a bit friendlier: fewer services,
 more direct hints, a shorter time limit.
 
-**Not published to the public repo.** This lab is gitignored
-(`labs/week10-mock/`) — like Week 10 itself, it should only reach students
-when the instructor deliberately hands it out (a zip, an LMS upload, or a
-one-off `git add -f`), not sit visible in git history beforehand.
+This is practice material — a rehearsal for the real Week 10 exam, which
+stays private and unpublished. This mock version, including its answer
+key, is published for students to use.
 
 ## Quick Start
 
@@ -31,10 +30,10 @@ All containers run on an isolated network (`10.10.50.0/24`):
 
 ## Documentation
 
-- [worksheet.md](worksheet.md) — student exam worksheet
+- [mock-exam.md](mock-exam.md) — student exam worksheet
 - [ctf-challenge.md](ctf-challenge.md) — optional CTF framing (two flags)
-- `INSTRUCTOR-WALKTHROUGH.md` / `ctf-walkthrough.md` — instructor-only
-  answer keys (gitignored, not present unless generated locally)
+- [mock-exam-walkthrough.md](mock-exam-walkthrough.md) /
+  [ctf-walkthrough.md](ctf-walkthrough.md) — answer keys
 
 ## Cleanup
 

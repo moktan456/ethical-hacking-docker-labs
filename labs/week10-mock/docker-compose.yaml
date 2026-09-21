@@ -78,7 +78,7 @@ services:
       apt-get update -qq &&
       apt-get install -y -q openssh-server sudo less &&
       id -u jreyes &>/dev/null || useradd -m -s /bin/bash jreyes &&
-      echo 'jreyes:Rusty2024' | chpasswd &&
+      echo 'jreyes:Rusty2026' | chpasswd &&
       echo 'flag{mock10_ssh_foothold}' > /home/jreyes/user.txt &&
       chown jreyes:jreyes /home/jreyes/user.txt &&
       echo 'flag{mock10_privesc_complete}' > /root/root.txt &&

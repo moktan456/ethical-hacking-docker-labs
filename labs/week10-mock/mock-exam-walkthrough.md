@@ -1,4 +1,4 @@
-# Week 10 Mock Exam — Instructor Walkthrough & Answer Key
+# Week 10 Mock Exam — Walkthrough & Answer Key
 
 > Verified against live containers. Not for student distribution.
 
@@ -47,19 +47,68 @@ same recon lesson as Week 8's workstation target.
 
 ## Phase 3: FTP Enumeration & Decryption
 
+### 3.1 — Connect and pull the files down
+
+Use the `ftp` client directly rather than `curl` — it's the real tool for
+the job, and it lands the files on the attacker machine's own disk, which
+you need anyway for the decryption step that follows.
+
 ```bash
-curl ftp://anonymous:anonymous@10.10.50.11/pub/
-curl ftp://anonymous:anonymous@10.10.50.11/pub/welcome.txt
-curl -o backup_notice.txt.enc ftp://anonymous:anonymous@10.10.50.11/pub/backup_notice.txt.enc
+ftp 10.10.50.11
+# Name: anonymous   Password: anonymous
+ftp> cd pub
+ftp> ls
+ftp> get welcome.txt
+ftp> get backup_notice.txt.enc
+ftp> bye
+
+cat welcome.txt
 ```
 
 **Verified result:** `welcome.txt` states the password policy
 ("PetName + current year") and names the pet ("Rusty") without spelling
 out the year — students have to supply the current year themselves.
-Password: **`Rusty2024`**.
+Password: **`Rusty2026`**. Both files are now local, in the attacker
+container's current directory.
+
+### 3.2 — Why this file needs decrypting at all
+
+`backup_notice.txt.enc` isn't plain text — opening it directly just shows
+binary noise. Two things tell you it's deliberately protected, not just a
+random binary file: the `.enc` extension (a filename convention, not
+proof by itself), and `welcome.txt` explicitly calling it "encrypted."
+Any file flagged this way in an engagement is worth decrypting — it's
+exactly the kind of thing (credentials, internal memos, configs) an
+attacker targets.
+
+### 3.3 — Working out *how* to decrypt it
+
+Don't guess a tool blindly — check the file first:
 
 ```bash
-openssl enc -aes-256-cbc -pbkdf2 -d -in backup_notice.txt.enc -k Rusty2024
+file backup_notice.txt.enc
+```
+**Verified result:** `backup_notice.txt.enc: openssl enc'd data with
+salted password` — modern `file` recognises the format directly and
+names the tool for you.
+
+If `file` doesn't recognise it (older systems), look at the raw header
+bytes yourself:
+```bash
+xxd backup_notice.txt.enc | head -1
+```
+**Verified result:** `5361 6c74 6564 5f5f ...` → ASCII `Salted__` — this
+exact 8-byte magic string is OpenSSL's own marker for a file made with
+`openssl enc` using a password (rather than a raw key). Seeing it tells
+you definitively which tool to reach for: `openssl enc -d`.
+
+The header doesn't record which cipher or KDF was used, though — that's
+not something you can read off the file. This course has consistently
+used `aes-256-cbc` with `-pbkdf2` for this kind of exercise, so try that
+combination first:
+
+```bash
+openssl enc -aes-256-cbc -pbkdf2 -d -in backup_notice.txt.enc -k Rusty2026
 ```
 
 **Verified result:** decrypts to a handover memo confirming the `jreyes`
@@ -73,7 +122,7 @@ the SSH password (password reuse, the exercise's core teaching point).
 
 ```bash
 ssh jreyes@10.10.50.12
-# Password: Rusty2024
+# Password: Rusty2026
 whoami
 id
 cat /home/jreyes/user.txt

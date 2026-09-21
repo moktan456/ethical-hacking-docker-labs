@@ -55,13 +55,14 @@ than they should.)
 
 _________________________________
 
-**Build a small password list** (matching the Week 6 approach — a short,
-targeted list, not a full rockyou run):
+**Build a small password list** — instead of guessing candidates by hand,
+pull the 20 most common real-world passwords straight from rockyou.txt
+(the same wordlist Hydra uses against real targets, just trimmed down so
+the attack finishes in seconds instead of hours):
 ```bash
-echo "password123" > /tmp/pw.txt
-echo "sunshine1" >> /tmp/pw.txt
-echo "letmein" >> /tmp/pw.txt
-echo "admin123" >> /tmp/pw.txt
+# -20 : keep only the first 20 lines — the 20 most common passwords in
+#       the file (rockyou.txt is sorted by real-world frequency)
+head -20 /usr/share/wordlists/rockyou.txt > /tmp/pw.txt
 ```
 
 **Brute-force it with Hydra**, using the username you found:

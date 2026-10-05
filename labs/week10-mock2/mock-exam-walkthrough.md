@@ -3,6 +3,15 @@
 > Verified against live containers end-to-end. Do not distribute to
 > students before the end of the session.
 
+**Grading note:** `mock-exam.md` no longer labels anything "Flag 1" up
+front, gives no network/host/service info, and never names "anonymous
+access" as the technique — students have to actually enumerate to find
+it, and Recon & Enumeration is graded in its own right (30%, broken into
+6 line items) rather than folded silently into a flag or a vague
+"methodology" mark. The 3 flags and their exact technique names below
+are for your reference only; nothing on this page should reach students
+before the session ends.
+
 ---
 
 ## Setup
@@ -11,6 +20,9 @@
 cd labs/week10-mock2 && docker compose up -d
 # Provisioning: web/ftp are fast; ssh-target and database take ~30-60s
 docker exec -it week10mock2-attacker bash
+
+# What a student actually has to do first - find their own position:
+ip addr show   # → 10.10.60.2/24, so the target range is 10.10.60.0/24
 ```
 
 **Known gotcha (environment, not a skill being tested):** the bundled

@@ -36,7 +36,8 @@ services:
       echo 'SCENARIO: test CyberGuard Corp internal network.' &&
       echo 'Find 3 flags and document your methodology.' &&
       echo '' &&
-      echo 'Network: 10.10.60.0/24   Time limit: 3 hours' &&
+      echo 'No network, host, or service info is given - find it yourself.' &&
+      echo 'Time limit: 3 hours' &&
       echo '' &&
       echo 'Access: docker exec -it week10mock2-attacker bash' &&
       tail -f /dev/null"

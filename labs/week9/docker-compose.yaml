@@ -1,115 +1,193 @@
 # Week 9: Lateral Movement Between Systems and Services
 #
-# Network topology:
-#   EXTERNAL (10.10.9.0/24) — attacker lives here, can reach pivot host only
-#   INTERNAL (10.10.90.0/24) — internal targets, only reachable via pivot host
+# Rebuilt to match the Week 9 slide deck / worksheet techniques directly:
+#   - Network enumeration (nmap)
+#   - Credential dumping (weak file permissions exposing a dumped hash +
+#     a backed-up SSH private key)
+#   - Pass-the-Hash (Impacket against a Samba service account's NTLM hash)
+#   - Exploiting a trust relationship (reusing the leaked SSH key)
+#   - "Windows-like" credential extraction (grep for passwords in a config
+#     file, the Linux equivalent of a mimikatz-style credential hunt)
+#   - Remote access / privilege escalation via a reused password
 #
-#   week9-attacker  (10.10.9.2)  — external only
-#   week9-pivot     (10.10.9.10 + 10.10.90.10) — both networks (the hop)
-#   week9-internal-web  (10.10.90.20) — internal only
-#   week9-internal-db   (10.10.90.21) — internal only
+# One flat network, same as Week 8 — you work from the Kali attacker
+# container and reach every target directly. (Network *pivoting* through a
+# non-routable segment is a different lab; this week is about reusing
+# credentials and trust relationships between hosts you can already reach.)
+#
+#   week9-attacker        10.10.9.2   Kali (ethical-base image)
+#   week9-workstation      10.10.9.10  initial foothold (creds supplied)
+#   week9-fileserver       10.10.9.12  Samba: anonymous share + PtH-only share
+#   week9-ubuntu-desktop   10.10.9.11  reached via a leaked SSH key; root via
+#                                      a password reused from a config file
+#
+# A short-lived named volume carries only the PUBLIC half of a keypair that
+# week9-workstation generates for itself at startup from week9-workstation to
+# week9-ubuntu-desktop, the same way a real backup job might distribute a
+# host key. The matching private key never leaves week9-workstation's own
+# filesystem — it is left there with weak permissions for students to find,
+# which is the vulnerability this exercise teaches.
 
 services:
 
   week9-attacker:
-    image: metasploitframework/metasploit-framework:latest
+    image: ethical-base
     container_name: week9-attacker
     hostname: kali-attacker
     stdin_open: true
     tty: true
-    # The msf image's entrypoint drops to an unprivileged user by default, which
-    # makes `apk add` below fail (exit 99). Run as root (MSF_UID=0) instead.
-    user: root
-    environment:
-      - MSF_UID=0
     networks:
-      week9-external:
+      week9-net:
         ipv4_address: 10.10.9.2
     cap_add:
       - NET_ADMIN
-      - NET_RAW
+    security_opt:
+      - seccomp:unconfined
+    # impacket-scripts provides impacket-smbclient / impacket-psexec (the
+    # pass-the-hash / RCE tools named in the slides). ethical-base only ships
+    # python3-impacket (the library + impacket-secretsdump etc.), so the
+    # extra console scripts are installed at container start instead of
+    # rebuilding the shared base image just for this one week.
     command: >
       /bin/bash -c "
-      apk add --no-cache openssh-client mysql-client proxychains-ng iproute2 > /dev/null 2>&1 &&
+      sudo apt-get update -qq &&
+      sudo apt-get install -y -qq impacket-scripts > /dev/null 2>&1 &&
       echo '======================================================' &&
-      echo ' Week 9 Attacker Ready (Metasploit included)' &&
-      echo ' Your IP: 10.10.9.2 (external network only)' &&
-      echo ' Pivot:   10.10.9.10 (ssh user: pivotuser / pivot123)' &&
-      echo ' Internal targets (reachable ONLY via pivot):' &&
-      echo '   10.10.90.20  week9-internal-web  (HTTP :80)' &&
-      echo '   10.10.90.21  week9-internal-db   (MySQL :3306)' &&
+      echo ' Week 9 Attacker Ready (Kali + impacket-scripts)' &&
+      echo ' Your IP: 10.10.9.2' &&
+      echo ' Targets:' &&
+      echo '   10.10.9.10  week9-workstation    (SSH :22)' &&
+      echo '   10.10.9.12  week9-fileserver     (SMB  :445)' &&
+      echo '   10.10.9.11  week9-ubuntu-desktop (SSH :22)' &&
       echo ' Enter: docker exec -it week9-attacker bash' &&
       echo '======================================================' &&
       tail -f /dev/null"
 
-  week9-pivot:
+  # Initial foothold. Credentials are supplied up front (framed as "obtained
+  # during a prior step of the engagement") — this week picks up *after* a
+  # foothold and asks what you do with it; earning the first foothold itself
+  # is Week 8's topic.
+  week9-workstation:
     image: ubuntu:22.04
-    container_name: week9-pivot
-    hostname: pivot-host
+    container_name: week9-workstation
+    hostname: workstation
     environment:
       - DEBIAN_FRONTEND=noninteractive
-    networks:
-      week9-external:
-        ipv4_address: 10.10.9.10
-      week9-internal:
-        ipv4_address: 10.10.90.10
-    cap_add:
-      - NET_ADMIN
     command: >
       /bin/bash -c "
       apt-get update -qq &&
-      apt-get install -y -q openssh-server iproute2 iptables net-tools iputils-ping &&
-      mkdir -p /var/run/sshd &&
+      apt-get install -y -qq openssh-server sudo > /dev/null 2>&1 &&
+      useradd -m -s /bin/bash netadmin &&
+      echo 'netadmin:Sp1ngR3set!' | chpasswd &&
+      sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
+      sed -i 's/PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config &&
       ssh-keygen -A &&
-      id -u pivotuser &>/dev/null || useradd -m -s /bin/bash pivotuser &&
-      echo 'pivotuser:pivot123' | chpasswd &&
-      echo 'flag{w9_pivot_host_accessed}' > /home/pivotuser/user.txt &&
-      chown pivotuser:pivotuser /home/pivotuser/user.txt &&
-      sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
-      sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
-      grep -q AllowTcpForwarding /etc/ssh/sshd_config || echo 'AllowTcpForwarding yes' >> /etc/ssh/sshd_config &&
-      grep -q PermitTunnel /etc/ssh/sshd_config || echo 'PermitTunnel yes' >> /etc/ssh/sshd_config &&
-      grep -q GatewayPorts /etc/ssh/sshd_config || echo 'GatewayPorts yes' >> /etc/ssh/sshd_config &&
-      (echo 1 > /proc/sys/net/ipv4/ip_forward 2>/dev/null || true) &&
-      echo 'Pivot host ready. Internal network: 10.10.90.0/24' &&
-      /usr/sbin/sshd -D"
-    restart: unless-stopped
-
-  week9-internal-web:
-    image: nginx:alpine
-    container_name: week9-internal-web
-    hostname: internal-web
+      echo 'flag{w9_initial_foothold_confirmed}' > /home/netadmin/user.txt &&
+      chown netadmin:netadmin /home/netadmin/user.txt &&
+      chmod 600 /home/netadmin/user.txt &&
+      mkdir -p /opt/maintenance/.ssh_backup &&
+      if [ ! -f /opt/maintenance/.ssh_backup/id_rsa ]; then
+        ssh-keygen -t rsa -b 2048 -N '' -C 'deskuser-backup-key' -f /opt/maintenance/.ssh_backup/id_rsa -q;
+      fi &&
+      chmod 644 /opt/maintenance/.ssh_backup/id_rsa &&
+      mkdir -p /mnt/keyexchange &&
+      cp /opt/maintenance/.ssh_backup/id_rsa.pub /mnt/keyexchange/deskuser_id_rsa.pub &&
+      echo '# nightly SMB backup sync (legacy cron job, do not edit)' > /opt/maintenance/backup-notes.txt &&
+      echo '# local cache of the service account hash for break-glass recovery' >> /opt/maintenance/backup-notes.txt &&
+      echo '# format: username:uid:LM-hash:NT-hash:::' >> /opt/maintenance/backup-notes.txt &&
+      echo 'svcacct:1000:aad3b435b51404eeaad3b435b51404ee:D96652F55443534D10FCA67C4BAAD485:::' >> /opt/maintenance/backup-notes.txt &&
+      chmod 666 /opt/maintenance/backup-notes.txt &&
+      service ssh start &&
+      tail -f /dev/null"
     networks:
-      week9-internal:
-        ipv4_address: 10.10.90.20
+      week9-net:
+        ipv4_address: 10.10.9.10
     volumes:
-      - ./internal-web:/usr/share/nginx/html:ro
+      - week9-key-exchange:/mnt/keyexchange
     restart: unless-stopped
 
-  week9-internal-db:
-    image: mysql:8.0
-    container_name: week9-internal-db
-    hostname: internal-db
+  # SMB target. "public" is anonymous/guest-readable (plain enumeration).
+  # "secure" requires the svcacct service account and is only reachable with
+  # the NT hash found on week9-workstation — the plaintext password is never
+  # given to students, so getting in here is a genuine Pass-the-Hash, not a
+  # password guess.
+  week9-fileserver:
+    image: ubuntu:22.04
+    container_name: week9-fileserver
+    hostname: fileserver
     environment:
-      - MYSQL_ROOT_PASSWORD=internalR00t
-      - MYSQL_DATABASE=internaldb
-      - MYSQL_USER=appuser
-      - MYSQL_PASSWORD=apppass456
+      - DEBIAN_FRONTEND=noninteractive
+    command: >
+      /bin/bash -c "
+      apt-get update -qq &&
+      apt-get install -y -qq samba > /dev/null 2>&1 &&
+      useradd -M -s /usr/sbin/nologin svcacct &&
+      printf 'N3tw0rkSecure!24\nN3tw0rkSecure!24\n' | smbpasswd -s -a svcacct &&
+      mkdir -p /srv/public /srv/secure &&
+      echo 'IT Notice: file shares are being migrated this quarter.' > /srv/public/notice.txt &&
+      echo 'Handover documentation for the migration is on the secure share.' >> /srv/public/notice.txt &&
+      echo 'Handover Notes (confidential)' > /srv/secure/handover-notes.txt &&
+      echo 'Desktop migration access path: deskuser@10.10.9.11, SSH key only' >> /srv/secure/handover-notes.txt &&
+      echo '(password auth is disabled there). Backup key cached on workstation.' >> /srv/secure/handover-notes.txt &&
+      chown -R svcacct:svcacct /srv/public /srv/secure &&
+      printf '[global]\n workgroup = WORKGROUP\n security = user\n map to guest = Never\n log level = 0\n[public]\n path = /srv/public\n browseable = yes\n read only = yes\n guest ok = yes\n[secure]\n path = /srv/secure\n browseable = yes\n read only = yes\n valid users = svcacct\n' > /etc/samba/smb.conf &&
+      /usr/sbin/smbd --foreground --no-process-group"
     networks:
-      week9-internal:
-        ipv4_address: 10.10.90.21
+      week9-net:
+        ipv4_address: 10.10.9.12
+    restart: unless-stopped
+
+  # Reached only via the SSH private key leaked on week9-workstation
+  # (password auth is disabled here — this is a trust-relationship exploit,
+  # not a brute force). Once in, a config file reuses the root password,
+  # which is the "search config files for passwords" / credential-hunting
+  # step from the slides (the real Linux equivalent of a mimikatz-style
+  # local credential dump — there's no Windows kernel under this container
+  # for mimikatz.exe itself to run against).
+  week9-ubuntu-desktop:
+    image: ubuntu:22.04
+    container_name: week9-ubuntu-desktop
+    hostname: ubuntu-desktop
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: >
+      /bin/bash -c "
+      apt-get update -qq &&
+      apt-get install -y -qq openssh-server > /dev/null 2>&1 &&
+      useradd -m -s /bin/bash deskuser &&
+      echo 'root:Th1sPasswordIsReused99' | chpasswd &&
+      sed -i 's/#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config &&
+      sed -i 's/PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config &&
+      ssh-keygen -A &&
+      mkdir -p /home/deskuser/.ssh &&
+      echo 'waiting for the backup public key from workstation...' &&
+      until [ -s /mnt/keyexchange/deskuser_id_rsa.pub ]; do sleep 2; done &&
+      cat /mnt/keyexchange/deskuser_id_rsa.pub > /home/deskuser/.ssh/authorized_keys &&
+      chown -R deskuser:deskuser /home/deskuser/.ssh &&
+      chmod 700 /home/deskuser/.ssh &&
+      chmod 600 /home/deskuser/.ssh/authorized_keys &&
+      mkdir -p /etc/app &&
+      echo 'service=db-backup-agent' > /etc/app/backup.conf &&
+      echo 'backup_user=svc-backup' >> /etc/app/backup.conf &&
+      echo 'root_password=Th1sPasswordIsReused99' >> /etc/app/backup.conf &&
+      chmod 644 /etc/app/backup.conf &&
+      echo 'flag{w9_lateral_movement_root}' > /root/root.txt &&
+      chmod 600 /root/root.txt &&
+      service ssh start &&
+      tail -f /dev/null"
+    networks:
+      week9-net:
+        ipv4_address: 10.10.9.11
+    volumes:
+      - week9-key-exchange:/mnt/keyexchange
     restart: unless-stopped
 
 networks:
-  week9-external:
+  week9-net:
     driver: bridge
     ipam:
       config:
         - subnet: 10.10.9.0/24
 
-  week9-internal:
-    driver: bridge
-    internal: true
-    ipam:
-      config:
-        - subnet: 10.10.90.0/24
+volumes:
+  week9-key-exchange:

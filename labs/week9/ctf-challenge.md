@@ -1,41 +1,43 @@
-# Week 9 CTF Challenge — Lateral Movement & Pivoting
+# Week 9 CTF Challenge — Lateral Movement
 
-> **Optional challenge** — attempt after completing the main worksheet exercises.  
+> **Optional challenge** — attempt after completing the main worksheet exercises.
 > Instructor releases the walkthrough at the end of the session.
 
 ---
 
-## Network Topology
+## Scenario
+
+You have a single low-privilege foothold: `netadmin` on `week9-workstation`
+(`10.10.9.10`). Everything else on the network has to be earned by chaining
+together what that foothold leads to — a dumped hash, a leaked key, a
+reused password. No further hints are given on what each step unlocks.
 
 ```
-[Attacker 10.10.9.2] ──── EXTERNAL ──── [Pivot 10.10.9.10]
-                                                    │
-                                              INTERNAL
-                                                    │
-                                    [Internal Web 10.10.90.20]
+week9-attacker (you)   10.10.9.2
+week9-workstation      10.10.9.10   ← starting foothold
+week9-fileserver       10.10.9.12
+week9-ubuntu-desktop   10.10.9.11   ← final target
 ```
-
-The internal network (`10.10.90.0/24`) is **not directly reachable** from the attacker.  
-You must pivot through the pivot host.
 
 ---
 
 ## Your Mission
 
-Two flags are hidden — one on the pivot host, one deep inside the internal network.  
-Submit each flag in the format `flag{...}`.
+Two flags are hidden. Submit each in the format `flag{...}`.
 
 ### Flag 1 — user.txt
 
-SSH credentials for the pivot host are provided in the lab (`pivotuser` / `pivot123`).  
+SSH credentials for the foothold are provided: `netadmin` / `Sp1ngR3set!`.
 Log in and find the flag in the user's home directory.
 
 `user.txt` → `flag{________________________}`
 
 ### Flag 2 — root.txt
 
-Set up SSH port forwarding through the pivot host to reach the internal web server.  
-The flag is served at the web root of `10.10.90.20`.
+Somewhere beyond the foothold is a path to `root` on a second host. It
+involves at least one credential you'll have to find rather than guess, and
+at least one trust relationship you'll have to exploit rather than
+brute-force.
 
 `root.txt` → `flag{________________________}`
 

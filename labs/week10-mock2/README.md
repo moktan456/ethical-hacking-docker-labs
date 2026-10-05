@@ -1,9 +1,10 @@
 # Week 10 Mock Exam 2: Comprehensive Penetration Test
 
-A challenging 3-hour practical exam covering Weeks 1-9. Only 3 flags,
-deliberately uneven: 1 easy, 2 genuinely hard. Flag 1 plus solid
-documentation already equals 50% of the grade — the other 50% has to be
-earned by actually attacking something.
+A challenging 3-hour practical exam covering Weeks 1-9. Recon and
+enumeration are graded step by step (30% of the total), two flags are
+genuinely hard (25% each), and documentation rounds it out (20%).
+Thorough recon + documentation alone already equals a 50% pass — no
+exploit required to pass, but two real ones are needed to score high.
 
 ---
 
@@ -13,9 +14,14 @@ You have been contracted by **CyberGuard Corp** to test their internal
 network, capture flags as proof of compromise, and document your
 methodology.
 
-**Network Range:** 10.10.60.0/24
 **Time Limit:** 3 hours
-**Starting Point:** Attacker machine at 10.10.60.2
+**Starting Point:** `docker exec -it week10mock2-attacker bash`
+
+No network range, host list, or service list is given anywhere in this
+file — working that out yourself is the first graded skill (see the
+rubric below). Instructors: the real topology is in `docker-compose.yaml`
+and `mock-exam-walkthrough.md`; don't hand either to students before the
+session ends.
 
 ---
 
@@ -32,36 +38,37 @@ installing packages before scanning them.
 
 ---
 
-## Lab Network
-
-| Container | IP | Services |
-|-----------|-----|----------|
-| week10mock2-attacker | 10.10.60.2 | Kali (ethical-base) — your attack platform |
-| week10mock2-web | 10.10.60.10 | HTTP :80 — corporate site (recon lead, no flag) |
-| week10mock2-ftp | 10.10.60.11 | FTP :21 — anonymous access, Flag 1 |
-| week10mock2-ssh | 10.10.60.12 | SSH :22 — Flag 2 (targeted password attack + GTFOBins) |
-| week10mock2-db | 10.10.60.13 | MariaDB :3306 — Flag 3 (credential reuse + hash crack + decrypt) |
-
----
-
 ## Exam Structure & Marking Guide
 
 **Total Marks: 100%**
 
-### Part A: Flags (70%)
+### Part A: Recon & Enumeration (30%)
+
+Graded on what was actually found and documented, not on whether a flag
+happened to come out of it.
+
+| Item | Marks | Concepts Tested |
+|------|-------|----------------|
+| Network / Host Discovery | 5% | Week 4: determining scope from your own platform, finding live hosts |
+| Port Scanning | 5% | Week 4: full, justified port coverage |
+| Host / Service Enumeration | 5% | Week 5: service + version on every open port, including ones never exploited |
+| Web Enumeration | 5% | Week 5: inspecting beyond the rendered page |
+| FTP Enumeration | 5% | Week 5: testing actual access level, exploring what it gives |
+| File Discovery | 5% | Retrieving and reading whatever's reachable |
+
+### Part B: Hard Flags (50%)
 
 | Flag | Difficulty | Marks | Concepts Tested |
 |------|-----------|-------|----------------|
-| Flag 1: FTP Enumeration | ⭐ EASY | 20% | Week 4/5: Nmap, anonymous FTP |
-| Flag 2: Targeted Password Attack → Privesc | ⭐⭐⭐ HARD | 25% | Week 6: Hydra against a *built* wordlist; Week 8: GTFOBins (sudo `find`) |
-| Flag 3: Credential Reuse → Hash Crack → Decrypt | ⭐⭐⭐ HARD | 25% | Week 9: credential reuse; Week 6: offline hash cracking (john/hashcat); openssl decryption |
+| Targeted Password Attack → Privesc | ⭐⭐⭐ HARD | 25% | Week 6: Hydra against a *built* wordlist; Week 8: GTFOBins (sudo `find`) |
+| Credential Reuse → Hash Crack → Decrypt | ⭐⭐⭐ HARD | 25% | Week 9: credential reuse; Week 6: offline hash cracking (john/hashcat); openssl decryption |
 
-### Part B: Documentation (30%)
+### Part C: Documentation (20%)
 
 | Component | Marks | Requirements |
 |-----------|-------|-------------|
-| Methodology | 15% | Every phase, including recon — even the phase with no flag attached |
-| Evidence | 10% | Output/screenshots for every flag and major pivot |
+| Methodology | 10% | Every phase, including recon — even where no flag was attached |
+| Evidence | 5% | Output/screenshots for every finding and major pivot |
 | Recommendations | 5% | One specific remediation per vulnerability found |
 
 ---
@@ -70,10 +77,8 @@ installing packages before scanning them.
 
 **To achieve 50%, students must:**
 
-1. **Capture Flag 1 (20%)** — anonymous FTP access, no exploitation needed.
-2. **Document recon + the attempt narrative fully (30%)** — including
-   Phase 1 (network/service enumeration) even though it carries no flag,
-   and whatever was tried on Flags 2/3 even if incomplete.
+1. **Fully complete and document Recon & Enumeration (30%)** — network/host discovery, port scanning, service enumeration (including unexploited services), web enumeration, FTP enumeration, file discovery.
+2. **Baseline Documentation (20%)** — write up everything above properly, even where it didn't lead to a flag.
 
 **No hard flag is required to pass.** This is intentional — it rewards
 disciplined methodology on its own, separately from exploitation skill.
@@ -82,10 +87,10 @@ disciplined methodology on its own, separately from exploitation skill.
 
 ## Higher Achievement
 
-- **60–69%:** Flag 1 + one hard flag, decent documentation.
-- **70–84%:** Flag 1 + both hard flags, good documentation.
-- **85–100%:** All 3 flags, professional-grade documentation across
-  methodology, evidence, and recommendations.
+- **60–69%:** Full recon + documentation (50%) + one hard flag (25%).
+- **70–84%:** Full recon + documentation (50%) + most of both hard flags.
+- **85–100%:** Both hard flags fully, near-complete recon marks,
+  professional-grade documentation across all three criteria.
 
 ---
 
@@ -93,11 +98,11 @@ disciplined methodology on its own, separately from exploitation skill.
 
 | Week | Concept | How It's Tested |
 |------|---------|----------------|
-| Week 4 | Reconnaissance (Nmap) | Required throughout |
-| Week 5 | Service enumeration | FTP, SSH, MariaDB |
-| Week 6 | Password/hash attacks | Hydra (Flag 2), john/hashcat (Flag 3) |
-| Week 8 | Privilege escalation | GTFOBins `sudo find` (Flag 2) |
-| Week 9 | Lateral movement / credential reuse | DB creds leaked on ssh-target (Flag 3) |
+| Week 4 | Reconnaissance (Nmap) | Network/host discovery, port scanning |
+| Week 5 | Service enumeration | Host/service, web, FTP enumeration, file discovery |
+| Week 6 | Password/hash attacks | Hydra (hard flag 1), john/hashcat (hard flag 2) |
+| Week 8 | Privilege escalation | GTFOBins `sudo find` (hard flag 1) |
+| Week 9 | Lateral movement / credential reuse | DB creds leaked on ssh-target (hard flag 2) |
 
 ---
 
@@ -110,7 +115,9 @@ against this MariaDB image) · `john` / `hashcat` · `openssl`
 
 ## Flag Format
 
-`flag{mock2_description_with_numbers}` — e.g. `flag{mock2_ftp_an0nym0us_acc3ss}`
+Flags follow the format `flag{mock2_description_with_numbers}`. No
+example flag is given here — the exact strings are in the compose file
+and the instructor-only walkthrough.
 
 ---
 
@@ -133,13 +140,13 @@ don't have explicit written authorisation to test.
 
 ## Differences from week10-mock
 
-**week10-mock** (original): 3 services, 2 flags, linear, ~90 minutes.
+**week10-mock** (original): 3 services, 2 flags, linear, ~90 minutes,
+target network given up front.
 
-**week10-mock2** (this lab): 5 services, 3 flags deliberately uneven in
-difficulty (1 easy, 2 hard), a full 3-hour exam, and a grading structure
-where documentation + the one easy flag already guarantees a pass —
-exploitation skill is what separates a pass from a high grade, not what
-gates the pass itself.
+**week10-mock2** (this lab): 5 services, recon graded as its own 30%
+block instead of a single pass/fail flag, 2 deliberately hard flags
+(25% each), a full 3-hour exam, and nothing about the network or
+services handed to the student — scope discovery is itself assessed.
 
 ---
 

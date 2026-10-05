@@ -23,15 +23,48 @@ reach `root` somewhere else on the network.
 ### Network Map
 
 ```
-week9-attacker (Kali)          10.10.9.2
-week9-workstation               10.10.9.10   ← your foothold starts here
-week9-fileserver (Samba)        10.10.9.12
-week9-ubuntu-desktop            10.10.9.11   ← the final target
+                    ┌──────────────────────────┐
+                    │  week9-attacker (Kali)    │
+                    │       10.10.9.2           │
+                    └─────────────┬─────────────┘
+                                  │
+                                  │ ssh netadmin@10.10.9.10
+                                  │ (foothold creds — given)
+                                  ▼
+                    ┌──────────────────────────┐
+                    │  week9-workstation         │   STEP 1: FOOTHOLD
+                    │  10.10.9.10                │
+                    │  user: netadmin            │
+                    └─────────────┬──────────────┘
+                                  │
+                   found here, reused on two different hosts:
+                                  │
+              ┌───────────────────┴───────────────────┐
+              │ weak-perm file                         │ world-readable file
+              │ → svcacct NTLM hash                    │ → deskuser SSH private key
+              ▼                                        ▼
+  ┌──────────────────────────┐            ┌──────────────────────────┐
+  │  week9-fileserver (SMB)   │            │  week9-ubuntu-desktop    │  STEP 3:
+  │  10.10.9.12               │            │  10.10.9.11              │  FINAL TARGET
+  │                           │            │                          │
+  │  STEP 2: PASS-THE-HASH    │            │  password login: BLOCKED│
+  │  impacket-smbclient       │            │  ssh -i <stolen key> →  │
+  │  -hashes :<NT hash>  ───► │            │  deskuser          ───► │
+  │  reaches "secure" share   │            │  config file leaks      │
+  │  (never touches the real  │            │  root's reused password │
+  │  plaintext password)      │            │  su root ───► root.txt  │
+  └──────────────────────────┘            └──────────────────────────┘
 ```
 
-Unlike some weeks, there's no network segmentation here — every host is
-directly reachable from the attacker. The challenge is entirely about
-**credentials and trust**, not routing.
+**On terminology:** this isn't *network pivoting* in the routing sense —
+there's no segmented subnet to tunnel through, and every host above is
+directly reachable from the attacker the whole time (verify this yourself:
+`nmap -sn 10.10.9.0/24` sees all three targets immediately, no SSH tunnel
+required). What's "moving" here is **credentials and trust**, not network
+access: a hash found on one host unlocks a service on a second host, and a
+private key found on that same first host unlocks a login on a third.
+That's lateral movement — the attacker's reachable network never changes,
+only what they're able to authenticate to within it.
 
 ---
 

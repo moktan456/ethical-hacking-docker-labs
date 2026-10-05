@@ -1,0 +1,12 @@
+CyberGuard Corp - Network Services Overview
+===========================================
+
+Internal Network: 10.10.60.0/24
+
+1. Web Server (10.10.60.10) - HTTP :80 - corporate site
+2. FTP Server (10.10.60.11) - FTP :21 - anonymous allowed
+3. Application Server (10.10.60.12) - SSH :22 - hostname cyberguard-app
+4. Database Server (10.10.60.13) - MySQL/MariaDB :3306 - internal only
+
+Last Updated: 2026-10-01
+Maintained by: IT Operations Team

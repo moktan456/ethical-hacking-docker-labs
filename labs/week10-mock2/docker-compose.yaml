@@ -1,0 +1,150 @@
+# Week 10 Mock Exam 2: Comprehensive Penetration Test
+#
+# 3 flags, deliberately uneven in difficulty:
+#   Flag 1 (EASY)  — FTP anonymous enumeration            — 20% of grade
+#   Flag 2 (HARD)  — targeted password attack + GTFOBins  — 25% of grade
+#   Flag 3 (HARD)  — credential reuse + hash crack + enc  — 25% of grade
+# Documentation & methodology                              — 30% of grade
+#
+# Flag 1 + documentation alone = 50% of the total grade, achievable by any
+# student who does basic recon and writes it up properly — even without
+# cracking anything. The two hard flags are where the other 50% lives.
+#
+# Concepts covered: nmap recon, FTP enumeration, targeted password attacks
+# (Hydra), GTFOBins privilege escalation, credential reuse across services,
+# offline hash cracking (john/hashcat), and openssl-based decryption.
+
+services:
+  attacker:
+    image: ethical-base
+    container_name: week10mock2-attacker
+    hostname: kali-attacker
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    tty: true
+    stdin_open: true
+    networks:
+      lab_network:
+        ipv4_address: 10.10.60.2
+    command: >
+      /bin/bash -c "
+      echo '========================================' &&
+      echo 'Week 10 Mock Exam 2 - CyberGuard Corp' &&
+      echo '========================================' &&
+      echo '' &&
+      echo 'SCENARIO: test CyberGuard Corp internal network.' &&
+      echo 'Find 3 flags and document your methodology.' &&
+      echo '' &&
+      echo 'Network: 10.10.60.0/24   Time limit: 3 hours' &&
+      echo '' &&
+      echo 'Access: docker exec -it week10mock2-attacker bash' &&
+      tail -f /dev/null"
+    restart: unless-stopped
+
+  web:
+    image: nginx:alpine
+    container_name: week10mock2-web
+    hostname: cyberguard-web
+    volumes:
+      - ./web-content:/usr/share/nginx/html:ro
+    networks:
+      lab_network:
+        ipv4_address: 10.10.60.10
+    restart: unless-stopped
+
+  # Flag 1 lives here (anonymous, plain enumeration). The README also hints
+  # at an SSH account and its password *pattern* — not the password itself.
+  ftp:
+    image: ubuntu:22.04
+    container_name: week10mock2-ftp
+    hostname: cyberguard-ftp
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    volumes:
+      - ./ftp-data:/var/ftp-source:ro
+    command: >
+      /bin/bash -c "
+      apt-get update -qq &&
+      apt-get install -y -q vsftpd &&
+      mkdir -p /srv/ftp/public &&
+      cp /var/ftp-source/* /srv/ftp/public/ 2>/dev/null || true &&
+      chown -R root:root /srv/ftp &&
+      chmod -R 755 /srv/ftp &&
+      mkdir -p /var/run/vsftpd/empty &&
+      echo 'anonymous_enable=YES' > /etc/vsftpd.conf &&
+      echo 'local_enable=NO' >> /etc/vsftpd.conf &&
+      echo 'write_enable=NO' >> /etc/vsftpd.conf &&
+      echo 'anon_root=/srv/ftp' >> /etc/vsftpd.conf &&
+      echo 'listen=YES' >> /etc/vsftpd.conf &&
+      echo 'listen_ipv6=NO' >> /etc/vsftpd.conf &&
+      echo 'pasv_enable=YES' >> /etc/vsftpd.conf &&
+      echo 'pasv_min_port=21100' >> /etc/vsftpd.conf &&
+      echo 'pasv_max_port=21110' >> /etc/vsftpd.conf &&
+      /usr/sbin/vsftpd /etc/vsftpd.conf"
+    networks:
+      lab_network:
+        ipv4_address: 10.10.60.11
+    restart: unless-stopped
+
+  # Holds the Flag 3 vault: an MD5 hash to crack (john/hashcat + rockyou)
+  # whose plaintext IS the decryption key for an openssl-enc'd blob holding
+  # the actual flag. Reached only with credentials found on ssh-target.
+  database:
+    image: mariadb:10.11
+    container_name: week10mock2-db
+    hostname: cyberguard-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootDBpass2026!
+      - MYSQL_DATABASE=company_db
+      - MYSQL_USER=webuser
+      - MYSQL_PASSWORD=web_P@ss123
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      lab_network:
+        ipv4_address: 10.10.60.13
+    restart: unless-stopped
+
+  # Foothold earned via a targeted password attack (the FTP hint narrows
+  # the password to a small candidate set — build the wordlist, don't
+  # guess). Flag 2 requires a GTFOBins sudo-misconfiguration privesc on
+  # top of that. A backup script here also leaks the DB credentials that
+  # unlock Flag 3.
+  ssh-target:
+    image: ubuntu:22.04
+    container_name: week10mock2-ssh
+    hostname: cyberguard-app
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: >
+      /bin/bash -c "
+      apt-get update -qq &&
+      apt-get install -y -q openssh-server sudo mysql-client &&
+      id -u mrahman &>/dev/null || useradd -m -s /bin/bash mrahman &&
+      echo 'mrahman:Dragon2026' | chpasswd &&
+      echo 'flag{mock2_gtfobins_find_r00t}' > /root/flag2.txt &&
+      chmod 600 /root/flag2.txt &&
+      mkdir -p /opt/scripts &&
+      echo '#!/bin/bash' > /opt/scripts/db_backup.sh &&
+      echo '# Nightly company_db backup - do not edit' >> /opt/scripts/db_backup.sh &&
+      echo 'mysqldump -h 10.10.60.13 -u webuser -pweb_P@ss123 company_db > /opt/scripts/db_backup.sql' >> /opt/scripts/db_backup.sh &&
+      chmod 750 /opt/scripts/db_backup.sh &&
+      chown mrahman:mrahman /opt/scripts/db_backup.sh &&
+      grep -q 'mrahman ALL' /etc/sudoers || echo 'mrahman ALL=(ALL) NOPASSWD: /usr/bin/find' >> /etc/sudoers &&
+      sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
+      sed -i 's/PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config &&
+      ssh-keygen -A &&
+      mkdir -p /var/run/sshd &&
+      /usr/sbin/sshd -D"
+    networks:
+      lab_network:
+        ipv4_address: 10.10.60.12
+    restart: unless-stopped
+
+networks:
+  lab_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.60.0/24

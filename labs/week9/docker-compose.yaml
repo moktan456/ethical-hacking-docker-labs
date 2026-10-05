@@ -17,6 +17,11 @@ services:
     hostname: kali-attacker
     stdin_open: true
     tty: true
+    # The msf image's entrypoint drops to an unprivileged user by default, which
+    # makes `apk add` below fail (exit 99). Run as root (MSF_UID=0) instead.
+    user: root
+    environment:
+      - MSF_UID=0
     networks:
       week9-external:
         ipv4_address: 10.10.9.2

@@ -89,7 +89,7 @@ docker exec -it midterm2026-attacker bash
 ## Documentation
 
 - [INSTRUCTOR-WALKTHROUGH.md](INSTRUCTOR-WALKTHROUGH.md) - Complete answer key for instructors
-- [STUDENT-WORKSHEET.md](STUDENT-WORKSHEET.md) - Student lab worksheet  
+- [Midterm2026.md](Midterm2026.md) - Student lab worksheet  
 - [PENETRATION-TESTING-STRATEGY.md](PENETRATION-TESTING-STRATEGY.md) - Educational methodology guide
 - [COMMAND-REFERENCE.md](COMMAND-REFERENCE.md) - Plain English explanation of all commands used
 - [LINUX-BASICS.md](LINUX-BASICS.md) - Essential Linux crash course for beginners

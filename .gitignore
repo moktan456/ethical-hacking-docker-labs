@@ -38,6 +38,7 @@ labs/week9/internal-web/.DS_Store
 labs/week8/ctf-walkthrough.md
 labs/week9/ctf-walkthrough.md
 
-# Week 10 is a live exam — never track/push it. Publish it deliberately
-# (e.g. `git add -f labs/week10 && git commit`) only when ready to release it.
-labs/week10/
+# Midterm 2026 (formerly week10) is a live exam — never track/push it.
+# Publish it deliberately (e.g. `git add -f labs/midterm2026 && git commit`)
+# only when ready to release it — not before Tuesday next week.
+labs/midterm2026/

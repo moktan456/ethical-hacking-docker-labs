@@ -1,1 +1,0 @@
-flag{w10_foothold_via_ssh}

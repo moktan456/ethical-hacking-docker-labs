@@ -6,7 +6,7 @@
 
 You have been hired to perform a penetration test on De-ICE Corporation's web server. The CEO believes the system is secure since they run regular Nessus scans. Your job is to prove that automated scanning isn't enough. This is the course's examination — no walkthrough, no hints. Approach it the way you'd approach a real engagement.
 
-**Time Limit:** 2 hours  
+**Time Limit:** 3 hours  
 **Submission:** Complete this worksheet and submit your findings
 
 ## Pre-Lab Setup

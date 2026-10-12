@@ -4,22 +4,37 @@
 
 ## Lab Scenario
 
-You have been hired to perform a penetration test on De-ICE Corporation's web server. The CEO believes the system is secure since they run regular Nessus scans. Your job is to prove that automated scanning isn't enough. This is the course's capstone exercise — no walkthrough, no hints. Approach it the way you'd approach a real engagement.
+You have been hired to perform a penetration test on De-ICE Corporation's web server. The CEO believes the system is secure since they run regular Nessus scans. Your job is to prove that automated scanning isn't enough. This is the course's examination — no walkthrough, no hints. Approach it the way you'd approach a real engagement.
 
 **Time Limit:** 2 hours  
 **Submission:** Complete this worksheet and submit your findings
 
 ## Pre-Lab Setup
 
+□ Pull the latest changes, or clone a fresh copy of the repository, so you're
+running the current version of this lab:
+```bash
+git pull
+# or, for a completely new clone:
+git clone <repository-url>
+```
+□ Build the base attacker image:
+```bash
+# Using make (Linux / macOS / Git Bash / WSL2)
+make build-base
+
+# Direct docker command (Windows PowerShell / Command Prompt)
+docker build -t ethical-base -f base.Dockerfile . #(Don't miss this dot)
+```
 □ Start the lab environment: `docker compose up -d`  
 □ Access attacker machine: `docker exec -it midterm2026-attacker bash`  
 □ Verify you're in the Kali container: `whoami` (should show "root")
 
 ---
 
-## Phase 1: Reconnaissance (15 points)
+## Phase 1: Reconnaissance (18 points)
 
-### 1.1 Network Discovery (7 points)
+### 1.1 Network Discovery (8 points)
 
 Run a network scan to identify all hosts in the lab network.
 
@@ -36,7 +51,7 @@ _________________________________________________
 | | | |
 | | | |
 
-### 1.2 Port Scanning (8 points)
+### 1.2 Port Scanning (10 points)
 
 Scan the target services for open ports.
 
@@ -57,9 +72,9 @@ _________________________________________________
 
 ---
 
-## Phase 2: Web Application Enumeration (10 points)
+## Phase 2: Web Application Enumeration (12 points)
 
-### 2.1 Web Content Analysis (7 points)
+### 2.1 Web Content Analysis (8 points)
 
 Examine the web application for useful information.
 
@@ -80,7 +95,7 @@ _________________________________________________
 
 **Flag captured:** ****************\_****************
 
-### 2.2 Username Generation (3 points)
+### 2.2 Username Generation (4 points)
 
 Based on the naming convention, create a username list.
 
@@ -90,9 +105,9 @@ Based on the naming convention, create a username list.
 
 ---
 
-## Phase 3: FTP Enumeration (10 points)
+## Phase 3: FTP Enumeration (12 points)
 
-### 3.1 FTP Access (5 points)
+### 3.1 FTP Access (6 points)
 
 Attempt to access the FTP service.
 
@@ -108,7 +123,7 @@ _________________________________________________
 
 **Flag captured:** ****************\_****************
 
-### 3.2 FTP File Discovery (5 points)
+### 3.2 FTP File Discovery (6 points)
 
 Explore the FTP directory structure and identify interesting files.
 
@@ -125,9 +140,9 @@ Explore the FTP directory structure and identify interesting files.
 
 ---
 
-## Phase 4: SSH Attack (20 points)
+## Phase 4: SSH Attack (23 points)
 
-### 4.1 Password List Creation (5 points)
+### 4.1 Password List Creation (6 points)
 
 Create a password list for brute force attacks. Use only the **top 10 passwords
 from `/usr/share/wordlists/rockyou.txt`** — not the full list (`head -n 10
@@ -139,7 +154,7 @@ to your list.
 
 **Password list file:** ****************\_****************
 
-### 4.2 SSH Brute Force (10 points)
+### 4.2 SSH Brute Force (12 points)
 
 Perform a brute force attack against the SSH service.
 
@@ -169,9 +184,9 @@ id: _____________________
 
 ---
 
-## Phase 5: File Analysis (15 points)
+## Phase 5: File Analysis (18 points)
 
-### 5.1 System Exploration (5 points)
+### 5.1 System Exploration (6 points)
 
 Explore the system for interesting files.
 
@@ -186,7 +201,7 @@ _________________________________________________
 
 ---
 
-### 5.2 File Decryption (10 points)
+### 5.2 File Decryption (12 points)
 
 Attempt to decrypt any encrypted files found.
 
@@ -220,9 +235,9 @@ _________________________________________________
 
 ---
 
-## Phase 6: Privilege Escalation (15 points)
+## Phase 6: Privilege Escalation (17 points)
 
-### 6.1 Sudo Enumeration (5 points)
+### 6.1 Sudo Enumeration (6 points)
 
 Check what the compromised account is allowed to run as another user.
 
@@ -234,7 +249,7 @@ _________________________________________________
 
 **Sudo rights found:** ****************\_****************
 
-### 6.2 Root Exploitation (5 points)
+### 6.2 Root Exploitation (6 points)
 
 Use the misconfiguration to read a root-owned file.
 

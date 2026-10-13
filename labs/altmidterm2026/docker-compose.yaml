@@ -1,0 +1,128 @@
+services:
+  attacker:
+    image: ethical-base
+    container_name: altmidterm2026-attacker
+    hostname: kali-attacker
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    tty: true
+    stdin_open: true
+    networks:
+      lab_network:
+        ipv4_address: 10.10.11.2
+    volumes:
+      - ./attacker-tools:/root/tools
+      - ./lab-files:/root/lab
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: >
+      /bin/bash -c "
+      gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null || true &&
+      echo 'Kali attacker ready! Use: docker exec -it altmidterm2026-attacker bash' &&
+      tail -f /dev/null"
+    restart: unless-stopped
+
+  web:
+    image: httpd:2.4-bookworm
+    container_name: altmidterm2026-web
+    hostname: target-web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./web-content:/usr/local/apache2/htdocs:ro
+    networks:
+      lab_network:
+        ipv4_address: 10.10.11.10
+    restart: unless-stopped
+
+  ssh-target:
+    image: ubuntu:22.04
+    container_name: altmidterm2026-ssh
+    hostname: target-ssh
+    command: >
+      /bin/bash -c "
+      apt update &&
+      apt install -y openssh-server sudo findutils &&
+      useradd -m -s /bin/bash nchen &&
+      echo 'nchen:nchen01' | chpasswd &&
+      useradd -m -s /bin/bash opatel &&
+      echo 'opatel:opatel01' | chpasswd &&
+      echo 'flag{altmidterm_ssh_foothold}' > /home/nchen/user.txt &&
+      chown nchen:nchen /home/nchen/user.txt &&
+      echo 'flag{altmidterm_root_privesc}' > /root/root.txt &&
+      chmod u+s /usr/bin/find &&
+      echo 'PermitRootLogin no' >> /etc/ssh/sshd_config &&
+      echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config &&
+      echo 'Port 22' >> /etc/ssh/sshd_config &&
+      service ssh start &&
+      tail -f /dev/null"
+    ports:
+      - "2223:22"
+    networks:
+      lab_network:
+        ipv4_address: 10.10.11.11
+    restart: unless-stopped
+
+  ftp:
+    image: ubuntu:22.04
+    container_name: altmidterm2026-ftp
+    hostname: target-ftp
+    command: >
+      /bin/bash -c "
+      apt update &&
+      apt install -y vsftpd &&
+      mkdir -p /var/ftp/pub &&
+      cp -r /data/* /var/ftp/pub/ 2>/dev/null || true &&
+      echo 'anonymous_enable=YES' > /etc/vsftpd.conf &&
+      echo 'local_enable=NO' >> /etc/vsftpd.conf &&
+      echo 'write_enable=NO' >> /etc/vsftpd.conf &&
+      echo 'anon_upload_enable=NO' >> /etc/vsftpd.conf &&
+      echo 'anon_mkdir_write_enable=NO' >> /etc/vsftpd.conf &&
+      echo 'dirmessage_enable=YES' >> /etc/vsftpd.conf &&
+      echo 'xferlog_enable=YES' >> /etc/vsftpd.conf &&
+      echo 'connect_from_port_20=YES' >> /etc/vsftpd.conf &&
+      echo 'listen=YES' >> /etc/vsftpd.conf &&
+      echo 'listen_ipv6=NO' >> /etc/vsftpd.conf &&
+      echo 'anon_root=/var/ftp' >> /etc/vsftpd.conf &&
+      service vsftpd start &&
+      tail -f /dev/null"
+    volumes:
+      - ./ftp-data:/data
+    ports:
+      - "2121:21"
+    networks:
+      lab_network:
+        ipv4_address: 10.10.11.12
+    restart: unless-stopped
+
+  smtp:
+    image: axllent/mailpit:latest
+    container_name: altmidterm2026-smtp
+    hostname: target-smtp
+    ports:
+      - "1125:1025"
+      - "8125:8025"
+    networks:
+      lab_network:
+        ipv4_address: 10.10.11.13
+    restart: unless-stopped
+
+  mail:
+    image: dovecot/dovecot:latest
+    container_name: altmidterm2026-mail
+    hostname: target-mail
+    ports:
+      - "1110:110"
+      - "1143:143"
+    networks:
+      lab_network:
+        ipv4_address: 10.10.11.14
+    restart: unless-stopped
+
+networks:
+  lab_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.11.0/24

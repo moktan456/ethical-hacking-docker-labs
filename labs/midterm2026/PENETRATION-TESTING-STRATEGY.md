@@ -136,9 +136,10 @@ echo "aadams" > users.txt
 echo "bbanter" >> users.txt
 echo "ccoffee" >> users.txt
 
-# Create smart password list based on company/patterns
-echo "<password>" > passwords.txt    # "aadams" backwards
-echo "company123" >> passwords.txt
+# Create smart password list based on company/patterns.
+# Don't just guess — try each username reversed, plus common weak
+# passwords, on top of your top-10 rockyou.txt list.
+echo "company123" > passwords.txt
 echo "password" >> passwords.txt
 
 # Launch targeted attack — port 22 (not 2222, which is only for host-machine access)

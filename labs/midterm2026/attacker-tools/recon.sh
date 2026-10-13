@@ -32,36 +32,14 @@ admin
 EOF
 echo "Created users.txt with potential usernames"
 
-echo "[+] Step 5: Generate Password List"
-cat > /root/lab/passwords.txt << 'EOF'
-password
-password123
-123456
-admin
-root
-aadams
-bbanter
-ccoffee
-ddeeds
-eeikman
-<password>
-retnabtb
-eeffocc
-sdeedd
-namkie
-company
-deice
-2003
-2004
-security
-welcome
-letmein
-EOF
-echo "Created passwords.txt with common weak passwords"
+echo "[+] Step 5: Build Your Password List"
+echo "This is yours to build — see the worksheet's Phase 4.1 hint"
+echo "(top 10 of rockyou.txt, plus each discovered username reversed)."
+echo "Not generated for you here; working it out is part of the exam."
 
 echo ""
 echo "=== Ready for Exploitation ==="
 echo "Next steps:"
 echo "1. FTP enumeration: ftp 10.10.10.12"
 echo "2. SSH brute force: hydra -L users.txt -P passwords.txt 10.10.10.11 ssh"
-echo "3. SSH access: ssh aadams@10.10.10.11 (password: <password>)"
+echo "3. SSH access: ssh <username>@10.10.10.11"

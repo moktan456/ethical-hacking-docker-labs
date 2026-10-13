@@ -42,3 +42,8 @@ labs/week9/ctf-walkthrough.md
 # Publish it deliberately (e.g. `git add -f labs/midterm2026 && git commit`)
 # only when ready to release it — not before Tuesday next week.
 labs/midterm2026/
+
+# Alt Midterm 2026 is the make-up exam for students who missed the
+# original sitting — same rule: never track/push until that sitting is
+# over and it's ready to be released deliberately.
+labs/altmidterm2026/

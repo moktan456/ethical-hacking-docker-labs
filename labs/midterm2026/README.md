@@ -65,11 +65,12 @@ All containers run in isolated network (10.10.10.0/24)
 | IMAP | target-mail | telnet target-mail 143 | telnet localhost 143 |
 | Mailpit UI | target-smtp | http://target-smtp:8025 | http://localhost:8025 |
 
-## Vulnerable Credentials
+## Vulnerable Services (not an answer key)
 
-- **SSH**: `aadams:<password>`
+- **SSH**: at least one account has a weak, guessable password — find it
+  yourself via the worksheet's reconnaissance and brute-force phases
 - **FTP**: Anonymous access enabled
-- **Encrypted file password**: `<password>`
+- **Encrypted file**: protected by a guessable password, not a strong key
 
 ## Learning Path
 

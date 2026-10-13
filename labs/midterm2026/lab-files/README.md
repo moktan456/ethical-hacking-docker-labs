@@ -43,8 +43,7 @@ hydra -L users.txt -P passwords.txt target-ssh ssh
 
 ### SSH Access
 ```bash
-ssh aadams@target-ssh
-# Password: <password>
+ssh <username>@target-ssh
 ```
 
 ### File Decryption

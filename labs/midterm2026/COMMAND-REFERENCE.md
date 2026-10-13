@@ -150,7 +150,7 @@ EOF
 
 ### Successful Hydra Attack
 ```
-[22][ssh] host: 10.10.10.11   login: aadams   password: <password>
+[22][ssh] host: 10.10.10.11   login: <username>   password: <password>
 ```
 **What it means:**
 - `[22]`: SSH service (port 22)  

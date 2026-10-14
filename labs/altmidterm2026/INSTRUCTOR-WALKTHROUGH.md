@@ -78,8 +78,11 @@ Directories: `pub/`, `pub/incoming/`.
 |----------|------|----------|------------|
 | flag.txt | 33 bytes | pub/ | — |
 | client_contracts_q3.csv.enc | ~330 bytes | pub/incoming/ | ✓ (required) |
+| encryption-policy.txt | ~450 bytes | pub/incoming/ | ✓ (needed for the Phase 5.2 password) |
 Full credit requires the encrypted contracts file downloaded — needed for
-Phase 5.
+Phase 5. `encryption-policy.txt` is easy to miss if a student only `get`s
+the `.enc` file and doesn't `ls` the directory first — nudge them to
+list before downloading if they're stuck in Phase 5.
 
 ### Phase 4: SSH Attack (16 points)
 
@@ -113,6 +116,15 @@ expected; the privesc vector here is the SUID bit, found in Phase 6.
 
 **5.2 File Decryption (9 points)**
 Encrypted file: `client_contracts_q3.csv.enc`.
+**Clue trail (this password is discoverable, not a blind guess):**
+`pub/incoming/encryption-policy.txt` (sitting right next to the
+encrypted file on FTP) states the passphrase convention — "responsible
+reviewing officer's title + export year, no spaces" — and names this
+export as "Q3 2024" reviewed by "the Compliance Officer." The web
+directory (Phase 2) lists Priya Shah as "Finance (Compliance Officer)."
+Combining title + year gives the password. Award partial credit (half
+the phase) for decrypting it by brute force/guessing without having
+found `encryption-policy.txt`; full credit requires citing the memo.
 **Successful password:** `ComplianceOfficer2024`.
 ```bash
 openssl enc -aes-256-cbc -d -salt -in client_contracts_q3.csv.enc -out client_contracts_q3.csv -k "ComplianceOfficer2024"

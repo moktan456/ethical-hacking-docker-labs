@@ -1,0 +1,14 @@
+Solari Analytics Inc. — Finance Dept. Internal Memo
+
+Re: Encrypted exports from the contracts system
+
+Per IT policy, confidential exports (client contracts, renewals,
+account-manager assignments) must be encrypted before leaving the
+contracts system. Passphrase convention for these exports: the
+responsible reviewing officer's title, followed by the export year,
+no spaces, no punctuation.
+
+This export: Q3 2024 client contracts, reviewed and flagged by the
+Compliance Officer prior to release.
+
+— Finance Dept. IT

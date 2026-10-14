@@ -212,6 +212,9 @@ Attempt to decrypt any encrypted files found.
 
 **Hint:** this file was encrypted with OpenSSL's symmetric cipher, AES-256-CBC
 with a salt. Only the password is unknown — the tool and algorithm aren't.
+Don't stop at the encrypted file itself — check what else was left
+alongside it on the FTP server, and re-check the web directory for
+anything about the people involved.
 
 ```bash
 openssl enc -aes-256-cbc -d -salt -in <file> -out <output> -k <password>

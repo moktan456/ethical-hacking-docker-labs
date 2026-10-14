@@ -56,14 +56,16 @@ docker exec -it altmidterm2026-attacker bash
 
 ## Lab Network
 All containers run in an isolated network (10.10.11.0/24) — a different
-subnet from `labs/midterm2026/` (10.10.10.0/24) so both labs can run at
-the same time without colliding.
+subnet from `labs/midterm2026/` (10.10.10.0/24). Note: the web service's
+host port (80) does collide with midterm2026's, so the two labs can't
+both be running at once — `docker compose down` one before starting the
+other.
 
 ## Target Services
 
 | Service | Container | Internal Access | External Access |
 |---------|-----------|-----------------|-----------------|
-| HTTP | target-web | http://target-web | http://localhost:8080 |
+| HTTP | target-web | http://target-web | http://localhost |
 | SSH | target-ssh | ssh user@target-ssh | ssh -p 2223 user@localhost |
 | FTP | target-ftp | ftp target-ftp | ftp -p 2121 localhost |
 | SMTP | target-smtp | telnet target-smtp 1025 | telnet localhost 1125 |

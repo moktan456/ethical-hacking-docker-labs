@@ -28,7 +28,7 @@ services:
     container_name: altmidterm2026-web
     hostname: target-web
     ports:
-      - "8080:80"
+      - "80:80"
     volumes:
       - ./web-content:/usr/local/apache2/htdocs:ro
     networks:
@@ -50,6 +50,11 @@ services:
       echo 'opatel:opatel01' | chpasswd &&
       echo 'flag{altmidterm_ssh_foothold}' > /home/nchen/user.txt &&
       chown nchen:nchen /home/nchen/user.txt &&
+      echo 'Note for Priya -' > /home/opatel/handover-notes.txt &&
+      echo '' >> /home/opatel/handover-notes.txt &&
+      echo 'The Q3 export password is ComplianceOfficer2024 if you need it again.' >> /home/opatel/handover-notes.txt &&
+      echo 'Please do not leave this lying around next time. - Omar' >> /home/opatel/handover-notes.txt &&
+      chown opatel:opatel /home/opatel/handover-notes.txt &&
       echo 'flag{altmidterm_root_privesc}' > /root/root.txt &&
       chmod u+s /usr/bin/find &&
       echo 'PermitRootLogin no' >> /etc/ssh/sshd_config &&

@@ -106,6 +106,13 @@ id: uid=1001(nchen) gid=1001(nchen) groups=1001(nchen)
 ```
 **Flag captured:** `flag{altmidterm_ssh_foothold}` — `/home/nchen/user.txt`.
 
+**Note:** `opatel` cracks with the exact same brute-force run (same
+password idiom, `opatel01`) — hydra returns both accounts. Logging into
+`opatel` isn't required for the flag above, but
+`/home/opatel/handover-notes.txt` hands the Phase 5.2 decryption
+password outright: a second, more direct route to the same answer as
+the FTP/web clue trail. Full credit for 5.2 either way.
+
 ### Phase 5: File Analysis (13 points)
 
 **5.1 System Exploration (4 points)** — any reasonable discovery commands
@@ -122,9 +129,11 @@ encrypted file on FTP) states the passphrase convention — "responsible
 reviewing officer's title + export year, no spaces" — and names this
 export as "Q3 2024" reviewed by "the Compliance Officer." The web
 directory (Phase 2) lists Priya Shah as "Finance (Compliance Officer)."
-Combining title + year gives the password. Award partial credit (half
-the phase) for decrypting it by brute force/guessing without having
-found `encryption-policy.txt`; full credit requires citing the memo.
+Combining title + year gives the password. Alternatively,
+`/home/opatel/handover-notes.txt` (Phase 4, see note above) states the
+password outright. Award partial credit (half the phase) for decrypting
+it by brute force/guessing without having found either source; full
+credit requires citing one.
 **Successful password:** `ComplianceOfficer2024`.
 ```bash
 openssl enc -aes-256-cbc -d -salt -in client_contracts_q3.csv.enc -out client_contracts_q3.csv -k "ComplianceOfficer2024"
@@ -188,7 +197,8 @@ nmap -sn 10.10.11.0/24
 **Cause:** Student using wrong IP address/port.
 **Solution:** Ensure using correct IP addresses discovered from network
 scan. From inside the attacker container, services are on their real
-ports (22, 21, 80) — the host-port mappings (2223, 2121, 8080, etc.) are
+ports (22, 21, 80) — the host-port mappings (2223, 2121, etc. — web is
+plain 80:80, no remapping) are
 only for reaching the lab from outside Docker.
 
 ### Error: "Hydra shows no results"

@@ -11,6 +11,15 @@
 ❌ **DON'T:** Attempt any physical bypass technique on any premises without explicit written authorisation
 ❌ **DON'T:** Purchase or build physical attack hardware for unsanctioned use
 
+**Looking for the hands-on part of this week?** This worksheet is
+discussion/analysis-based by design — but keypad brute force, RFID
+clone-and-replay, and BadUSB payload injection are all genuinely
+executable this week in **[hands-on-lab.md](./hands-on-lab.md)**, a
+Docker-based simulation. Do that first if your session runs it before
+this worksheet; several exercises below (Exercise 2.2's RFID discussion
+in particular) land better once you've actually replayed a captured
+credential yourself.
+
 ---
 
 ## Part 1: Threat Modelling Physical Space (20 minutes)

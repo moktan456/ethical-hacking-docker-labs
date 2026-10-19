@@ -2,7 +2,34 @@
 
 ## CYB204 Ethical Hacking — Week 11
 
-**No Docker lab this week.** This session covers physical attack vectors, access control systems, and on-site social engineering techniques.
+**There's a Docker lab this week after all** — not of the physical
+attacks themselves (there's no simulating a real lock or a real RF
+field), but of the *logic* underneath three of them: keypad brute force,
+RFID clone-and-replay, and BadUSB keystroke injection, each genuinely
+executed over a network rather than just discussed. See
+**[hands-on-lab.md](./hands-on-lab.md)**. Lockpicking and biometric
+spoofing stay discussion/theory this week — see the notes below on why,
+and on a low-cost way to make lockpicking hands-on too if you want it.
+
+---
+
+## Session Delivery Plan (~3 hours)
+
+| Time | Segment | Material |
+|---|---|---|
+| 0:00–0:35 | Lecture: slide deck, start to finish | `week11-slides-physical.md` (types of controls, common weaknesses, tools, mitigation strategies) |
+| 0:35–1:05 | **Hands-on Challenge 1 & 2:** keypad brute force, RFID clone & replay | `hands-on-lab.md` Challenges 1–2 |
+| 1:05–1:15 | Break | — |
+| 1:15–1:45 | **Hands-on Challenge 3:** BadUSB / Rubber Ducky payload | `hands-on-lab.md` Challenge 3 (+ Challenge 4 for early finishers) |
+| 1:45–2:15 | Discussion worksheet, Parts 1–2 (threat modelling, attack techniques) | `worksheet.md` |
+| 2:15–2:45 | Discussion worksheet, Parts 3–4 (pentest planning, defence in depth) + slide deck's Group Discussion scenario | `worksheet.md` + slides |
+| 2:45–3:00 | Wrap-up, Quick Knowledge Check, Q&A | `worksheet.md` + slides |
+
+Running short on time: cut Challenge 4 (it's explicitly an optional
+extension) and worksheet Part 3.2 (evidence/reporting) before cutting
+anything else — the three hands-on challenges and the core attack/
+mitigation pairing in Parts 1–2 are the material students are least
+likely to get anywhere else.
 
 ---
 
@@ -72,6 +99,39 @@ Physical penetration testing carries **higher legal risk** than network testing 
 
 ---
 
+## Making Lockpicking Hands-On Too (Optional)
+
+The hands-on lab explicitly leaves lockpicking as theory-only, because
+there's no honest digital stand-in for a skill that's entirely mechanical
+feel (tension + pin stacks). If you want it hands-on, the standard,
+low-cost, fully legal way ethical hacking courses do this:
+
+- A **practice padlock set with clear/cutaway bodies** (so students can
+  see the pin stacks move) — inexpensive, widely sold specifically for
+  training, no different legally from owning any other padlock.
+- A **basic pick set** (tension wrench + a few hook/rake picks) —
+  legal to own and use on locks you own or have explicit permission to
+  pick; check your state's specifics if in doubt, since a few
+  jurisdictions regulate possession of picking tools in public without
+  reasonable excuse (owning them for a declared training exercise is
+  the reasonable excuse).
+- Run it as a **supervised 15-minute station** during the break or
+  alongside Challenge 3, not as a whole-class activity — one or two
+  practice locks per 4–5 students is plenty, since most of the learning
+  is watching the pins set one at a time under instructor guidance.
+- **Document it as an authorised classroom exercise** on your own
+  equipment, consistent with the "Ethical Considerations" principle on
+  the slides and the Applicable Law section above — it's the same
+  authorisation principle as everything else in this unit, just applied
+  to a padlock instead of a network.
+
+This is a procurement/facilities decision for you, not something that
+can be scripted — nothing in this repo depends on it.
+
+---
+
 ## See Also
 
+- **hands-on-lab.md** — the digital simulation lab (keypad, RFID, BadUSB), with real flags to capture
+- **hands-on-lab-walkthrough.md** — instructor-only verified walkthrough and answer key
 - worksheet.md — case studies and assessment exercises for this week's class

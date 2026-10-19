@@ -208,6 +208,62 @@ payload and what it achieves in your submission.
 
 ---
 
+## Challenge 5 (Optional): Tabletop Physical Pentest of CyberCorp (30 minutes)
+
+No containers for this one. Use the fictional CyberCorp floor plan and key in **[worksheet.md](./worksheet.md)** (Exercise 1.1) and work in pairs. It ties the three simulated attacks above back to a real building layout. Nothing here should be tried on a real building.
+
+### Part A: Reconnaissance (10 min)
+
+Using only the plan and key, fill in a recon sheet:
+
+| Question | Your answer |
+|----------|-------------|
+| Which doors lead from outside into the building? | |
+| Which of them have no camera and no alarm? | |
+| Where does the guard NOT cover, and when? | |
+| Which rooms hold the highest-value assets? | |
+| What OSINT (Google Maps, LinkedIn, job ads, delivery vans) would help before you go on site? | |
+
+### Part B: Plan three entry attempts (15 min)
+
+For each attempt, write the door, the technique, the pretext (if any), and the control you expect to beat. Pick at least one that avoids every camera.
+
+| # | Entry point | Technique | Pretext / cover | Control defeated |
+|---|-------------|-----------|-----------------|------------------|
+| 1 | | | | |
+| 2 | | | | |
+| 3 | | | | |
+
+### Part C: Build the attack path (15 min)
+
+Starting in P1 (car park), reach the server room R1 and take a photo of the racks as evidence. Write the sequence of doors and rooms, then for each step note the time of day you would choose and what could go wrong.
+
+```
+P1 → ____ → ____ → ____ → R1
+```
+
+Then answer: which single control, if fixed, breaks the most paths?
+
+### Part D: On-site actions (10 min)
+
+1. Choose a drop location for five USB drives. Give the label you would write on them and why.
+2. Choose a location for a rogue device (LAN Turtle or WiFi Pineapple). State what network access it gives you.
+3. List three pieces of evidence you would photograph inside R6 and R7 without touching anything.
+
+### Part E: Remediation (10 min)
+
+Rank the top five fixes for CyberCorp by risk reduction per dollar. For each, name the plan reference it fixes (for example E4, D1, R7) and the layer of defence in depth it adds.
+
+| Rank | Fix | Plan ref | Layer |
+|------|-----|----------|-------|
+| 1 | | | |
+| 2 | | | |
+| 3 | | | |
+| 4 | | | |
+| 5 | | | |
+
+---
+
 ## Cleanup
 
 ```bash

@@ -10,14 +10,25 @@
 
 ### Exercise 1.1: Attack Surface Map
 
-Model answers will vary with whatever floor plan is shown, but the three
-entry points students should land on are typically: the loading
-dock/delivery entrance (least scrutinised, expects strangers), the main
-reception (defeated by tailgating/piggybacking), and any smoker's
-door/fire exit propped open for convenience. The server room is almost
-always the correct "highest-value target" answer — it's where physical
-access converts directly into full data/network compromise, versus
-individual desks which only expose one person's access.
+Answers below refer to the CyberCorp floor plan in `worksheet.md` and the hands-on-lab.md Challenge 5.
+
+**Top three entry points (any three well-argued ones score):**
+
+1. **E3 loading bay roller door** — open during business hours, no camera, no sign-in, drivers are expected strangers. A hi-vis vest and a parcel gets you in. From R5 you reach the corridor and R6.
+2. **E4 side door (R9)** — propped open by smokers, opens on the unlit car park P1, no camera. Zero tools needed. Also the quiet way to reach the corridor.
+3. **E1 main door** — swipe gate with no mantrap and a guard only 9–5. Tailgating at the 8:45–9:15 and 5:00–5:30 rush when the gate is held open. Cloned card works until someone checks the badge photo.
+
+Honourable mentions: **E2** fire exit (no alarm; can be wedged open by an insider) and the **R1 air vent** onto P1 (exposes the server room to outside tampering, heat/moisture, and a possible hardware-implant route).
+
+**Highest-value room:** **R1 server room.** Physical access converts directly into domain controller and backup NAS compromise. R3 (CEO safe + network diagram on the whiteboard) is second.
+
+**Camera blind spots:** C2 only covers D1's door, so the corridor and D2/D3/D4 are not watched. No camera in R5–R9, so E3, E2, E4, R6 desks and R7 are all blind. C3 only covers E1/lobby. P1 and P2 have none. Quiet movement: in through E4 or E3, along the corridor to D1, never entering C3's field.
+
+**USB drop:** P1 car park near E4 (smokers walk through it), or R9 kitchen table. Label "Q3 Salary Review - Confidential" or "CEO bonus". **Rogue device:** R7, plugged into the LAN port behind the printer, out of every camera's view. Also spare wall ports in R6. Gives an internal network foothold, often on the same VLAN as workstations.
+
+**Attack path example:** P1 → E4 (propped open) → R9 → corridor → D1 → R1. Controls: none at E4; none in the corridor beyond C2 (which only sees D1); D1 needs the shared PIN (shoulder-surf it earlier, thermal imaging, or social-engineer it from IT). Alternative: P1 → E3 → R5 → corridor → R1.
+
+**Cheapest fixes:** (1) door-held-open alarm + sensors on E2/E4, enforced no-prop policy; (2) lock and badge-reader the loading bay, staff meet drivers at the door, sign-in log; (3) replace the shared PIN on D1 with badge + PIN (or biometric) and extend C2 to cover the corridor. Also: lock the shred bin and move the printer LAN port to a disabled/802.1X port; fence or gate and light P1.
 
 ### Exercise 1.2: Access Control Inventory
 
@@ -86,8 +97,7 @@ challenging unbadged individuals) removes the human judgment call.
 
 ### Exercise 3.1: Scope a Physical Pentest — model scope statement
 
-- **Premises in scope:** Named building address only (e.g. "Level 4, 123
-  Example St, Sydney NSW" — never "all CyberCorp offices").
+- **Premises in scope:** Named building address only (e.g. "Ground Floor, 88 Harbour Street, Sydney NSW, rooms R1–R10, doors E1–E4 and car park P1" — never "all CyberCorp offices").
 - **Permitted actions:** Tailgating/piggybacking attempts, RFID card
   cloning of consenting test subjects or provided test badges, USB drop
   in nominated common areas, photography of findings.
@@ -151,3 +161,31 @@ was acting within the agreed engagement window and location.
 3. False — verbal authorisation is never sufficient; written, premises-specific authorisation must be carried at all times
 4. B — State/Territory trespass legislation (the Commonwealth Criminal Code covers computer/system access, not physical trespass)
 5. B — Observing someone enter credentials in a public space
+
+---
+
+## hands-on-lab.md Challenge 5 — Model Answers (CyberCorp tabletop)
+
+**Part A recon:** Outside doors E1, E2, E3, E4. No camera/alarm: E2, E3, E4 (E1 has C3). Guard covers only E1 and only 9–5, and the gate is propped during the rush. Highest value: R1, R3, then R2 (USB drives, spare laptops) and R7 (print jobs). OSINT: Google Street View of the loading bay, LinkedIn for staff names and badge photos, job ads for the security stack (HID iCLASS vs DESFire), delivery companies seen at the dock, social posts showing the lanyard.
+
+**Part B example attempts:**
+
+| # | Entry | Technique | Cover | Control defeated |
+|---|-------|-----------|-------|------------------|
+| 1 | E4 | Walk in through propped door | Smoker, no pretext | None (no alarm/camera) |
+| 2 | E3 | Walk in with parcel | Courier hi-vis | No sign-in, no badge |
+| 3 | E1 | Tailgate at 8:50 | Late staff member, coffee in hands | Swipe gate, guard distracted |
+
+**Part C path:** P1 → E4 → R9 → corridor → D1 → R1. Best time: 8:45–9:15 or 1pm lunch when staff are in R9. Risks: C2 sees D1 (it records the attempt); shared PIN unknown; guard is unaware, so detained by staff only. Single most useful control: alarmed, badge-controlled E4/E3 plus a corridor door that splits public from private zones, because every path crosses the corridor.
+
+**Part D:** USB: P1 near E4 and R9 table, label "Q3 Salary Review - Confidential". Rogue device: R7 LAN port behind the printer, gives internal network. Evidence in R6/R7: unlocked workstation with active session (wide shot), unlocked shred bin contents, spare wall ports in R6 (live).
+
+**Part E example ranking:**
+
+| Rank | Fix | Plan ref | Layer |
+|------|-----|----------|-------|
+| 1 | Door-held-open alarms, enforce no propping | E4, E2 | Perimeter |
+| 2 | Badge reader + log on loading bay, sign-in for deliveries | E3 | Perimeter |
+| 3 | Replace shared PIN with badge + PIN | D1 | Intermediate |
+| 4 | USB port control by GPO, 802.1X on wall/printer ports | R6, R7 | Final (device) |
+| 5 | Extend camera cover over corridor, lock shred bin, light P1 | C2, R7, P1 | Detection/Intermediate |

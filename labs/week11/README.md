@@ -134,4 +134,4 @@ can be scripted — nothing in this repo depends on it.
 
 - **hands-on-lab.md** — the digital simulation lab (keypad, RFID, BadUSB), with real flags to capture
 - **hands-on-lab-walkthrough.md** — instructor-only verified walkthrough and answer key
-- worksheet.md — case studies and assessment exercises for this week's class
+- worksheet.md — case studies and assessment exercises for this week's class (includes the CyberCorp floor plan used in Challenge 5 of the lab)

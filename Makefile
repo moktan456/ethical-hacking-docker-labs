@@ -45,8 +45,7 @@ run-week10:
 	@echo "Week 10: provided separately by the instructor."
 
 run-week11:
-	@echo "Week 11: Physical access controls — no Docker needed."
-	@cat labs/week11/README.md 2>/dev/null || true
+	cd labs/week11 && docker compose up -d
 
 run-week12:
 	@echo "Week 12: Social engineering — no Docker needed."
@@ -62,7 +61,7 @@ stop-multi:
 
 # ── Teardown ─────────────────────────────────────────────────────────────────
 stop-all:
-	for week in 1 3 4 5 6 7 8 9; do \
+	for week in 1 3 4 5 6 7 8 9 11; do \
 		(cd labs/week$$week && docker compose down 2>/dev/null || true); \
 	done
 

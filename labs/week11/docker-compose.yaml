@@ -1,0 +1,114 @@
+# Week 11: Bypassing Physical Access Controls - Digital Simulation Lab
+#
+# Physical attacks (lockpicking, real RFID hardware, real biometric
+# sensors) can't run inside Docker - there's no lock, no RF field, no
+# fingerprint reader to attack. What CAN run here is the underlying LOGIC
+# of three of the four attack categories from the slide deck, translated
+# into something students actually execute over a network rather than
+# just read about:
+#
+#   - Keypad brute force   -> a weak-key hint leaked with no auth, then a
+#                              real brute force against a real PIN check
+#   - RFID cloning          -> an unencrypted credential genuinely sniffable
+#                              off the wire, then genuinely replayable
+#   - BadUSB / Rubber Ducky -> a real "already-unlocked machine" shell,
+#                              and a real translated keystroke-injection
+#                              payload executed against it
+#
+# Lockpicking and biometric spoofing stay theory-only this week (see
+# README.md for why, and for a low-cost physical-kit option if you want
+# lockpicking to be hands-on too).
+#
+#   week11-attacker    10.10.11.2   Kali (ethical-base image)
+#   week11-keypad       10.10.11.10  HTTP keypad door, port 8080
+#   week11-badge-system 10.10.11.11  RFID door (tcp/9000) + badge beacon (udp/9100)
+#   week11-workstation  10.10.11.12  "unlocked machine", exposed shell on tcp/4444
+
+services:
+
+  attacker:
+    image: ethical-base
+    container_name: week11-attacker
+    hostname: kali-attacker
+    stdin_open: true
+    tty: true
+    networks:
+      week11-net:
+        ipv4_address: 10.10.11.2
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - ./sim/duckify.py:/home/hacker/duckify.py:ro
+    command: >
+      /bin/bash -c "
+      echo '======================================================' &&
+      echo ' Week 11 Attacker Ready (Kali)' &&
+      echo ' Your IP: 10.10.11.2' &&
+      echo ' Targets:' &&
+      echo '   10.10.11.10  week11-keypad        (HTTP :8080)' &&
+      echo '   10.10.11.11  week11-badge-system   (door tcp:9000, beacon udp:9100)' &&
+      echo '   10.10.11.12  week11-workstation    (shell tcp:4444)' &&
+      echo ' Helper: ~/duckify.py (DuckyScript -> keystrokes translator)' &&
+      echo ' Enter: docker exec -it week11-attacker bash' &&
+      echo '======================================================' &&
+      tail -f /dev/null"
+    restart: unless-stopped
+
+  keypad:
+    image: python:3.11-slim
+    container_name: week11-keypad
+    hostname: keypad-door
+    environment:
+      - KEYPAD_PIN=1531
+      - LOCKOUT_ENABLED=0
+    volumes:
+      - ./sim/keypad_server.py:/app/keypad_server.py:ro
+    command: ["python3", "/app/keypad_server.py"]
+    networks:
+      week11-net:
+        ipv4_address: 10.10.11.10
+    restart: unless-stopped
+
+  badge-system:
+    image: python:3.11-slim
+    container_name: week11-badge-system
+    hostname: badge-system
+    environment:
+      - BADGE_ID=EMP-7741-ACCT
+    volumes:
+      - ./sim/badge_system.py:/app/badge_system.py:ro
+    command: ["python3", "/app/badge_system.py"]
+    networks:
+      week11-net:
+        ipv4_address: 10.10.11.11
+    restart: unless-stopped
+
+  workstation:
+    image: ubuntu:22.04
+    container_name: week11-workstation
+    hostname: unlocked-workstation
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: >
+      /bin/bash -c "
+      apt-get update -qq &&
+      apt-get install -y -qq netcat-traditional > /dev/null 2>&1 &&
+      echo 'CONFIDENTIAL - Q3 Financials (do not distribute)' > /root/confidential.txt &&
+      echo 'Draft figures pending board review.' >> /root/confidential.txt &&
+      echo 'Recovery flag (do not lose this file): flag{w11_badusb_payload_executed}' >> /root/confidential.txt &&
+      echo '[workstation] unlocked shell on :4444 (this models physical access already obtained)' &&
+      while true; do nc.traditional -lp 4444 -e /bin/bash; done"
+    networks:
+      week11-net:
+        ipv4_address: 10.10.11.12
+    restart: unless-stopped
+
+networks:
+  week11-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.11.0/24

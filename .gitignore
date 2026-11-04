@@ -48,3 +48,17 @@ labs/midterm2026/
 # original sitting — same rule: never track/push until that sitting is
 # over and it's ready to be released deliberately.
 labs/altmidterm2026/
+
+# Final 2026 is the live capstone exam — never track/push it. Publish
+# deliberately (`git add -f labs/final2026 && git commit`) only once the
+# sitting is over. The instructor walkthrough stays untracked even then.
+labs/final2026/
+labs/final2026/INSTRUCTOR-WALKTHROUGH.md
+# The automated solver is the full answer key — never ship it, even on release.
+labs/final2026/solve.sh
+
+# Alt Final 2026 is the make-up sitting for the capstone — same rule:
+# never track/push until that sitting is over and it is ready to release.
+labs/altfinal2026/
+labs/altfinal2026/INSTRUCTOR-WALKTHROUGH.md
+labs/altfinal2026/solve.sh

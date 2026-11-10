@@ -1,0 +1,136 @@
+# Final 2026 Examination: Penetration Test — Meridian Freight Pty Ltd
+#
+# Single isolated network (10.10.12.0/24). NO host ports are published, so
+# this lab never clashes with another week's stack. Everything is reached
+# from the attacker container over the internal network.
+#
+# Flag chain (10 marks each, 50 total):
+#   F1  web recon + username convention        (web   10.10.12.10)
+#   F2  anonymous SMB share -> password policy (smb   10.10.12.11)
+#   F3  Hydra SSH foothold (policy wordlist)   (ssh   10.10.12.12)
+#   F4  world-writable /etc/passwd -> root     (ssh   10.10.12.12)
+#   F5  cred reuse -> crack MD5 -> openssl dec (mysql 10.10.12.13)
+#
+# Credentials live in these startup commands (same approach as midterm2026).
+# This file is instructor-only — keep labs/final2026 gitignored until release.
+
+services:
+  attacker:
+    image: ethical-base
+    container_name: final2026-attacker
+    hostname: kali-attacker
+    user: root
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    tty: true
+    stdin_open: true
+    networks:
+      lab_network:
+        ipv4_address: 10.10.12.2
+    volumes:
+      - ./lab-files:/root/lab
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: >
+      /bin/bash -c "
+      gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null || true &&
+      echo 'Kali attacker ready! Use: docker exec -it final2026-attacker bash' &&
+      tail -f /dev/null"
+    restart: unless-stopped
+
+  web:
+    image: httpd:2.4-bookworm
+    container_name: final2026-web
+    hostname: meridian-web
+    volumes:
+      - ./web-content:/usr/local/apache2/htdocs:ro
+    networks:
+      lab_network:
+        ipv4_address: 10.10.12.10
+    restart: unless-stopped
+
+  smb:
+    image: ubuntu:22.04
+    container_name: final2026-smb
+    hostname: meridian-fileshare
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    volumes:
+      - ./smb-data:/data:ro
+    command: >
+      /bin/bash -c "
+      apt-get update -qq &&
+      apt-get install -y -q samba &&
+      mkdir -p /srv/hr &&
+      cp -r /data/* /srv/hr/ 2>/dev/null || true &&
+      chmod -R 0555 /srv/hr &&
+      printf '[global]\n   server string = Meridian Freight File Server\n   workgroup = WORKGROUP\n   security = user\n   map to guest = Bad User\n   guest account = nobody\n   server role = standalone server\n   usershare allow guests = yes\n\n[hr]\n   comment = HR onboarding (staff only)\n   path = /srv/hr\n   browseable = yes\n   read only = yes\n   guest ok = yes\n   force user = nobody\n' > /etc/samba/smb.conf &&
+      nmbd --daemon &&
+      smbd --foreground --no-process-group"
+    networks:
+      lab_network:
+        ipv4_address: 10.10.12.11
+    restart: unless-stopped
+
+  ssh-target:
+    image: ubuntu:22.04
+    container_name: final2026-ssh
+    hostname: meridian-app
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: >
+      /bin/bash -c "
+      apt-get update -qq &&
+      apt-get install -y -q openssh-server sudo openssl mysql-client &&
+      useradd -m -s /bin/bash dchen &&
+      echo 'dchen:Winter2026' | chpasswd &&
+      useradd -m -s /bin/bash rtan &&
+      echo 'rtan:Spring2026!' | chpasswd &&
+      echo 'flag{final2026_ssh_foothold}' > /home/dchen/user.txt &&
+      chown dchen:dchen /home/dchen/user.txt &&
+      echo 'flag{final2026_root_privesc}' > /root/root.txt &&
+      chmod 600 /root/root.txt &&
+      mkdir -p /opt/scripts &&
+      printf '#!/bin/bash\n# Nightly company_db backup - do not edit (owner: dchen)\nmysqldump -h 10.10.12.13 -u webuser -pFr3ight_db!2026 company_db > /opt/scripts/company_db.sql\n' > /opt/scripts/db_backup.sh &&
+      chmod 0750 /opt/scripts/db_backup.sh &&
+      chown dchen:dchen /opt/scripts/db_backup.sh &&
+      mkdir -p /opt/vault &&
+      printf 'Meridian Freight Pty Ltd - Q4 client export (CONFIDENTIAL)\nAccount,Region,Value_AUD\nHarbourline Imports,NSW,284000\nRedgum Haulage,VIC,151500\nflag{final2026_crack_decrypt}\n' > /tmp/q4_export.csv &&
+      openssl enc -aes-256-cbc -salt -in /tmp/q4_export.csv -out /opt/vault/q4_export.enc -k sunshine &&
+      rm -f /tmp/q4_export.csv &&
+      chown dchen:dchen /opt/vault/q4_export.enc &&
+      chmod 0640 /opt/vault/q4_export.enc &&
+      chmod 0666 /etc/passwd &&
+      echo 'PermitRootLogin no' >> /etc/ssh/sshd_config &&
+      echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config &&
+      echo 'Port 22' >> /etc/ssh/sshd_config &&
+      service ssh start &&
+      tail -f /dev/null"
+    networks:
+      lab_network:
+        ipv4_address: 10.10.12.12
+    restart: unless-stopped
+
+  database:
+    image: mariadb:10.11
+    container_name: final2026-db
+    hostname: meridian-db
+    environment:
+      - MARIADB_ROOT_PASSWORD=rootFr8!2026
+      - MARIADB_DATABASE=company_db
+      - MARIADB_USER=webuser
+      - MARIADB_PASSWORD=Fr3ight_db!2026
+    volumes:
+      - ./db-init/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      lab_network:
+        ipv4_address: 10.10.12.13
+    restart: unless-stopped
+
+networks:
+  lab_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.12.0/24

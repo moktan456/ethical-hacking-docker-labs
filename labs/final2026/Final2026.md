@@ -4,6 +4,9 @@
 
 **Date:** ******\_******
 
+**Total: 80 marks** · Time: 3 hours (plus 15 minutes to build and launch the
+Docker environment — the clock on the 3 hours starts once your lab is up).
+
 ## Lab Scenario
 
 You have been engaged to perform a penetration test on **Meridian Freight
@@ -15,17 +18,9 @@ This is the course's capstone examination — no walkthrough, no hints.
 Approach it the way you would approach a real engagement: recon first, then
 enumerate every service you find, then look for a way in, then escalate.
 
-**Time Limit:** 3 hours (plus 15 minutes at the start to build and launch
-the Docker environment — the clock on the 3 hours starts once your lab is
-up).
-
-**Marks:** 100 total, across six graded phases. Marks are awarded for the
-five flags **and** for the commands, evidence, and written analysis that
-support them. Record your commands as you go; a flag with no working shown
-earns partial marks only.
-
-**Submission:** Complete this worksheet by hand and submit it with your
-findings.
+Marks are awarded for the five flags **and** for the commands and evidence
+that lead to them. Record your commands as you go; a flag with no working
+shown earns partial marks only.
 
 ---
 
@@ -36,7 +31,7 @@ copy — do **not** `git pull` an old clone, as the exam must run on the current
 version:
 ```bash
 # Remove your previous clone first (adjust the path if yours differs)
-rm -rf ethical-hacking-docker-labs
+rm -rf ethical-hacking-docker-labs   # (delete manually if rm is unavailable)
 
 # Clone a fresh copy
 git clone https://github.com/moktan456/ethical-hacking-docker-labs
@@ -135,9 +130,11 @@ naming convention and build a candidate username list.
 
 **Username naming convention:** ****************\_****************
 
+**Three sample usernames:** ****************\_****************
+
 ---
 
-## Phase 2: SMB Enumeration (15 marks)
+## Phase 2: SMB Enumeration (12 marks)
 
 ### 2.1 Enumerate the file-sharing service (6 marks)
 
@@ -155,7 +152,7 @@ _________________________________________________
 **Access level available (authenticated / anonymous / guest):**
 ****************\_****************
 
-### 2.2 Retrieve the files — Flag 2 (5 marks)
+### 2.2 Retrieve the files — Flag 2 (6 marks)
 
 **Files retrieved:**
 | Filename | Share | Downloaded |
@@ -165,18 +162,9 @@ _________________________________________________
 
 **Flag 2:** ****************\_****************
 
-### 2.3 Interpret the password policy (4 marks)
-
-Read the policy you recovered and write out, in your own words, the rule it
-sets for temporary passwords — you will need this in Phase 3.
-
-****************\_\_\_\_****************
-
-****************\_\_\_\_****************
-
 ---
 
-## Phase 3: SSH Brute Force & Foothold (20 marks)
+## Phase 3: SSH Brute Force & Foothold (18 marks)
 
 ### 3.1 Build your attack lists (8 marks)
 
@@ -187,11 +175,11 @@ candidates.
 
 **Username list file:** ****************\_****************
 
+**Three examples of usernames:** ****************\_****************
+
 **Password list file:** ****************\_****************
 
-**Passwords you included, and how the policy produced them:**
-
-****************\_\_\_\_****************
+**Three examples of passwords:** ****************\_****************
 
 ### 3.2 Brute force SSH (6 marks)
 
@@ -203,7 +191,7 @@ _________________________________________________
 **Successful credentials found:**
 Username: ********\_******** Password: ********\_********
 
-### 3.3 Log in and read the flag — Flag 3 (3 marks)
+### 3.3 Log in and read the flag — Flag 3 (4 marks)
 
 **Login successful:** □ Yes □ No
 
@@ -214,18 +202,9 @@ id:     _________________
 
 **Flag 3:** ****************\_****************
 
-### 3.4 Justify your approach (3 marks)
-
-Explain why a small targeted wordlist was the right call here — both faster
-and more realistic than a full `rockyou.txt` run.
-
-****************\_\_\_\_****************
-
-****************\_\_\_\_****************
-
 ---
 
-## Phase 4: Privilege Escalation (20 marks)
+## Phase 4: Privilege Escalation (14 marks)
 
 ### 4.1 Identify the misconfiguration (6 marks)
 
@@ -253,20 +232,9 @@ _________________________________________________
 
 **Flag 4:** ****************\_****************
 
-### 4.3 Assess and remediate (6 marks)
-
-Why is the misconfiguration you exploited so dangerous? What is the correct
-secure setting, and how would you remediate it?
-
-****************\_\_\_\_****************
-
-****************\_\_\_\_****************
-
-****************\_\_\_\_****************
-
 ---
 
-## Phase 5: Credential Reuse, Hash Cracking & Decryption (20 marks)
+## Phase 5: Credential Reuse, Hash Cracking & Decryption (16 marks)
 
 ### 5.1 Find reusable credentials and connect (6 marks)
 
@@ -312,81 +280,3 @@ _________________________________________________
 ```
 
 **Flag 5:** ****************\_****************
-
-### 5.4 Explain the chain (4 marks)
-
-In your own words, explain how credential reuse, offline cracking, and
-decryption chained together to reach the final flag.
-
-****************\_\_\_\_****************
-
-****************\_\_\_\_****************
-
----
-
-## Phase 6: Findings & Remediation (5 marks)
-
-For each vulnerability you exploited, give it a risk rating (e.g.
-Critical / High / Medium / Low) and one **specific** remediation step — not
-a generic "patch everything."
-
-| Vulnerability | Risk rating | Specific remediation |
-|---------------|-------------|----------------------|
-| | | |
-| | | |
-| | | |
-| | | |
-| | | |
-
----
-
-## Lab Cleanup
-
-Before you leave:
-□ Document all findings
-□ Stop the lab: `docker compose down`
-□ Submit this completed worksheet
-
----
-
-## Instructor Use Only
-
-**Grade Breakdown (100 marks):**
-
-Phase 1 — Reconnaissance & Web Enumeration ..... ___/20
-- 1.1 Network & host discovery: ___/5
-- 1.2 Port & service scan (service + version): ___/7
-- 1.3 Web content analysis — Flag 1: ___/4
-- 1.4 Username naming convention: ___/4
-
-Phase 2 — SMB Enumeration ..................... ___/15
-- 2.1 Enumerate shares + access level: ___/6
-- 2.2 Retrieve files — Flag 2: ___/5
-- 2.3 Interpret the password policy: ___/4
-
-Phase 3 — SSH Brute Force & Foothold .......... ___/20
-- 3.1 Build targeted attack lists: ___/8
-- 3.2 Brute force SSH: ___/6
-- 3.3 Log in — Flag 3: ___/3
-- 3.4 Justify your approach: ___/3
-
-Phase 4 — Privilege Escalation ................ ___/20
-- 4.1 Identify the misconfiguration: ___/6
-- 4.2 Exploit to root — Flag 4: ___/8
-- 4.3 Assess and remediate: ___/6
-
-Phase 5 — Credential Reuse / Crack / Decrypt .. ___/20
-- 5.1 Find reusable credentials and connect: ___/6
-- 5.2 Extract and crack the hash: ___/6
-- 5.3 Decrypt the file — Flag 5: ___/4
-- 5.4 Explain the chain: ___/4
-
-Phase 6 — Findings & Remediation .............. ___/5
-
-**Total Score: ___/100**
-
-**Comments:**
-
-****************\_\_\_\_****************
-
-****************\_\_\_\_****************

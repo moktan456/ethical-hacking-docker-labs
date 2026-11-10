@@ -1,0 +1,37 @@
+VANTA HEALTH PTY LTD
+IT Onboarding & Account Policy  (HR / IT — INTERNAL)
+Last reviewed: 2026
+
+----------------------------------------------------------------------
+1. Account naming
+----------------------------------------------------------------------
+Every staff member is issued ONE corporate account used for email, the
+HR file server and SSH access to the application server.
+
+Username = first initial + surname, all lowercase.
+  Example:  Rashid Khan  ->  rkhan
+
+----------------------------------------------------------------------
+2. Temporary passwords for new starters
+----------------------------------------------------------------------
+IT issues every new account a temporary password made of the MONTH the
+staff member started followed by the YEAR:
+
+      Month + Year         e.g.  March2026
+
+(Months are written in full, capitalised: January ... December.)
+
+Staff MUST change this within 7 days of their start date. IT runs a
+monthly report of accounts still on the temporary password.
+
+----------------------------------------------------------------------
+3. Reminder from the last audit
+----------------------------------------------------------------------
+The external auditor flagged that some accounts were STILL using their
+issued temporary password months later. Please change yours.
+
+flag{altfinal2026_smb_share}
+
+----------------------------------------------------------------------
+Questions? Grace Owens, HR Coordinator (gowens@vantahealth.local)
+----------------------------------------------------------------------

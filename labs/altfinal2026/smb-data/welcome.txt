@@ -1,0 +1,7 @@
+Welcome to Vanta Health!
+
+This share holds HR onboarding material. If you are a new starter, please
+read IT_onboarding_policy.txt and change your temporary password within
+your first week.
+
+- The IT Team

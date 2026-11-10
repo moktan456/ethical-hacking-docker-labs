@@ -5,7 +5,8 @@ against a simulated corporate network: recon → web/SMB enumeration → targete
 SSH brute force → privilege escalation → credential reuse, hash cracking and
 decryption.
 
-- **Five flags, 10 marks each — 50 total.**
+- **Five flags across five phases — 80 marks total** (practical; marks are
+  weighted per phase, see [Final2026.md](./Final2026.md)).
 - **3 hours**, plus **15 minutes** at the start to build and launch Docker.
 - Worksheet-style: students answer **on paper** ([Final2026.md](./Final2026.md)).
 - Built with **pull-only images** plus the shared Kali attacker container.

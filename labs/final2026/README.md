@@ -14,10 +14,8 @@ decryption.
   clashes with any other week's stack, and targets are reached only from
   the attacker container.
 
-> This is a **live exam**. `labs/final2026/` is gitignored — do not track or
-> push it until the sitting is over. The instructor walkthrough
-> (`INSTRUCTOR-WALKTHROUGH.md`) is the answer key and stays untracked even
-> after release.
+> This exam's sitting is **complete** and the lab is released. The answer key
+> is [INSTRUCTOR-WALKTHROUGH.md](./INSTRUCTOR-WALKTHROUGH.md).
 
 ---
 
@@ -75,10 +73,9 @@ happen from inside `final2026-attacker`.
 
 ## Instructor Notes
 
-- **Verify before the sitting.** `solve.sh` is **not** shipped inside the
-  lab (it would hand students every answer) — it lives at the lab root and is
-  gitignored. Run it against a freshly started stack by piping it into the
-  attacker container:
+- **Verify the lab.** `solve.sh` (the automated solver, at the lab root) is
+  not mounted into the attacker container. Run it against a freshly started
+  stack by piping it in:
   ```bash
   docker exec -i final2026-attacker bash -s < solve.sh
   ```

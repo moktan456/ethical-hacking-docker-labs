@@ -33,32 +33,10 @@ labs/week9/internal-web/.DS_Store
 # pwntools cache
 /tmp/.pwntools-cache*/
 
-# CTF answer keys — untracked from week 8 onwards until the class using them
-# finishes. Remove these lines once the course has moved past that content.
-labs/week8/ctf-walkthrough.md
-labs/week9/ctf-walkthrough.md
-labs/altmidterm2026/INSTRUCTOR-WALKTHROUGH.md
-
-# Midterm 2026 (formerly week10) is a live exam — never track/push it.
-# Publish it deliberately (e.g. `git add -f labs/midterm2026 && git commit`)
-# only when ready to release it — not before Tuesday next week.
-labs/midterm2026/
-
-# Alt Midterm 2026 is the make-up exam for students who missed the
-# original sitting — same rule: never track/push until that sitting is
-# over and it's ready to be released deliberately.
-labs/altmidterm2026/
-
-# Final 2026 is the live capstone exam — never track/push it. Publish
-# deliberately (`git add -f labs/final2026 && git commit`) only once the
-# sitting is over. The instructor walkthrough stays untracked even then.
-labs/final2026/
-labs/final2026/INSTRUCTOR-WALKTHROUGH.md
-# The automated solver is the full answer key — never ship it, even on release.
-labs/final2026/solve.sh
-
-# Alt Final 2026 is the make-up sitting for the capstone — same rule:
-# never track/push until that sitting is over and it is ready to release.
-labs/altfinal2026/
-labs/altfinal2026/INSTRUCTOR-WALKTHROUGH.md
-labs/altfinal2026/solve.sh
+# The 2026 exams (midterm, altmidterm, final, altfinal) and their answer keys
+# are released and tracked normally. Only local working files stay ignored.
+labs/final2026/Final2026-80marks.docx
+labs/midterm2026/ftp-data/user.txt
+labs/midterm2026/lab-files/passwords.txt
+labs/midterm2026/lab-files/users.txt
+labs/midterm2026/lab-files/salary_dec2003.csv.enc

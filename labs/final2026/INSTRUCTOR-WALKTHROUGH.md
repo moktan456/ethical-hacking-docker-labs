@@ -1,6 +1,6 @@
 # Final 2026 — Instructor Walkthrough (ANSWER KEY)
 
-**Do not distribute. Untracked by git even after the exam is released.**
+**Released after the sitting was completed.**
 
 Network: `10.10.12.0/24`. All commands are run from inside
 `final2026-attacker` (`docker exec -it final2026-attacker bash`).

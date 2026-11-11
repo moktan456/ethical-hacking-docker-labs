@@ -12,7 +12,6 @@
 #   F5  cred reuse -> crack MD5 -> openssl dec (mysql 10.10.12.13)
 #
 # Credentials live in these startup commands (same approach as midterm2026).
-# This file is instructor-only — keep labs/final2026 gitignored until release.
 
 services:
   attacker:

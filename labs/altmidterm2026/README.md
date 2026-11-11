@@ -90,7 +90,6 @@ docker exec -it altmidterm2026-attacker bash
 
 ## Documentation
 
-- [INSTRUCTOR-WALKTHROUGH.md](INSTRUCTOR-WALKTHROUGH.md) - Complete answer key for instructors (not published until this sitting is over)
 - [AltMidterm2026.md](AltMidterm2026.md) - Student lab worksheet
 - [PENETRATION-TESTING-STRATEGY.md](PENETRATION-TESTING-STRATEGY.md) - Educational methodology guide
 - [COMMAND-REFERENCE.md](COMMAND-REFERENCE.md) - Plain English explanation of all commands used

@@ -11,8 +11,6 @@
 #   F3  Hydra SSH foothold (policy wordlist)   (ssh   10.10.13.12)
 #   F4  SUID /bin/cp -> read root-only file    (ssh   10.10.13.12)
 #   F5  cred reuse -> crack MD5 -> openssl dec (mysql 10.10.13.13)
-#
-# Instructor-only file — keep labs/altfinal2026 gitignored until release.
 
 services:
   attacker:
